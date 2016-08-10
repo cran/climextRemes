@@ -1,0 +1,11 @@
+0.1.2:
+
+* added check that 'blockIndex' does not put one outside range of 'x', 'weights', or 'proportionMissing'
+
+* added check for NA in 'blockIndex', 'x', 'xObs'
+
+* report warning if risk ratio confidence interval optimization results in estimate of either endpoint of confidence interval equal to an endpoint of the interval (i.e., 'bounds' value) used for optimization
+
+0.1.1: 
+
+* first internal release

@@ -1,0 +1,10 @@
+#' climextRemes
+#'
+#' @name climextRemes
+#' @docType package
+#' @import extRemes 
+NULL
+
+#' @importFrom methods is
+#' @importFrom stats as.formula dbinom optim optimize model.matrix qchisq qnorm rbinom rnorm sd
+NULL

@@ -1,6 +1,106 @@
 require(testthat)
 
 
+context("Testing basic functionality.")
+
+library(extRemes)
+data(Fort)
+FortMax <- aggregate(Prec ~ year, data = Fort, max)
+
+fitg <- fit_gev(FortMax$Prec, returnPeriod = 20, returnValue = 3.5,
+         getParams = TRUE, bootSE = TRUE)
+
+firstBlock <- min(Fort$year)
+years <- min(Fort$year):max(Fort$year)
+nYears <- length(years)
+threshold <- 0.395
+ord <- order(Fort$year, Fort$month, Fort$day) 
+Fort <- Fort[ord, ]
+ind <- Fort$Prec > threshold
+FortExc <- Fort[ind, ]
+
+fitp <- fit_pot(FortExc$Prec, threshold = threshold, nBlocks = nYears, 
+        blockIndex = FortExc$year, firstBlock = firstBlock,
+        returnPeriod = 20, returnValue = 3.5,
+        getParams = TRUE, bootSE = TRUE)
+
+test_that(paste0("test return value estimates with GEV vs. POT"), {
+    expect_lt(max(abs(fitg$mle - fitp$mle)), 0.05) 
+})
+test_that(paste0("test analytic and bootstrap SEs for GEV"), {
+    expect_lt(max(abs(fitg$se_mle - fitg$se_mle_boot)), 0.018) 
+})
+test_that(paste0("test analytic and bootstrap SEs for GEV"), {
+    expect_lt(max(abs(fitp$se_mle - fitp$se_mle_boot)), 0.008) 
+})
+
+
+context("Testing multiple return periods / values.")
+
+fitg2 <- fit_gev(FortMax$Prec, returnPeriod = 50, returnValue = 3,
+         getParams = TRUE, bootSE = TRUE)
+
+fitp2 <- fit_pot(FortExc$Prec, threshold = threshold, nBlocks = nYears, 
+        blockIndex = FortExc$year, firstBlock = firstBlock,
+        returnPeriod = 50, returnValue = 3,
+        getParams = TRUE, bootSE = TRUE)
+
+fitgMult <- fit_gev(FortMax$Prec, returnPeriod = c(20,40, 50),
+                 returnValue = c(3.5, 3.2, 3),
+         getParams = TRUE, bootSE = TRUE)
+
+fitpMult <- fit_pot(FortExc$Prec, threshold = threshold, nBlocks = nYears, 
+        blockIndex = FortExc$year, firstBlock = firstBlock,
+        returnPeriod = c(20, 40, 50), returnValue = c(3.5, 3.2, 3),
+        getParams = TRUE, bootSE = TRUE)
+
+test_that("test single/multi return values for GEV", {
+    expect_equivalent(c(fitg$returnValue, fitg2$returnValue),
+                     fitgMult$returnValue[c(1,3)])})
+
+test_that("test single/multi return probs for GEV", {
+    expect_equivalent(c(fitg$logReturnProb, fitg2$logReturnProb),
+                     fitgMult$logReturnProb[c(1,3)])})
+
+test_that("test single/multi return value std errors for GEV", {
+    expect_equivalent(c(fitg$se_returnValue, fitg2$se_returnValue),
+                     fitgMult$se_returnValue[c(1,3)])})
+
+test_that("test single/multi return prob std errors for GEV", {
+    expect_equivalent(c(fitg$se_logReturnProb, fitg2$se_logReturnProb),
+                     fitgMult$se_logReturnProb[c(1,3)])})
+
+test_that("test single/multi return value bootstrap std errors for GEV", {
+    expect_equivalent(c(fitg$se_returnValue_boot, fitg2$se_returnValue_boot),
+                     fitgMult$se_returnValue_boot[c(1,3)])})
+
+test_that("test single/multi return prob bootstrap std errors for GEV", {
+    expect_equivalent(c(fitg$se_logReturnProb_boot, fitg2$se_logReturnProb_boot),
+                     fitgMult$se_logReturnProb_boot[c(1,3)])})
+
+test_that("test single/multi return values for POT", {
+    expect_equivalent(c(fitp$returnValue, fitp2$returnValue),
+                     fitpMult$returnValue[c(1,3)])})
+
+test_that("test single/multi return probs for POT", {
+    expect_equivalent(c(fitp$logReturnProb, fitp2$logReturnProb),
+                     fitpMult$logReturnProb[c(1,3)])})
+
+test_that("test single/multi return value std errors for POT", {
+    expect_equivalent(c(fitp$se_returnValue, fitp2$se_returnValue),
+                     fitpMult$se_returnValue[c(1,3)])})
+
+test_that("test single/multi return prob std errors for POT", {
+    expect_equivalent(c(fitp$se_logReturnProb, fitp2$se_logReturnProb),
+                     fitpMult$se_logReturnProb[c(1,3)])})
+
+test_that("test single/multi return value bootstrap std errors for POT", {
+    expect_equivalent(c(fitp$se_returnValue_boot, fitp2$se_returnValue_boot),
+                     fitpMult$se_returnValue_boot[c(1,3)])})
+
+test_that("test single/multi return prob bootstrap std errors for POT", {
+    expect_equivalent(c(fitp$se_logReturnProb_boot, fitp2$se_logReturnProb_boot),
+                     fitpMult$se_logReturnProb_boot[c(1,3)])})
 
 context("Testing normalization and scaling in pot_fit() and gev_fit().")
 
@@ -30,13 +130,13 @@ zContrast <- rnorm(3)
 
 rv <- 8
 
-fit = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
+fitg = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
               shapeFun = ~x+w+z, scaling = 1/5,
               returnPeriod = 20, returnValue = rv, getParams = TRUE,
               xNew = data.frame(x=xNew, w = wNew, z = zNew),
               xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
               optimArgs = list(method = 'BFGS'))
-fitn = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
+fitgn = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
               shapeFun = ~x+w+z,
               returnPeriod = 20, returnValue = rv, getParams = TRUE,
               xNew = data.frame(x=xNew, w = wNew, z = zNew), .normalizeX = FALSE,
@@ -44,22 +144,22 @@ fitn = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleF
               optimArgs = list(method = 'BFGS'))                                      
 
 test_that(paste0("test parameter estimates with normalization and scaling for GEV"), {
-    expect_lt(max(abs(fit$mle - fitn$mle)), 5e-5) 
+    expect_lt(max(abs(fitg$mle - fitgn$mle)), 5e-5) 
 })
 test_that(paste0("test parameter estimates with normalization and scaling for GEV"), {
-    expect_lt(max(abs(fit$se_mle - fitn$se_mle)), 1e-3) 
+    expect_lt(max(abs(fitg$se_mle - fitgn$se_mle)), 1e-3) 
 })
 
 
 # current fevd error with len(scale) != len(shape) so modifying to have z be two covars
-fit = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
+fitp = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
               shapeFun = ~x+w, scaling = 1/5,
                 nBlocks = nT, blockIndex = blockIndexObs, index = index,
               returnPeriod = 20, returnValue = rv, getParams = TRUE,
               xNew = data.frame(x=xNew, w = wNew, z = zNew),
               xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
               optimArgs = list(method = 'BFGS'))
-fitn = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
+fitpn = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
               shapeFun = ~x+w,
                nBlocks = nT, blockIndex = blockIndexObs, index = index,
               returnPeriod = 20, returnValue = rv, getParams = TRUE,
@@ -68,11 +168,157 @@ fitn = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locatio
               optimArgs = list(method = 'BFGS'))                                      
 
 test_that(paste0("test parameter estimates with normalization and scaling for POT"), {
-    expect_lt(max(abs(fit$mle - fitn$mle)), 5e-5) 
+    expect_lt(max(abs(fitp$mle - fitpn$mle)), 5e-5) 
 })
 test_that(paste0("test parameter estimates with normalization and scaling for POT"), {
-    expect_lt(max(abs(fit$se_mle - fitn$se_mle)), 1e-3) 
+    expect_lt(max(abs(fitp$se_mle - fitpn$se_mle)), 1e-3) 
 })
+
+
+context("Testing multiple return periods / values with covariates.")
+
+fitg = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w+z, scaling = 1/5,
+              returnPeriod = 20, returnValue = rv, getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+fitp = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w, scaling = 1/5,
+                nBlocks = nT, blockIndex = blockIndexObs, index = index,
+              returnPeriod = 20, returnValue = rv, getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+fitg2 = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w+z, scaling = 1/5,
+              returnPeriod = 50, returnValue = rv-1, getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+
+fitp2 = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w, scaling = 1/5,
+                nBlocks = nT, blockIndex = blockIndexObs, index = index,
+              returnPeriod = 50, returnValue = rv-1, getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+fitgMulti = fit_gev(yMax, x = data.frame(x=x, w = w, z = z), locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w+z, scaling = 1/5,
+              returnPeriod = c(20, 40, 50), returnValue = c(rv, rv+1, rv-1), getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+fitpMulti = fit_pot(yExc, x = data.frame(x=x, w = w, z = z), threshold = thr, locationFun = ~x, scaleFun = ~x+w,
+              shapeFun = ~x+w, scaling = 1/5,
+                nBlocks = nT, blockIndex = blockIndexObs, index = index,
+              returnPeriod = c(20, 40, 50), returnValue = c(rv, rv+1, rv-1), getParams = TRUE,
+              xNew = data.frame(x=xNew, w = wNew, z = zNew),
+              xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
+              optimArgs = list(method = 'BFGS'), bootSE = TRUE, bootControl = list(n = 100))
+
+
+test_that("test single/multi return values for GEV with covars", {
+    expect_equivalent(c(fitg$returnValue, fitg2$returnValue),
+                     c(fitgMulti$returnValue[ , c(1,3)]))})
+
+test_that("test single/multi return probs for GEV with covars", {
+    expect_equivalent(c(fitg$logReturnProb, fitg2$logReturnProb),
+                     c(fitgMulti$logReturnProb[ , c(1,3)]))})
+
+test_that("test single/multi return value std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_returnValue, fitg2$se_returnValue),
+                     c(fitgMulti$se_returnValue[ , c(1,3)]))})
+
+test_that("test single/multi return prob std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_logReturnProb, fitg2$se_logReturnProb),
+                     c(fitgMulti$se_logReturnProb[ , c(1,3)]))})
+
+test_that("test single/multi return value bootstrap std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_returnValue_boot, fitg2$se_returnValue_boot),
+                     c(fitgMulti$se_returnValue_boot[ , c(1,3)]))})
+
+test_that("test single/multi return prob bootstrap std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_logReturnProb_boot, fitg2$se_logReturnProb_boot),
+                     c(fitgMulti$se_logReturnProb_boot[ , c(1,3)]))})
+
+test_that("test single/multi return values for GEV with covars", {
+    expect_equivalent(c(fitg$returnValueDiff, fitg2$returnValueDiff),
+                     c(fitgMulti$returnValueDiff[ , c(1,3)]))})
+
+test_that("test single/multi return probs for GEV with covars", {
+    expect_equivalent(c(fitg$logReturnProbDiff, fitg2$logReturnProbDiff),
+                     c(fitgMulti$logReturnProbDiff[ , c(1,3)]))})
+
+test_that("test single/multi return value std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_returnValueDiff, fitg2$se_returnValueDiff),
+                     c(fitgMulti$se_returnValueDiff[ , c(1,3)]))})
+
+test_that("test single/multi return prob std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_logReturnProbDiff, fitg2$se_logReturnProbDiff),
+                     c(fitgMulti$se_logReturnProbDiff[ , c(1,3)]))})
+
+test_that("test single/multi return value bootstrap std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_returnValueDiff_boot, fitg2$se_returnValueDiff_boot),
+                     c(fitgMulti$se_returnValueDiff_boot[ , c(1,3)]))})
+
+test_that("test single/multi return prob bootstrap std errors for GEV with covars", {
+    expect_equivalent(c(fitg$se_logReturnProbDiff_boot, fitg2$se_logReturnProbDiff_boot),
+                     c(fitgMulti$se_logReturnProbDiff_boot[ , c(1,3)]))})
+
+test_that("test single/multi return values for POT with covars", {
+    expect_equivalent(c(fitp$returnValue, fitp2$returnValue),
+                     c(fitpMulti$returnValue[ , c(1,3)]))})
+
+test_that("test single/multi return probs for POT with covars", {
+    expect_equivalent(c(fitp$logReturnProb, fitp2$logReturnProb),
+                     c(fitpMulti$logReturnProb[ , c(1,3)]))})
+
+test_that("test single/multi return value std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_returnValue, fitp2$se_returnValue),
+                     c(fitpMulti$se_returnValue[ , c(1,3)]))})
+
+test_that("test single/multi return prob std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_logReturnProb, fitp2$se_logReturnProb),
+                     c(fitpMulti$se_logReturnProb[ , c(1,3)]))})
+
+test_that("test single/multi return value bootstrap std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_returnValue_boot, fitp2$se_returnValue_boot),
+                     c(fitpMulti$se_returnValue_boot[ , c(1,3)]))})
+
+test_that("test single/multi return prob bootstrap std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_logReturnProb_boot, fitp2$se_logReturnProb_boot),
+                     c(fitpMulti$se_logReturnProb_boot[ , c(1,3)]))})
+
+test_that("test single/multi return values for POT with covars", {
+    expect_equivalent(c(fitp$returnValueDiff, fitp2$returnValueDiff),
+                     c(fitpMulti$returnValueDiff[ , c(1,3)]))})
+
+test_that("test single/multi return probs for POT with covars", {
+    expect_equivalent(c(fitp$logReturnProbDiff, fitp2$logReturnProbDiff),
+                     c(fitpMulti$logReturnProbDiff[ , c(1,3)]))})
+
+test_that("test single/multi return value std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_returnValueDiff, fitp2$se_returnValueDiff),
+                     c(fitpMulti$se_returnValueDiff[ , c(1,3)]))})
+
+test_that("test single/multi return prob std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_logReturnProbDiff, fitp2$se_logReturnProbDiff),
+                     c(fitpMulti$se_logReturnProbDiff[ , c(1,3)]))})
+
+test_that("test single/multi return value bootstrap std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_returnValueDiff_boot, fitp2$se_returnValueDiff_boot),
+                     c(fitpMulti$se_returnValueDiff_boot[ , c(1,3)]))})
+
+test_that("test single/multi return prob bootstrap std errors for POT with covars", {
+    expect_equivalent(c(fitp$se_logReturnProbDiff_boot, fitp2$se_logReturnProbDiff_boot),
+                     c(fitpMulti$se_logReturnProbDiff_boot[ , c(1,3)]))})
 
 # test NAs or illegit values in blockIndex
 blockIndexBad <- blockIndexObs + 200

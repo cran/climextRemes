@@ -21,7 +21,7 @@ parseParamInput <- function(input, names = NULL) {
     } else stop("parseParamInput: expecting 'input' to be a formula, column names, or indices of columns.")
 }
 
-compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NULL, x = NULL, x2 = NULL, locationFun, scaleFun, shapeFun, getParams = FALSE, upper = TRUE, scaling = 1, normalizers) {
+compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NULL, x = NULL, x2 = NULL, locationFun, scaleFun, shapeFun, getParams = FALSE, upper = TRUE, scaling = 1, normalizers, getSE = TRUE) {
     # auxiliary function for calculating parameter estimates (on original scale) and return-related quantities requested by user by calling out to functions specific to each quantity
     
     results <- list()
@@ -110,7 +110,7 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
         
 
     if(!is.null(returnValue)) {
-        tmp <- calc_logReturnProb_fevd(fit, returnValue, covariates = covariateMatrix)
+        tmp <- calc_logReturnProb_fevd(fit, returnValue, covariates = covariateMatrix, getSE = getSE, scaling = scaling)
         results$logReturnProb <- tmp$logReturnProb
         results$se_logReturnProb <- tmp$se_logReturnProb
         # return period on log scale is negative of return probability
@@ -121,12 +121,12 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
     if(!is.null(x2)) {
         # get difference of return values or of log return probabilities (i.e. log of risk ratio)
         if(!is.null(returnPeriod)) {
-            tmp <- calc_returnValueDiff_fevd(fit, returnPeriod = returnPeriod, covariates1 = covariateMatrix, covariates2 = covariateMatrix2)
+            tmp <- calc_returnValueDiff_fevd(fit, returnPeriod = returnPeriod, covariates1 = covariateMatrix, covariates2 = covariateMatrix2, getSE = getSE)
             results$returnValueDiff <- tmp$returnValueDiff / scaling
             results$se_returnValueDiff <- tmp$se_returnValueDiff / scaling
         }
         if(!is.null(returnValue)) {
-            tmp <- calc_logReturnProbDiff_fevd(fit, returnValue = returnValue, covariates1 = covariateMatrix, covariates2 = covariateMatrix2) 
+            tmp <- calc_logReturnProbDiff_fevd(fit, returnValue = returnValue, covariates1 = covariateMatrix, covariates2 = covariateMatrix2, getSE = getSE, scaling = scaling) 
             results$logReturnProbDiff <- tmp$logReturnProbDiff
             results$se_logReturnProbDiff <- tmp$se_logReturnProbDiff
 

@@ -1,3 +1,17 @@
+0.1.3:
+
+* now allow users to request multiple return values or return periods (or differences of values or periods)  when using 'fit_gev' and 'fit_pot'.
+
+* added user option to return return quantities (via 'getReturnCalcs'), parameter estimates (via 'getParams') and fitted model information (via 'getFit') from the fitted models in 'calc_riskRatio_gev' and 'calc_riskRatio_pot'.
+
+* added user option 'logScale' to specify if scale should be fit on log scale
+
+* added functionality to avoid standard error calculations of return quantities when fitting bootstrapped datasets to avoid unnecessary computation
+
+* new error trapping to detect when names in formulae are not present in data 'x', 'xNew', or 'xContrast'
+
+* added additional help information regarding convergence failures
+
 0.1.2:
 
 * added check that 'blockIndex' does not put one outside range of 'x', 'weights', or 'proportionMissing'

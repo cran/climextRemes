@@ -21,9 +21,9 @@ y0e <- y0[wh0]
 bi1 <- (1:n)[wh1]
 bi2 <- (1:n)[wh0]
 
-outb <- calc_riskRatio_binom(yC, rep(n, 2), bootSE = TRUE, lrtCI = TRUE)
+outb <- calc_riskRatio_binom(yC, rep(n, 2), bootCI = TRUE, lrtCI = TRUE)
 outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, nBlocks1 = n,
-                           nBlocks2 = n, bootSE = FALSE, lrtCI = TRUE)
+                           nBlocks2 = n, bootCI = FALSE, lrtCI = TRUE)
 
 test_that(paste0("binom RR uncertainty methods"), {
     expect_lt(max(abs(outb$ci_riskRatio - outb$ci_riskRatio_lrt)), (.25))
@@ -62,9 +62,9 @@ for( i in 1:m ) {
     bi1 <- (1:n)[wh1]
     bi2 <- (1:n)[wh0]
     
-    outb <- calc_riskRatio_binom(yC, rep(n, 2), bootSE = TRUE, lrtCI = FALSE)
+    outb <- calc_riskRatio_binom(yC, rep(n, 2), bootCI = TRUE, lrtCI = FALSE)
     outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, nBlocks1 = n,
-                               nBlocks2 = n, bootSE = FALSE, lrtCI = FALSE)
+                               nBlocks2 = n, bootCI = FALSE, lrtCI = FALSE)
     rrb[i] <- outb$logRiskRatio
     se_rrb[i] <- outb$se_logRiskRatio
     se_rrb_b[i] <- outb$se_logRiskRatio_boot
@@ -139,8 +139,9 @@ outg <- calc_riskRatio_gev(yMax[yrgrps == 2], yMax[yrgrps == 1], x1 = data.frame
                    locationFun1 = ~ w, scaleFun1 = ~w, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = data.frame(w = wNew), xNew2 = data.frame(w = wNew, z = zNew),
-                   returnValue = cutoff, bootSE = TRUE,
+                   returnValue = cutoff, bootCI = TRUE,
                    lrtCI = TRUE, optimArgs = list(method = 'BFGS'))
+
 test_that(paste0("GEV nonstationary RR methods"), {
     expect_lt(max(abs(outg$ci_riskRatio[1,] - outg$ci_riskRatio_lrt[1, ])), (.4))
 })
@@ -149,7 +150,7 @@ outg <- calc_riskRatio_gev(yMax[yrgrps == 2], yMax[yrgrps == 1], x1 = NULL, x2 =
                    locationFun1 = ~ 1, scaleFun1 = ~1, shapeFun1 = ~1,
                    locationFun2 = ~ z, scaleFun2 = ~z, shapeFun2 = ~z,
                    xNew1 = NULL, xNew2 = data.frame(z = zNew[1]),
-                   returnValue = cutoff, bootSE = TRUE,
+                   returnValue = cutoff, bootCI = TRUE,
                    lrtCI = TRUE)
 
 test_that(paste0("GEV nonstationary RR methods, one stationary"), {
@@ -163,8 +164,9 @@ outp <- calc_riskRatio_pot(yExc[grps == 1], yExc[grps == 2],
                    locationFun1 = ~ w, scaleFun1 = ~w, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = data.frame(w = wNew), xNew2 = data.frame(w = wNew, z = zNew),
-                   returnValue = cutoff, bootSE = TRUE,
+                   returnValue = cutoff, bootCI = TRUE,
                    lrtCI = TRUE, optimArgs = list(method = 'BFGS'))
+
 test_that(paste0("POT nonstationary RR methods"), {
     expect_lt(max(abs(outp$ci_riskRatio[1,] - outp$ci_riskRatio_lrt[1, ])), (.01))
 })
@@ -180,8 +182,9 @@ outp <- calc_riskRatio_pot(yExc[grps == 1], yExc[grps == 2],
                    locationFun1 = ~ 1, scaleFun1 = ~1, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = NULL, xNew2 = data.frame(w = wNew[1], z = zNew[1]),
-                   returnValue = cutoff, bootSE = TRUE,
+                   returnValue = cutoff, bootCI = TRUE,
                    lrtCI = TRUE, optimArgs = list(method = 'BFGS'))
+
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
     expect_lt(max(abs(outp$ci_riskRatio - outp$ci_riskRatio_lrt)), (.01))
 })
@@ -199,8 +202,9 @@ outp <- calc_riskRatio_pot(yExc[grps == 1], yExc[grps == 2],
                    locationFun1 = ~ 1, scaleFun1 = ~1, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = NULL, xNew2 = data.frame(w = wNew[1], z = zNew[1]),
-                   returnValue = cutoff, bootSE = TRUE,
+                   returnValue = cutoff, bootCI = TRUE,
                    lrtCI = TRUE, optimArgs = list(method = 'BFGS'))
+
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
     expect_lt(max(abs(outp$ci_riskRatio - outp$ci_riskRatio_lrt)), (.01))
 })

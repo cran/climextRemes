@@ -5,9 +5,9 @@
 #' @param y vector of two values, the number of events in the two scenarios
 #' @param n vector of two values, the number of samples (possible occurrences of events) in the two scenarios 
 #' @param ciLevel statistical confidence level for confidence intervals; in repeated experimentation, this proportion of confidence intervals should contain the true risk ratio. Note that if only one endpoint of the resulting interval is used, for example the lower bound, then the effective confidence level increases by half of one minus \code{ciLevel}. For example, a two-sided 0.90 confidence interval corresponds to a one-sided 0.95 confidence interval.
-#' @param bootSE logical indicating whether to use the bootstrap to estimate standard errors.
+#' @param bootCI logical indicating whether to use the bootstrap to estimate a confidence interval (and standard error).
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
-#' @param lrtCI logical indicating whether to calculate a likelihood ratio-based confidence interval
+#' @param lrtCI logical indicating whether to calculate a likelihood ratio-based confidence interval.
 #' @param lrtControl list containing a single component, \code{bounds}, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to \code{NA}.
 #' @author Christopher J. Paciorek
 #' @export
@@ -16,10 +16,14 @@
 #' @references
 #' Paciorek et al. methods paper being finalized.
 #' @examples
-#' calc_riskRatio_binom(c(4,0), rep(100, 2), bootSE = FALSE, lrtCI = TRUE)
-#' calc_riskRatio_binom(c(40, 8), rep(400, 2), bootSE = TRUE, lrtCI = TRUE)
+#' # risk ratio for 40/400 compared to 8/400 events and for
+#' # 4/100 compared to 0/100 events
+#' calc_riskRatio_binom(c(40, 8), c(400, 400), bootCI = TRUE, lrtCI = TRUE)
+#' # LRT method can estimate lower confidence interval endpoint,
+#' # even if estimated risk ratio is infinity:
+#' calc_riskRatio_binom(c(4,0), c(100, 100), bootCI = FALSE, lrtCI = TRUE)
 calc_riskRatio_binom <- function(y, n, ciLevel = 0.90,
-                                 bootSE = FALSE, bootControl = list(seed = 0, n = 500),
+                                 bootCI = FALSE, bootControl = list(seed = 1, n = 500),
                                  lrtCI = FALSE, lrtControl = list(bounds = c(.01, 100))) {
     results <- list()
     z_alpha <- stats::qnorm(( 1 - ciLevel ) / 2, lower.tail = FALSE)
@@ -32,7 +36,7 @@ calc_riskRatio_binom <- function(y, n, ciLevel = 0.90,
     results$riskRatio <- exp(results$logRiskRatio)
     results$ci_riskRatio <- exp(results$logRiskRatio + c(-1, 1)*z_alpha*results$se_logRiskRatio)
     
-    if(bootSE) {
+    if(bootCI) {
         if(any(p == 0 || p == 1)) {
             results$se_logRiskRatio_boot <- NA
         } else {
@@ -150,33 +154,76 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' @param scaling1 positive-valued scalar used to scale the data values of the first dataset for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
 #' @param scaling2 positive-valued scalar used to scale the data values of the second dataset for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
 #' @param ciLevel statistical confidence level for confidence intervals; in repeated experimentation, this proportion of confidence intervals should contain the true risk ratio. Note that if only one endpoint of the resulting interval is used, for example the lower bound, then the effective confidence level increases by half of one minus \code{ciLevel}. For example, a two-sided 0.90 confidence interval corresponds to a one-sided 0.95 confidence interval.
-#' @param bootSE logical indicating whether to use the bootstrap to estimate standard errors.
+#' @param bootCI logical indicating whether to use the bootstrap to estimate a confidence interval (and standard error).
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
 #' @param lrtCI logical indicating whether to calculate a likelihood ratio-based confidence interval
 #' @param lrtControl list containing a single component, \code{bounds}, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to \code{NA}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to \code{optim}. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{'control=list(maxit=VALUE)'} for a user-chosen VALUE can be used to increase the number of iterations if the optimization is converging slowly.
+#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param getReturnCalcs logical indicating whether to return the estimated return values/probabilities/periods from the fitted models. 
+#' @param getParams logical indicating whether to return the fitted parameter values and their standard errors for the fitted models; WARNING: parameter values for models with covariates for the scale parameter must interpreted based on the value of \code{logScale}.
+#' @param getFit logical indicating whether to return the full fitted models (potentially useful for model evaluation and for understanding optimization problems); note that estimated parameters in the fit object for nonstationary models will not generally match the MLE provided when \code{getParams} is \code{TRUE} because covariates are normalized before fitting and the fit object is based on the normalized covariates. Similarly, parameters will not match if \code{scaling} is not 1.
 #' @author Christopher J. Paciorek
 #' @export
 #' @details
 #' See \code{\link{fit_pot}} for more details on fitting the peaks-over-threshold model for each dataset, including details on blocking and replication. Also see \code{\link{fit_pot}} for information on the \code{bootControl} argument. 
+#'
+#' @section Optimization failures:
+#'
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_pot}. Also note that if the probability in the denominator of the risk ratio is near 1, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
+#' 
+#' @return
+#'
+#' The primary outputs of this function are as follows: the log of the risk ratio and standard error of that log risk ratio (\code{logRiskRatio} and \code{se_logRiskRatio}) as well the risk ratio itself (\code{riskRatio}) and a confidence interval (\code{ci_riskRatio}) for the risk ratio. The standard error and confidence interval are based on the usual MLE asymptotics using a delta-method-based approximation. If requested via \code{bootCI} or \code{lrtCI}, confidence intervals based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
+#' 
 #' @references
-#' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes. In press. arXiv preprint: http://arxiv.org/abs/1602.04139.
+#' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. doi: 10.1016/j.wace.2016.02.001. arXiv preprint: http://arxiv.org/abs/1602.04139.
 #' 
 #' @examples
-#' # need examples
+#' require(extRemes)
+#' data(Fort)
+#' threshold <- 0.395
+#' ord <- order(Fort$year, Fort$month, Fort$day) 
+#' Fort <- Fort[ord, ]
+#' ind <- Fort$Prec > threshold
+#' FortExc <- Fort[ind, ]
+#' earlyYears <- 1900:1929
+#' lateYears <- 1970:1999
+#' earlyPeriod <- which(FortExc$year %in% earlyYears)
+#' latePeriod <- which(FortExc$year %in% lateYears)
+#' # contrast late period with early period, assuming a nonstationary fit
+#' # within each time period and finding RR based on midpoint of each period
+#' # lrtCI set to FALSE here to limit time in running examples on CRAN
+#' out <- calc_riskRatio_pot(returnValue = 3,
+#'                    y1 = FortExc$Prec[earlyPeriod], y2 = FortExc$Prec[latePeriod],
+#'                    x1 = data.frame(years = earlyYears), x2 = data.frame(years = lateYears),
+#'                    threshold1 = threshold, threshold2 = threshold,
+#'                    locationFun1 = ~years, locationFun2 = ~years,
+#'                    xNew1 = data.frame(years = mean(earlyYears)), 
+#'		      xNew2 = data.frame(years = mean(lateYears)),
+#'                    blockIndex1 = FortExc$year[earlyPeriod], 
+#'                    blockIndex2 = FortExc$year[latePeriod],
+#'                    firstBlock1 = earlyYears[1], firstBlock2 = lateYears[1],
+#'                    lrtCI = FALSE)
 calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
-                                  threshold1, threshold2 = threshold1, locationFun1 = NULL,
-                                  locationFun2 = locationFun1, scaleFun1 = NULL, scaleFun2 = scaleFun1,
-                                  shapeFun1 = NULL, shapeFun2 = shapeFun1, nBlocks1 = nrow(x1),
-                                  nBlocks2 = nrow(x2), blockIndex1 = NULL, blockIndex2 = NULL, firstBlock1 = 1,
-                                  firstBlock2 = 1, index1 = NULL, index2 = NULL, nReplicates1 = 1,
-                                  nReplicates2 = 1, replicateIndex1 = NULL, replicateIndex2 = NULL,
-                                  weights1 = NULL, weights2 = NULL, proportionMissing1 = NULL,
-                                  proportionMissing2 = NULL, xNew1 = NULL, xNew2 = NULL, declustering = NULL,
-                                  upperTail = TRUE, scaling1 = 1, scaling2 = 1, ciLevel = 0.90, bootSE = FALSE,
-                                  bootControl = list(seed = 0, n = 250, by = "block"), 
-                                  lrtCI = FALSE, lrtControl = list(bounds = c(.01, 100)),
-                                  optimArgs = list(method = 'Nelder-Mead')) {
+                               threshold1, threshold2 = threshold1, locationFun1 = NULL,
+                               locationFun2 = locationFun1, scaleFun1 = NULL, scaleFun2 = scaleFun1,
+                               shapeFun1 = NULL, shapeFun2 = shapeFun1, nBlocks1 = nrow(x1),
+                               nBlocks2 = nrow(x2), blockIndex1 = NULL, blockIndex2 = NULL, firstBlock1 = 1,
+                               firstBlock2 = 1, index1 = NULL, index2 = NULL, nReplicates1 = 1,
+                               nReplicates2 = 1, replicateIndex1 = NULL, replicateIndex2 = NULL,
+                               weights1 = NULL, weights2 = NULL, proportionMissing1 = NULL,
+                               proportionMissing2 = NULL, xNew1 = NULL, xNew2 = NULL, declustering = NULL,
+
+                               upperTail = TRUE, scaling1 = 1, scaling2 = 1, ciLevel = 0.90, bootCI = FALSE,
+                               bootControl = list(seed = 1, n = 250, by = "block"), 
+                               lrtCI = FALSE, lrtControl = list(bounds = c(.01, 100)),
+                               optimArgs = list(method = 'Nelder-Mead'), initial1 = NULL,
+                               initial2 = NULL, logScale1 = NULL, logScale2 = NULL,
+                               getReturnCalcs = FALSE, getParams = FALSE, getFit = FALSE  ) {
 
     if(missing(returnValue))
         stop("calc_riskRatio_pot: 'returnValue' must be provided.")
@@ -189,20 +236,22 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                         nReplicates = nReplicates1, replicateIndex = replicateIndex1,
                         weights = weights1, proportionMissing = proportionMissing1, returnValue = returnValue,
                         xNew = xNew1, declustering = declustering, upperTail = upperTail,
-                        scaling = scaling1, bootSE = bootSE, bootControl = bootControl,
-                        optimArgs = optimArgs, getFit = TRUE, .getInputs = TRUE) 
+                        scaling = scaling1, bootSE = bootCI, bootControl = bootControl,
+                        optimArgs = optimArgs, initial = initial1, logScale = logScale1,
+                    getFit = TRUE, getParams = getParams, .getInputs = TRUE) 
     fit2 <- fit_pot(y2, x = x2, threshold = threshold2, locationFun = locationFun2,
                         scaleFun = scaleFun2, shapeFun = shapeFun2, nBlocks = nBlocks2,
                         blockIndex = blockIndex2, firstBlock = firstBlock2, index = index2,
                         nReplicates = nReplicates2, replicateIndex = replicateIndex2,
                         weights = weights2, proportionMissing = proportionMissing2, returnValue = returnValue,
                         xNew = xNew2, declustering = declustering, upperTail = upperTail,
-                        scaling = scaling2, bootSE = bootSE, bootControl = bootControl,
-                        optimArgs = optimArgs, getFit = TRUE, .getInputs = TRUE)
+                        scaling = scaling2, bootSE = bootCI, bootControl = bootControl,
+                        optimArgs = optimArgs, initial = initial2, logScale = logScale2,
+                    getFit = TRUE, getParams = getParams, .getInputs = TRUE)
     if(fit1$info$failure || fit2$info$failure) {
         warning("calc_riskRatio_pot: fitting failed for one of two datasets.")
         results$logRiskRatio <- results$se_logRiskRatio <- results$ci_riskRatio <- NA
-        if(bootSE)
+        if(bootCI)
             results$se_logRiskRatio_boot <- results$ci_riskRatio_boot <- NA
         if(lrtCI)
             results$ci_riskRatio_lrt <- NA
@@ -217,7 +266,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             results$ci_riskRatio <- exp(cbind(results$logRiskRatio - z_alpha*results$se_logRiskRatio,
                                               results$logRiskRatio + z_alpha*results$se_logRiskRatio))
         } else results$ci_riskRatio <- exp(results$logRiskRatio + c(-1,1)*z_alpha*results$se_logRiskRatio)
-        if(bootSE) { 
+        if(bootCI) { 
             results$se_logRiskRatio_boot <- sqrt(fit1$se_logReturnProb_boot^2 + fit2$se_logReturnProb_boot^2)
             if(length(results$logRiskRatio) > 1) {
                 results$ci_riskRatio_boot <- exp(cbind(results$logRiskRatio - z_alpha*results$se_logRiskRatio_boot,
@@ -234,6 +283,22 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "PP", optimArgs = oArgs)
         }
+    }
+    if(getFit || getParams || getReturnCalcs) {
+        fit1$inputs <- fit2$inputs <- NULL
+        if(!getFit) {
+            fit1$fit <- fit2$fit <- fit1$info <- fit2$info <- NULL
+        }
+        if(!getReturnCalcs) {
+            fit1$logReturnProb <- fit1$se_logReturnProb <- fit1$logReturnPeriod <- fit1$se_logReturnPeriod <- NULL
+            fit2$logReturnProb <- fit2$se_logReturnProb <- fit2$logReturnPeriod <- fit2$se_logReturnPeriod <- NULL
+            if(bootCI) {
+                fit1$se_logReturnProb_boot <- fit1$se_logReturnPeriod <- NULL
+                fit2$se_logReturnProb_boot <- fit2$se_logReturnPeriod <- NULL
+            }
+        }
+        results$fit1 <- fit1
+        results$fit2 <- fit2
     }
     return(results)
 }
@@ -265,20 +330,53 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #' @param scaling1 positive-valued scalar used to scale the data values of the first dataset for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
 #' @param scaling2 positive-valued scalar used to scale the data values of the second dataset for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
 #' @param ciLevel statistical confidence level for confidence intervals; in repeated experimentation, this proportion of confidence intervals should contain the true risk ratio. Note that if only one endpoint of the resulting interval is used, for example the lower bound, then the effective confidence level increases by half of one minus \code{ciLevel}. For example, a two-sided 0.90 confidence interval corresponds to a one-sided 0.95 confidence interval.
-#' @param bootSE logical indicating whether to use the bootstrap to estimate standard errors.
+#' @param bootCI logical indicating whether to use the bootstrap to estimate a confidence interval (and standard error).
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
 #' @param lrtCI logical indicating whether to calculate a likelihood ratio-based confidence interval
 #' @param lrtControl list containing a single component, \code{bounds}, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to \code{NA}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to \code{optim}. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{'control=list(maxit=VALUE)'} for a user-chosen VALUE can be used to increase the number of iterations if the optimization is converging slowly.
+#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param getReturnCalcs logical indicating whether to return the estimated return values/probabilities/periods from the fitted models. 
+#' @param getParams logical indicating whether to return the fitted parameter values and their standard errors for the fitted models; WARNING: parameter values for models with covariates for the scale parameter must interpreted based on the value of \code{logScale}.
+#' @param getFit logical indicating whether to return the full fitted models (potentially useful for model evaluation and for understanding optimization problems); note that estimated parameters in the fit object for nonstationary models will not generally match the MLE provided when \code{getParams} is \code{TRUE} because covariates are normalized before fitting and the fit object is based on the normalized covariates. Similarly, parameters will not match if \code{scaling} is not 1.
+#' 
 #' @author Christopher J. Paciorek
 #' @export
 #' @details
-#' See \code{\link{fit_gev}} for more details on fitting the block maxima model for each dataset, including details on blocking and replication. Also see \code{\link{fit_gev}} for information on the \code{bootControl} argument. 
+#' See \code{\link{fit_gev}} for more details on fitting the block maxima model for each dataset, including details on blocking and replication. Also see \code{\link{fit_gev}} for information on the \code{bootControl} argument.
+#' 
+#' @section Optimization failures:
+#'
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_gev}. Also note that if the probability in the denominator of the risk ratio is near 1, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
+#' 
+#' @return
+#'
+#' The primary outputs of this function are as follows: the log of the risk ratio and standard error of that log risk ratio (\code{logRiskRatio} and \code{se_logRiskRatio}) as well the risk ratio itself (\code{riskRatio}) and a confidence interval (\code{ci_riskRatio}) for the risk ratio. The standard error and confidence interval are based on the usual MLE asymptotics using a delta-method-based approximation. If requested via \code{bootCI} or \code{lrtCI}, confidence intervals based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
+#' 
 #' @references
-#' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes. In press. arXiv preprint: http://arxiv.org/abs/1602.04139.
+#' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. doi: 10.1016/j.wace.2016.02.001. arXiv preprint: http://arxiv.org/abs/1602.04139.
 #' 
 #' @examples
-#' # need examples
+#' require(extRemes)
+#' data(Fort)
+#' FortMax <- aggregate(Prec ~ year, data = Fort, max)
+#' earlyYears <- 1900:1929
+#' lateYears <- 1970:1999
+#' earlyPeriod <- which(FortMax$year %in% earlyYears)
+#' latePeriod <- which(FortMax$year %in% lateYears)
+#' # contrast late period with early period, assuming a nonstationary fit
+#' # within each time period and finding RR based on midpoint of each period
+#' # lrtCI set to FALSE here to limit time in running examples on CRAN
+#' out <- calc_riskRatio_gev(returnValue = 3,
+#'                    y1 = FortMax$Prec[earlyPeriod], y2 = FortMax$Prec[latePeriod],
+#'                    x1 = data.frame(years = earlyYears), x2 = data.frame(years = lateYears),
+#'                    locationFun1 = ~years, locationFun2 = ~years,
+#'                    xNew1 = data.frame(years = mean(earlyYears)),
+#'                    xNew2 = data.frame(years = mean(lateYears)),
+#'                    lrtCI = FALSE)
 calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                                locationFun1 = NULL, locationFun2 = locationFun1,
                                scaleFun1 = NULL, scaleFun2 = scaleFun1,
@@ -287,10 +385,12 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                                replicateIndex1 = NULL, replicateIndex2 = NULL,
                                weights1 = NULL, weights2 = NULL, xNew1 = NULL, xNew2 = NULL, 
                                maxes = TRUE, scaling1 = 1, scaling2 = 1,
-                               ciLevel = 0.90, bootSE = FALSE,
-                               bootControl = list(seed = 0, n = 250, by = "block"),
+                               ciLevel = 0.90, bootCI = FALSE,
+                               bootControl = list(seed = 1, n = 250, by = "block"),
                                lrtCI = FALSE, lrtControl = list(bounds = c(.01, 100)),
-                               optimArgs = list(method = 'Nelder-Mead')) {
+                               optimArgs = list(method = 'Nelder-Mead'), initial1 = NULL,
+                               initial2 = NULL, logScale1 = NULL, logScale2 = NULL,
+                               getReturnCalcs = FALSE, getParams = FALSE, getFit = FALSE) {
 
     if(missing(returnValue))
         stop("calc_riskRatio_gev: 'returnValue' must be provided.")
@@ -302,20 +402,22 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                         nReplicates = nReplicates1, replicateIndex = replicateIndex1,
                         weights = weights1, returnValue = returnValue,
                         xNew = xNew1, maxes = maxes,
-                        scaling = scaling1, bootSE = bootSE, bootControl = bootControl,
-                        optimArgs = optimArgs, getFit = TRUE, .getInputs = TRUE) 
+                        scaling = scaling1, bootSE = bootCI, bootControl = bootControl,
+                        optimArgs = optimArgs, initial = initial1, logScale = logScale1,
+                    getFit = TRUE, getParams = getParams, .getInputs = TRUE) 
     fit2 <- fit_gev(y2, x = x2, locationFun = locationFun2,
                         scaleFun = scaleFun2, shapeFun = shapeFun2, 
                         nReplicates = nReplicates2, replicateIndex = replicateIndex2,
                         weights = weights2, returnValue = returnValue,
                         xNew = xNew2, maxes = maxes,
-                        scaling = scaling2, bootSE = bootSE, bootControl = bootControl,
-                        optimArgs = optimArgs, getFit = TRUE, .getInputs = TRUE) 
-
+                        scaling = scaling2, bootSE = bootCI, bootControl = bootControl,
+                        optimArgs = optimArgs, initial = initial2, logScale = logScale2,
+                    getFit = TRUE, getParams = getParams, .getInputs = TRUE) 
+    
     if(fit1$info$failure || fit2$info$failure) {
         warning("calc_riskRatio_pot: fitting failed for one of two datasets.")
         results$logRiskRatio <- results$se_logRiskRatio <- results$ci_riskRatio <- NA
-        if(bootSE)
+        if(bootCI)
             results$se_logRiskRatio_boot <- results$ci_riskRatio_boot <- NA
         if(lrtCI)
             results$ci_riskRatio_lrt <- NA
@@ -331,7 +433,7 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                                               results$logRiskRatio + z_alpha*results$se_logRiskRatio))
         } else results$ci_riskRatio <- exp(results$logRiskRatio + c(-1,1)*z_alpha*results$se_logRiskRatio)
     
-        if(bootSE) { 
+        if(bootCI) { 
             results$se_logRiskRatio_boot <- sqrt(fit1$se_logReturnProb_boot^2 + fit2$se_logReturnProb_boot^2)
             if(length(results$logRiskRatio) > 1) {
                 results$ci_riskRatio_boot <- exp(cbind(results$logRiskRatio - z_alpha*results$se_logRiskRatio_boot,
@@ -345,13 +447,13 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             ##                 nReplicates = nReplicates1, replicateIndex = replicateIndex1,
             ##                 weights = weights1, returnValue = returnValue,
             ##                 maxes = maxes,
-            ##                 scaling = scaling1, bootSE = FALSE, optimArgs = optimArgs, getParams = TRUE)
+            ##                 scaling = scaling1, bootCI = FALSE, optimArgs = optimArgs, getParams = TRUE)
             ## fit2i <- fit_gev(y2, locationFun = ~1,
             ##                 scaleFun = ~1, shapeFun = ~1, 
             ##                 nReplicates = nReplicates2, replicateIndex = replicateIndex2,
             ##                 weights = weights2, returnValue = returnValue,
             ##                 maxes = maxes,
-            ##                 scaling = scaling2, bootSE = FALSE,
+            ##                 scaling = scaling2, bootCI = FALSE,
             ##                 optimArgs = optimArgs, getParams = TRUE) 
 
             lControl <- list(bounds = c(.01, 100))
@@ -362,6 +464,22 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue = returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "GEV", optimArgs = oArgs)
         #    results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "GEV", optimArgs = oArgs, init1 = fit1i$mle, init2 = fit2i$mle)
         }
+    }
+    if(getFit || getParams || getReturnCalcs) {
+        fit1$inputs <- fit2$inputs <- NULL
+        if(!getFit) {
+            fit1$fit <- fit2$fit <- fit1$info <- fit2$info <- NULL
+        }
+        if(!getReturnCalcs) {
+            fit1$logReturnProb <- fit1$se_logReturnProb <- fit1$logReturnPeriod <- fit1$se_logReturnPeriod <- NULL
+            fit2$logReturnProb <- fit2$se_logReturnProb <- fit2$logReturnPeriod <- fit2$se_logReturnPeriod <- NULL
+            if(bootCI) {
+                fit1$se_logReturnProb_boot <- fit1$se_logReturnPeriod <- NULL
+                fit2$se_logReturnProb_boot <- fit2$se_logReturnPeriod <- NULL
+            }
+        }
+        results$fit1 <- fit1
+        results$fit2 <- fit2
     }
     return(results)
 }
@@ -604,6 +722,7 @@ calc_riskRatio_lrt <- function(fit1, fit2, returnValue, ciLevel, bounds, type = 
 } # end calc_riskRatio_lrt()
 
 calc_constrNegLogLik <- function(par, rr0, y1, y2, x1, x2, threshold1 = NULL, threshold2 = NULL, weights1, weights2, p1, p2, designs1, designs2, blocks1 = NULL, blocks2 = NULL, usePhi1, usePhi2, returnValue, qcov1, qcov2, type = "PP"){
+    infval <- 1e6
     np1 <- sum(unlist(p1))
     np2 <- sum(unlist(p2)) 
     par1 <- par[1:np1]
@@ -624,7 +743,7 @@ calc_constrNegLogLik <- function(par, rr0, y1, y2, x1, x2, threshold1 = NULL, th
         shape <- par1[shapeIndices]
     }    
     if(usePhi1) scale <- exp(scale)
-    if(scale <= 0) return(1e308)
+    if(scale <= 0) return(infval)
     
     pA <- pevd(returnValue, location, scale, shape, lower.tail = FALSE, type = "GEV") # type always GEV here as PP params are in terms of equivalent GEV model
 
@@ -643,13 +762,13 @@ calc_constrNegLogLik <- function(par, rr0, y1, y2, x1, x2, threshold1 = NULL, th
         shape <- par2[shapeIndices]
     }
     if(usePhi2) scale <- exp(scale)
-    if(scale <= 0) return(1e308)
+    if(scale <= 0) return(infval)
 
-    if(pA/rr0 > 1) return(1e308)
+    if(pA/rr0 > 1) return(infval)
     
     par2[1] <- returnValue - location + (scale/shape) * (1 - (-log(1 - pA/rr0))^-shape)
     if(!is.finite(par2[1]))
-        return(1e308)
+        return(infval)
 
     out1 <- out2 <- list(type = type)
     out1$weights <- weights1
@@ -662,5 +781,6 @@ calc_constrNegLogLik <- function(par, rr0, y1, y2, x1, x2, threshold1 = NULL, th
         result <- oevd(par1, out1, des = designs1, x = y1, data = x1, npy = 0, phi = usePhi1) +
             oevd(par2, out2, des = designs2, x = y2, data = x2, npy = 0, phi = usePhi2)
     } else stop("calc_constrNegLogLik: 'type' must be 'PP' or 'GEV'.")
+    if(result > infval) result <- infval # larger values such as 1e10 from oevd() seem to lead to early stopping of optimization over this function in some cases
     return(result)
 } # end calc_constrNegLogLik()

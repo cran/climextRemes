@@ -13,6 +13,8 @@ result['mle']                  # MLE array
 result['mle_names']            # names for MLE array 
 result['mle'][2]               # MLE for shape parameter
 
+result['numBootFailures']      # number of bootstrap datasets for which the model could not be fit; if this is non-negligible relative to the number of bootstrap samples (default of 250), interpret the bootstrap results with caution
+
 # modifying the bootstrapping specifications
 result = climextremes.fit_gev(numpy.array(FortMax.Prec), returnPeriod = 20, returnValue = 3.5, getParams = True, bootSE = True, bootControl = {'n': 100, 'seed': 3})
 result['se_returnValue_boot']  # return value standard error (bootstrapping)

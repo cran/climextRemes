@@ -1,0 +1,3 @@
+#' @param y numpy array of values
+#' @param index numpy array of indices, one per value, that indicate which elements of ‘y’ are consecutive
+#' @param blockLength length of block within which to remove all but the most extreme value

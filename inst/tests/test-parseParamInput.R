@@ -3,7 +3,6 @@ require(testthat)
 context("Testing parseParamInput().")
 
 testFormula <- ~x1+x5
-print(environment(testFormula))
 test_that(paste0("test parseParamInput() with formula input"), {
     expect_equal(parseParamInput(~x1 + x5),
                 testFormula)

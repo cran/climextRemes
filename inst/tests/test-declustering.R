@@ -11,6 +11,13 @@ test_that(paste0("test remove_runs() with max last, ordered"), {
                 result)
 })
 
+result <- y
+result[c(2,4,5,8,9,10,12,13)] <- NA
+test_that(paste0("test remove_runs() with min first, ordered"), {
+    expect_identical(remove_runs(y, index, FALSE),
+                result)
+})
+
 index <- c(1,2,4,5,6,10,12,13,14,15,18,19,20)
 y <- -seq_along(index)
 result <- y
@@ -74,14 +81,10 @@ test_that(paste0("test screen_within_block() with max first, ordered"), {
                 result)
 })
 
-set.seed(0)
 index <- c(1,10,11,15,19,21,45,51,53)
-y <- seq_along(index)
-smp = sample(seq_along(y), length(y), replace = FALSE)
-y <- y[smp]
-index <- index[smp]
+y <- c(0, 1, 5, 3, 7, 9, 11, 0, 7)
 result <- y
-result[c(2,3,4,6)] <- NA
+result[c(1,3,4,8)] <- NA
 test_that(paste0("test screen_within_block() with max last, unordered"), {
     expect_identical(screen_within_block(y, index),
                 result)

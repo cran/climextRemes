@@ -1,3 +1,25 @@
+0.2.0:
+
+* added Koopman confidence interval method to 'calc_riskRatio_binom'.
+
+* added various types of bootstrap confidence intervals (basic, percentile, BCA, bootstrap-t) to 'calc_riskRatio_binom', 'calc_riskRatio_gev', and 'calc_riskRatio_pot'.
+
+* simplified optimization in likelihood-ratio-based confidence intervals for risk ratio.
+
+* fixed a bug in remove_runs() that caused failure to remove any values when upperTail is FALSE; also fixed jittering amount to work regardless of magnitude of values.
+
+* fixed bug in cases where 'x' provided to 'fit_pot' or 'fit_gev' but no regression functions specified.
+
+* added Python version of all examples to Python front end.
+
+* reworked help information for Python front end to show arguments in terms of Python syntax.
+
+* added functionality to update R version from Python and keep Python and R versions in sync.
+
+* forced R warnings to be printed in Python version.
+
+* added Conda deployment information for Python version.
+
 0.1.3:
 
 * now allow users to request multiple return values or return periods (or differences of values or periods)  when using 'fit_gev' and 'fit_pot'.

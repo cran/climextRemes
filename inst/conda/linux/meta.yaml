@@ -1,0 +1,34 @@
+package:
+  name: climextremes
+  version: "0.2.0"
+
+source:
+  path: ../../python_wrapper
+
+requirements:
+  build:
+    - r
+    - python
+    - setuptools
+    - numpy
+    - pandas
+    - rpy2
+  run:
+    - r
+    - python
+    - setuptools
+    - numpy
+    - pandas
+    - rpy2
+    - gcc_linux-64
+    - gxx_linux-64
+    - gfortran_linux-64
+    - r-devtools
+
+test:
+  imports:
+
+about:
+  home: https://bitbucket.org/lbl-cascade
+  license: BSD
+  license_file: LICENSE.txt

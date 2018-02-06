@@ -1,0 +1,5 @@
+@param vec numpy array of values
+@param shift optional central point (if not provided, uses the mean of ‘vec’)
+@param lower optional lower end point of range (if not provided uses min of ‘vec’)
+@param upper optional upper end point of range (if not provided uses max of ‘vec’)
+

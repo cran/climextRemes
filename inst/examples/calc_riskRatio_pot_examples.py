@@ -23,11 +23,10 @@ result = climextremes.calc_riskRatio_pot(
     xNew1 = earlyYears.mean(), xNew2 = lateYears.mean(),
     blockIndex1 = numpy.array(block1), blockIndex2 = numpy.array(block2),
     firstBlock1 = earlyYears[0], firstBlock2 = lateYears[0],
-    lrtCI = True)
+    ciType = 'lrt')
 
 result['logRiskRatio']
 result['se_logRiskRatio']
 result['riskRatio']
-result['ci_riskRatio']
 result['ci_riskRatio_lrt']
 

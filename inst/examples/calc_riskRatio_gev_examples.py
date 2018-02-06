@@ -18,11 +18,10 @@ result = climextremes.calc_riskRatio_gev(
     x1 = earlyYears, x2 = lateYears,
     locationFun1 = 1, locationFun2 = 1,
     xNew1 = earlyYears.mean(), xNew2 = lateYears.mean(),
-    lrtCI = True)
+    ciType = 'lrt')
 
 result['logRiskRatio']
 result['se_logRiskRatio']
 result['riskRatio']
-result['ci_riskRatio']
 result['ci_riskRatio_lrt']
 

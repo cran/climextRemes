@@ -1,0 +1,24 @@
+citHeader("In published work that uses climextRemes, please cite the arXiv preprint below. To cite a specific version of the package, please cite the package itself.")
+
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("{R} package version %s", meta$Version)
+
+bibentry(
+    bibtype = "techreport",
+    author = "Paciorek, C.J., D.A. Stone, and M.F. Wehner",
+    title = "Quantifying uncertainty in the attribution of human influence on severe weather",
+    institution = "arXiv preprint",
+    year = "2017",
+    number = "arXiv:1706.03388"
+)
+
+bibentry(
+    bibtype = "misc",
+    title = "climextRemes: Tools for Analyzing Climate Extremes",
+    author = person(given = "Christopher", middle = "J.", family = "Paciorek"),
+    url = "https://cran.r-project.org/package=climextRemes",
+    year = year,
+    version = meta$Version,
+    note = note,
+    textVersion = NULL
+)

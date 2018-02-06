@@ -11,7 +11,7 @@
 #' @param nBlocks number of blocks (e.g., a block will often be a year with climate data); note this value determines the interpretation of return values/periods/probabilities; see \code{returnPeriod} and \code{returnValue}.
 #' @param blockIndex numeric vector providing the index of the block corresponding to each element of \code{y}. Used only when \code{x} is provided to match exceedances to the covariate/predictor/feature value for the exceedance or when using bootstrapping with the resampling based on blocks based on the \code{by} element of \code{bootControl}. If \code{firstBlock} is not equal to one, then \code{blockIndex} need not have one as its smallest possible value.
 #' @param firstBlock single numeric value indicating the numeric value of the first possible block of \code{blockIndex}. For example the values in \code{blockIndex} might indicate the year of each exceedance with the first year of data being 1969, in which case \code{firstBlock} would be 1969. Note that the first block may not have any exceedances so it may not be represented in \code{blockIndex}. Used only to adjust \code{blockIndex} so that the block indices start at one and therefore correspond to the rows of \code{x}.
-#' @param index (optional) numeric vector providing the integer-valued index (e.g., julian day for daily climate data) corresponding to each element of \code{y}. For example if there are 10 original observations and the third, fourth, and seventh values are exceedances, then \code{index} would be the vector 3,4,7. Used only when \code{declustering} is provided to determine which exceedances occur sequentially or within a contiguous set of values of a given length. The actual values are arbitrary; only the lags between the values are used.
+#' @param index numeric vector providing the integer-valued index (e.g., julian day for daily climate data) corresponding to each element of \code{y}. For example if there are 10 original observations and the third, fourth, and seventh values are exceedances, then \code{index} would be the vector 3,4,7. Used only when \code{declustering} is provided to determine which exceedances occur sequentially or within a contiguous set of values of a given length. The actual values are arbitrary; only the lags between the values are used.
 #' @param nReplicates numeric value indicating the number of replicates.
 #' @param replicateIndex numeric vector providing the index of the replicate corresponding to each element of \code{y}. Used for three purposes: (1) when using bootstrapping with the resampling based on replicates based on the \code{by} element of \code{bootControl}, (2) to avoid treating values in different replicates as potentially being sequential or within a short interval when removing values based on \code{declustering}, and (3) to match outcomes to \code{weights} or \code{proportionMissing} when either vary by replicate.  
 #' @param weights a vector or matrix providing the weights by block. When there is only one replicate or the weights do not vary by replicate, a vector of length equal to the number of blocks. When weights vary by replicate, a matrix with rows corresponding to blocks and columns to replicates. Likelihood contribution of each block is multiplied by the corresponding weight. 
@@ -21,7 +21,7 @@
 #' @param getParams logical indicating whether to return the fitted parameter values and their standard errors; WARNING: parameter values for models with covariates for the scale parameter must interpreted based on the value of \code{logScale}.
 #' @param getFit logical indicating whether to return the full fitted model (potentially useful for model evaluation and for understanding optimization problems); note that estimated parameters in the fit object for nonstationary models will not generally match the MLE provided when \code{getParams} is \code{TRUE} because covariates are normalized before fitting and the fit object is based on the normalized covariates. Similarly, parameters will not match if \code{scaling} is not 1. 
 #' @param xNew object of the same form as \code{x}, providing covariate/predictor/feature values for which return values/periods/probabilities are desired.
-#' @param xContrast object of the same form and dimensions as \code{xNew}, providing covariate/predictor/feature values for which to calculate the differences of the return values and/or log return probabilities relative to the values in \code{x}. This provides a way to estimate differences in return value or log return probabilities (i.e., log risk ratios).
+#' @param xContrast object of the same form and dimensions as \code{xNew}, providing covariate/predictor/feature values for which to calculate the differences of the return values and/or log return probabilities relative to the values in \code{xNew}. This provides a way to estimate differences in return value or log return probabilities (i.e., log risk ratios).
 #' @param declustering one of \code{NULL}, \code{"noruns"}, or a number. If 'noruns' is specified, only the maximum (or minimum if upperTail = FALSE) value within a set of exceedances corresponding to successive indices is included. If a number, this should indicate the size of the interval (which will be used with the \code{index} argument) within which to allow only the largest (or smallest if upperTail = FALSE) value.
 #' @param upperTail logical indicating whether one is working with exceedances over a high threshold (TRUE) or exceedances under a low threshold (FALSE); in the latter case, the function works with the negative of the values and the threshold, changing the sign of the resulting location parameters.
 #' @param scaling positive-valued scalar used to scale the data values for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
@@ -30,7 +30,7 @@
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to R's \code{optim} function. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{control = list(maxit=VALUE)} for a user-specified VALUE can be used to increase the number of iterations if the optimization is converging slowly.
 #' @param initial a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
 #' @param logScale logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
-#' @param .normalizeX logical indicating whether to normalize 'x' values for better numerical performance; default is TRUE.
+#' @param .normalizeX logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.
 #' @param .getInputs logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only
 #' @author Christopher J. Paciorek
 #' @export
@@ -51,17 +51,17 @@
 #' 
 #' @section \code{bootControl} arguments:
 #' 
-#' The \code{bootControl} argument is a list that can supply any of the following components:
+#' The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 #' \itemize{
 #' \item seed. Value of the random number seed to set before doing resampling. Defaults to \code{1}.
 #' \item n. Number of bootstrap samples. Defaults to \code{250}.
 #' \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
-#' \item getSample. Logical indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
+#' \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
 #' }
 #'
 #' @section Optimization failures:
 #'
-#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')}.
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} if calling from Python).
 #' 
 #' When using the bootstrap, users should check that the number of convergence failures when fitting to the boostrapped datasets is small, as it is not clear how to interpret the bootstrap results when there are convergence failures for some bootstrapped datasets. 
 #'
@@ -79,10 +79,11 @@
 #' @references
 #' Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 #' 
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. http://arxiv.org/abs/1706.03388
+#'
 #' @examples
 #' # setup Fort precipitation data
-#' require(extRemes)
-#' data(Fort)
+#' data(Fort, package = 'extRemes')
 #' firstBlock <- min(Fort$year)
 #' years <- min(Fort$year):max(Fort$year)
 #' nYears <- length(years)
@@ -142,18 +143,25 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                     weights = NULL, proportionMissing = NULL, returnPeriod = NULL, returnValue = NULL,
                     getParams = FALSE, getFit = FALSE,
                     xNew = NULL, xContrast = NULL, declustering = NULL, upperTail = TRUE, scaling = 1,
-                    bootSE = FALSE, bootControl = list(),
-                    optimArgs = list(method = c("Nelder-Mead", "BFGS")), initial = NULL, logScale = NULL, .normalizeX = TRUE, .getInputs = FALSE) {
+                    bootSE = FALSE, bootControl = NULL,
+                    optimArgs = NULL, initial = NULL, logScale = NULL, .normalizeX = TRUE, .getInputs = FALSE) {
 
-    # various input checks
-    
+    ## various input checks
+  
+    if(is.null(y))  # for Python interface
+        stop("fit_pot: argument 'y' is missing, with no default")
+
+    if(is.null(optimArgs))
+        optimArgs = list(method = c("Nelder-Mead"))
+    if(is.null(optimArgs$method))
+        optimArgs$method <- c("Nelder-Mead")
+
     if(bootSE) {
-        bControl <- list(seed = 1, n = 250, by = "block", getSample = FALSE)
+        bControl <- list(seed = 1, n = 250, by = "block", getSample = FALSE,
+                         getSampleSE = FALSE)
         bControl[names(bootControl)] <- bootControl
         bootControl <- bControl
     }
-    if(is.null(optimArgs$method) || length(optimArgs$method) > 1)
-        optimArgs$method <- c("Nelder-Mead")
 
     numNumericFun <- sum(c(is.null(locationFun) || is.numeric(locationFun),
              is.null(scaleFun) || is.numeric(scaleFun),
@@ -183,9 +191,9 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             stop("fit_pot: columns in 'x' and 'xContrast' should be the same.")
     } else mContrast <- 0
 
-    if(is.null(nBlocks))
-        stop("fit_pot: 'nBlocks' must be provided.")
-    
+    if(m > 0 && is.null(nBlocks))
+        nBlocks <- m
+
     if(m > 0 && m != nBlocks) {
         stop("fit_pot: number of blocks must equal number of rows of 'x'.")
     }
@@ -247,8 +255,11 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             names(xContrast) <- names(x)
     }
 
-    if(!is.null(x) && locationFun == ~1 && scaleFun == ~1 && shapeFun == ~1) 
+    if(!is.null(x) && locationFun == quote(~1) && scaleFun == quote(~1) && shapeFun == quote(~1)) { 
         warning("fit_pot: 'x' provided but fitting stationary model based on 'locationFun', 'scaleFun' and 'shapeFun' specification.")
+        x <- xNew <- xContrast <- NULL
+        m <- mNew <- mContrast <- 0
+    }
 
      # scale data for better numerical performance (provided user chose scaling appropriately)
     if(scaling != 1) {
@@ -268,11 +279,11 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
 
     nm <- nm[grep("^[a-zA-Z]", nm)]
     if(!is.null(x) && !all(nm %in% names(x)))
-        stop("fit_gev: one or more variables in location, scale, and/or shape formulae are not contained in 'x'.")
+        stop("fit_pot: one or more variables in location, scale, and/or shape formulae are not contained in 'x'.")
     if(!is.null(xNew) && !all(nm %in% names(xNew)))
-        stop("fit_gev: one or more variables in location, scale, and/or shape formulae are not contained in 'xNew'.")
+        stop("fit_pot: one or more variables in location, scale, and/or shape formulae are not contained in 'xNew'.")
     if(!is.null(xContrast) && !all(nm %in% names(xContrast)))
-        stop("fit_gev: one or more variables in location, scale, and/or shape formulae are not contained in 'xContrast'.")
+        stop("fit_pot: one or more variables in location, scale, and/or shape formulae are not contained in 'xContrast'.")
     
     if(!is.null(x) && .normalizeX){
         nCovariates <- ncol(x)
@@ -322,6 +333,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         xObs <- x[blockIndex, , drop = FALSE] else xObs <- NULL
 
     if(!is.null(weights)) {
+        if(is.array(weights) && length(dim(weights)) == 1) # this will be the case for Python interface
+            weights <- as.vector(weights)  
         if(nReplicates > 1 && length(weights) == nBlocks*nReplicates) {
             weightsObs <- weights[cbind(blockIndex, replicateIndex)]
         } else weightsObs <- weights[blockIndex]
@@ -341,9 +354,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     if(!is.null(proportionMissing) && length(proportionMissing) == 1) 
         proportionMissing <- rep(proportionMissing, nBlocks)
     
-
     if(!is.null(initial)) {
-        if(!is.list(initial) || names(initial) != c('location', 'scale', 'shape'))
+        if(!is.list(initial) || sort(names(initial)) != c('location', 'scale', 'shape'))
             stop("fit_pot: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
         initial <- unlist(initial)
     }
@@ -376,7 +388,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     # do bootstrapping if requested
     if(bootSE && !results$info$failure) {
         nres <- max(1, ifelse(is.null(xNew), m, mNew))
-            
+        
         if(length(bootControl$seed) == 1){
             set.seed(bootControl$seed)
         } else{
@@ -393,6 +405,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         }
         if(!is.null(returnValue)) {
             logrp_boot <- array(NA, c(bootControl$n, nres, length(returnValue)))
+            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            logrp_boot_se <- array(NA, c(bootControl$n, nres, length(returnValue)))
             dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
         }
         if(!is.null(xContrast)) {
@@ -439,45 +453,48 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                 bX <- x[smp, , drop = FALSE]
                 bThreshold <- threshold[smp]
                 bWeights <- if(is.matrix(weights))
-                                   weights[smp, , drop = FALSE] else weights[smp]
+                                weights[smp, , drop = FALSE] else weights[smp]
                 if(is.null(proportionMissing)) {
                     bProportionMissing <- NULL
                 } else bProportionMissing <- if(is.matrix(proportionMissing))
-                                                    proportionMissing[smp, , drop = FALSE] else proportionMissing[smp]
+                    proportionMissing[smp, , drop = FALSE] else proportionMissing[smp]
             }
             if(bootControl$by == 'replicate') {
                 bX <- x
                 bThreshold <- threshold
                 bWeights <- if(is.matrix(weights))
-                                   weights[, smp, drop = FALSE] else weights
+                                weights[, smp, drop = FALSE] else weights
                 if(is.null(proportionMissing)) {
                     bProportionMissing <- NULL
                 } else bProportionMissing <- if(is.matrix(proportionMissing))
-                                   proportionMissing[ , smp, drop = FALSE] else proportionMissing
+                    proportionMissing[ , smp, drop = FALSE] else proportionMissing
             }
             if(bootControl$by == 'joint') {
                 blockSmp <- smp - nBlocks * ((smp-1) %/% nBlocks)
                 bX <- x[blockSmp, , drop = FALSE]
                 bThreshold <- threshold[blockSmp]
                 bWeights <- if(is.matrix(weights)) 
-                                   weights[smp] else weights[blockSmp]
+                                weights[smp] else weights[blockSmp]
                 if(is.null(proportionMissing)) {
                     bProportionMissing <- NULL
                 } else                bProportionMissing <- if(is.matrix(proportionMissing))
-                                   proportionMissing[smp] else proportionMissing[blockSmp]
+                    proportionMissing[smp] else proportionMissing[blockSmp]
             }
          
             # fit model to bootstrapped dataset
             bFit <- fit_model_pot(bData$y, bxObs, bX, bData$thresholdObs, bThreshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, bData$weightsObs, bWeights, bProportionMissing, optimArgs = optimArgs, initial = results$mle_raw, logScale = logScale)
             if(!bFit$info$failure) {
                 if(is.null(xNew)) xUse <- x else xUse <- xNew
-                bResults <- compute_return_quantities(bFit, returnPeriod = returnPeriod, returnValue = returnValue, x = xUse, x2 = xContrast, locationFun = locationFun, scaleFun = scaleFun, shapeFun = shapeFun, getParams = getParams, upper = upperTail, scaling = scaling, normalizers = normalizers, getSE = FALSE)
+                bResults <- compute_return_quantities(bFit, returnPeriod = returnPeriod, returnValue = returnValue, x = xUse, x2 = xContrast, locationFun = locationFun, scaleFun = scaleFun, shapeFun = shapeFun, getParams = getParams, upper = upperTail, scaling = scaling, normalizers = normalizers, getSE = bootControl$getSampleSE)
                 if(getParams) 
                     mle_boot[b, ] <- bResults$mle
                 if(!is.null(returnPeriod)) 
                     rv_boot[b, , ] <- bResults$returnValue
-                if(!is.null(returnValue)) 
+                if(!is.null(returnValue)) { 
                     logrp_boot[b, , ] <- bResults$logReturnProb
+                    if(bootControl$getSampleSE)
+                        logrp_boot_se[b, , ] <- bResults$se_logReturnProb
+                }
                 if(!is.null(xContrast)) {
                     if(!is.null(returnPeriod))
                         rvDiff_boot[b, , ]  <- bResults$returnValueDiff
@@ -505,7 +522,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                 results$se_logReturnProbDiff_boot <- drop(apply(logrpDiff_boot, c(2,3), sd, na.rm = TRUE))
         }
         results$numBootFailures <- failures
-        if(failures) warning("fit_gev: Some bootstrap fits failed; see 'numBootFailures'.")
+        if(failures) warning("fit_pot: Some bootstrap fits failed; see 'numBootFailures'.")
         
         if(bootControl$getSample) {
             if(getParams)
@@ -523,6 +540,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                     results$logReturnProbDiff_boot <- logrpDiff_boot
             }
         }
+        if(bootControl$getSampleSE) # used only for bootstrap-t for risk ratio
+            results$logReturnProb_boot_se <- logrp_boot_se
         
     } # end if(bootSE)
     results$mle_raw <- NULL

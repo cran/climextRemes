@@ -15,16 +15,16 @@
 #' @param getParams logical indicating whether to return the fitted parameter values and their standard errors; WARNING: parameter values for models with covariates for the scale parameter must interpreted based on the value of \code{logScale}.
 #' @param getFit logical indicating whether to return the full fitted model (potentially useful for model evaluation and for understanding optimization problems); note that estimated parameters in the fit object for nonstationary models will not generally match the MLE provided when \code{getParams} is \code{TRUE} because covariates are normalized before fitting and the fit object is based on the normalized covariates. Similarly, parameters will not match if \code{scaling} is not 1. 
 #' @param xNew object of the same form as \code{x}, providing covariate/predictor/feature values for which return values/periods/probabilities are desired.
-#' @param xContrast object of the same form and dimensions as \code{xNew}, providing covariate/predictor/feature values for which to calculate the differences of the return values and/or log return probabilities relative to the values in \code{x}. This provides a way to estimate the difference in return value or log return probabilities (i.e., log risk ratios).
+#' @param xContrast object of the same form and dimensions as \code{xNew}, providing covariate/predictor/feature values for which to calculate the differences of the return values and/or log return probabilities relative to the values in \code{xNew}. This provides a way to estimate the difference in return value or log return probabilities (i.e., log risk ratios).
 #' @param maxes logical indicating whether analysis is for block maxima (TRUE) or block minima (FALSE); in the latter case, the function works with the negative of the values, changing the sign of the resulting location parameters
 #' @param scaling positive-valued scalar used to scale the data values for more robust optimization performance. When multiplied by the values, it should produce values with magnitude around 1.
 #' @param bootSE logical indicating whether to use the bootstrap to estimate standard errors.
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to R's \code{optim} function. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{control=list(maxit=VALUE)} for a user-specified VALUE can be used to increase the number of iterations if the optimization is converging slowly.
-#' @param missingFlag optional value to be interpreted as missing values (instead of \code{NA}), intended for use in other languages (e.g., Python) calling this function
+#' @param missingFlag value to be interpreted as missing values (instead of \code{NA}), intended for use in other languages (e.g., Python) calling this function
 #' @param initial a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale}, and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
 #' @param logScale logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
-#' @param .normalizeX logical indicating whether to normalize 'x' values for better numerical performance; default is TRUE.
+#' @param .normalizeX logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.
 #' @param .getInputs logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only
 #' @author Christopher J. Paciorek
 #' @export
@@ -41,17 +41,17 @@
 #' 
 #' @section \code{bootControl} arguments:
 #' 
-#' The \code{bootControl} argument is a list that can supply any of the following components:
+#' The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 #' \itemize{
 #' \item seed. Value of the random number seed as a single value or in the form of \code{.Random.seed} to set before doing resampling. Defaults to \code{1}.
 #' \item n. Number of bootstrap samples. Defaults to \code{250}.
 #' \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
-#' \item getSample. Logical indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information returned for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
+#' \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information returned for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
 #' }
 #'
 #' @section Optimization failures:
 #' 
-#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')}. 
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} when calling from Python). 
 #' 
 #' When using the bootstrap, users should check that the number of convergence failures when fitting to the boostrapped datasets is small, as it is not clear how to interpret the bootstrap results when there are convergence failures for some bootstrapped datasets. 
 #'
@@ -68,9 +68,10 @@
 #'
 #' @references
 #' Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
+#'
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. http://arxiv.org/abs/1706.03388.
 #' @examples
-#' require(extRemes)
-#' data(Fort)
+#' data(Fort, package = 'extRemes')
 #' FortMax <- aggregate(Prec ~ year, data = Fort, max)
 #'
 #' # stationary fit
@@ -81,25 +82,31 @@
 #' out <- fit_gev(FortMax$Prec, x = data.frame(years = FortMax$year), 
 #'         locationFun = ~years, returnPeriod = 20, returnValue = 3.5,
 #'         getParams = TRUE, xNew = data.frame(years = range(FortMax$year)), bootSE = FALSE)
-#'
-#' @export
 fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
                     shapeFun = NULL, nReplicates = 1, replicateIndex = NULL,
                     weights = NULL, returnPeriod = NULL, returnValue = NULL,
                     getParams = FALSE, getFit = FALSE,
                     xNew = NULL, xContrast = NULL, maxes = TRUE, scaling = 1,
-                    bootSE = FALSE, bootControl = list(),
-                    optimArgs = list(method = c("Nelder-Mead", "BFGS")), missingFlag = NULL,
+                    bootSE = FALSE, bootControl = NULL,
+                    optimArgs = NULL, missingFlag = NULL,
                     initial = NULL, logScale = NULL, .normalizeX = TRUE, .getInputs = FALSE) {
 
+    
+    if(is.null(y))  # for Python interface
+        stop("fit_gev: argument 'y' is missing, with no default")
+    
+    if(is.null(optimArgs))
+        optimArgs = list(method = c("Nelder-Mead"))
+    if(is.null(optimArgs$method))
+        optimArgs$method <- c("Nelder-Mead")
+
     if(bootSE) {
-        bControl <- list(seed = 1, n = 250, by = "block", getSample = FALSE)
+        bControl <- list(seed = 1, n = 250, by = "block", getSample = FALSE,
+                         getSampleSE = FALSE)
         bControl[names(bootControl)] <- bootControl
         bootControl <- bControl
     }
-    if(is.null(optimArgs$method) || length(optimArgs$method) > 1)
-        optimArgs$method <- c("Nelder-Mead")
-
+    
     numNumericFun <- sum(c(is.null(locationFun) || is.numeric(locationFun),
              is.null(scaleFun) || is.numeric(scaleFun),
              is.null(shapeFun) || is.numeric(shapeFun)))
@@ -154,8 +161,11 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             names(xContrast) <- names(x)
     }
 
-    if(!is.null(x) && locationFun == ~1 && scaleFun == ~1 && shapeFun == ~1) 
+    if(!is.null(x) && locationFun == quote(~1) && scaleFun == quote(~1) && shapeFun == quote(~1)) {
         warning("fit_gev: 'x' provided but fitting stationary model based on 'locationFun', 'scaleFun' and 'shapeFun' specification.")
+        x <- xNew <- xContrast <- NULL
+        m <- mNew <- mContrast <- 0
+    }
 
     # scale data for better numerical performance (provided user chose scaling appropriately)
     if(scaling != 1) {
@@ -193,6 +203,8 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
     } else normalizers <- NULL
 
     if(!is.null(weights)) {
+        if(is.array(weights) && length(dim(weights)) == 1) # this will be the case for Python interface
+            weights <- as.vector(weights)  
         if(length(weights) != length(y)) {
             weights <- rep(weights, nReplicates)
             if(length(weights) != length(y))
@@ -281,6 +293,9 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
         if(!is.null(returnValue)) {
             logrp_boot <- array(NA, c(bootControl$n, nres, length(returnValue)))
             dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            logrp_boot_se <- array(NA, c(bootControl$n, nres, length(returnValue)))
+            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            
         }
         if(!is.null(xContrast)) {
             if(!is.null(returnPeriod)) {
@@ -331,13 +346,16 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             bFit <- fit_model_gev(bData$y, bX, locationFun, scaleFun, shapeFun, bData$weights, optimArgs, initial = results$mle_raw, logScale = logScale)
             if(!bFit$info$failure) {
                 if(is.null(xNew)) xUse <- x else xUse <- xNew
-                bResults <- compute_return_quantities(bFit, returnPeriod = returnPeriod, returnValue = returnValue, x = xUse, x2 = xContrast, locationFun = locationFun, scaleFun = scaleFun, shapeFun = shapeFun, getParams = getParams, upper = maxes, scaling = scaling, normalizers = normalizers, getSE = FALSE)
+                bResults <- compute_return_quantities(bFit, returnPeriod = returnPeriod, returnValue = returnValue, x = xUse, x2 = xContrast, locationFun = locationFun, scaleFun = scaleFun, shapeFun = shapeFun, getParams = getParams, upper = maxes, scaling = scaling, normalizers = normalizers, getSE = bootControl$getSampleSE)
                 if(getParams) 
                     mle_boot[b, ] <- bResults$mle
                 if(!is.null(returnPeriod)) 
                     rv_boot[b, , ] <- bResults$returnValue
-                if(!is.null(returnValue)) 
+                if(!is.null(returnValue)) {
                     logrp_boot[b, , ] <- bResults$logReturnProb
+                    if(bootControl$getSampleSE)
+                        logrp_boot_se[b, , ] <- bResults$se_logReturnProb
+                }
                 if(!is.null(xContrast)) {
                     if(!is.null(returnPeriod))
                         rvDiff_boot[b, , ]  <- bResults$returnValueDiff
@@ -365,10 +383,9 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             if(!is.null(returnValue)) 
                 results$se_logReturnProbDiff_boot <- drop(apply(logrpDiff_boot, c(2,3), sd, na.rm = TRUE))
         }
-        if(failures) {
-            results$numBootFailures <- failures
+        results$numBootFailures <- failures
+        if(failures) 
             warning("fit_gev: Some bootstrap fits failed; see 'numBootFailures'.")
-        }
         
         if(bootControl$getSample) {
             if(getParams)
@@ -386,7 +403,9 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
                     results$logReturnProbDiff_boot <- logrpDiff_boot
             }
         }
-        
+        if(bootControl$getSampleSE)  # used only for bootstrap-t for risk ratio
+            results$logReturnProb_boot_se <- logrp_boot_se
+
     } # end if(bootSE)
     results$mle_raw <- NULL
     

@@ -19,6 +19,8 @@ result['mle']                  # MLE array
 result['mle_names']            # names for MLE array 
 result['mle'][2]               # MLE for shape parameter
 
+result['numBootFailures']      # number of bootstrap datasets for which the model could not be fit; if this is non-negligible relative to the number of bootstrap samples (default of 250), interpret the bootstrap results with caution
+
 # nonstationary fit with location linear in year and two return values requested
 result = climextremes.fit_pot(numpy.array(FortExc.Prec), x = yrs, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = 1, getParams = True, returnPeriod = numpy.array([20, 30]), returnValue = 3.5, xNew = yrsToPred, bootSE = False)
 result['returnValue']
@@ -63,4 +65,6 @@ result = climextremes.fit_pot(numpy.array(FortSummerTotalExc.Prec), x = yrs, fir
 result['info']   # information on the optimization
 result['info']['counts']  # number of evaluations in the optimization
 result['info']['counts_names'] # names to interpret 'counts'
+result['numBootFailures']      # number of bootstrap datasets for which the model could not be fit; if this is non-negligible relative to the number of bootstrap samples (default of 250), interpret the bootstrap results with caution
+
 # result['fit']  # voluminous output from the R function that does the fitting

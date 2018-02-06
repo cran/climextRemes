@@ -1,0 +1,5 @@
+@param y numpy array of values
+@param index numpy array of indices, one per value, that indicate which elements of ‘y’ are consecutive
+@param upperTail boolean indicating whether values of ‘y’ are upper (right) tail values (True) or lower (left) tail values (False)
+
+

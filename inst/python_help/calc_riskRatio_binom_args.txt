@@ -1,0 +1,7 @@
+@param y numpy array of two values, the number of events in the two scenarios.
+@param n numpy array of two values, the number of samples (possible occurrences of events) in the two scenarios.
+@param ciLevel statistical confidence level for confidence intervals; in repeated experimentation, this proportion of confidence intervals should contain the true risk ratio. Note that if only one endpoint of the resulting interval is used, for example the lower bound, then the effective confidence level increases by half of one minus ‘ciLevel’. For example, a two-sided 0.90 confidence interval corresponds to a one-sided 0.95 confidence interval.
+@param ciType string or numpy array of strings indicating which type of confidence intervals to compute. See ‘Details'.
+@param bootSE boolean indicating whether to use the bootstrap to estimate the standard error of the risk ratio.
+@param bootControl dictionary of control parameters for the bootstrapping, used only when at least one bootstrap confidence interval is requested via ‘ciType’. See ‘Details’.
+@param lrtControl dictionary containing a single component, a numpy array named ‘bounds’, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to ‘nan’. Used only when ‘'lrt'’ is one of the ‘ciType’ values.

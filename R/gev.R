@@ -43,7 +43,7 @@
 #' 
 #' The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 #' \itemize{
-#' \item seed. Value of the random number seed as a single value or in the form of \code{.Random.seed} to set before doing resampling. Defaults to \code{1}.
+#' \item seed. Value of the random number seed as a single value, or in the form of \code{.Random.seed}, to set before doing resampling. Defaults to \code{1}.
 #' \item n. Number of bootstrap samples. Defaults to \code{250}.
 #' \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
 #' \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information returned for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
@@ -69,7 +69,7 @@
 #' @references
 #' Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 #'
-#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. http://arxiv.org/abs/1706.03388.
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 #' @examples
 #' data(Fort, package = 'extRemes')
 #' FortMax <- aggregate(Prec ~ year, data = Fort, max)
@@ -139,6 +139,13 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
     if(nReplicates > 1 && is.null(replicateIndex) && bootSE && bootControl$by == 'replicate')
         stop("fit_gev: 'replicateIndex' must be provided if 'nReplicates' is greater than 1 when bootstrapping by replicate.")
 
+    if(!is.null(initial)) {
+        if(!is.list(initial) || names(initial) != c('location', 'scale', 'shape'))
+            stop("fit_gev: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
+        if(!maxes)
+            initial$location <- -initial$location
+        initial <- unlist(initial)
+    }
 
     if(!maxes){  # modeling minima is equivalent to modeling the negative of maxima. Location parameter values will be the negative of those on the original scale, but are corrected before returning parameter values to the user.
         y <- -y
@@ -243,11 +250,6 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
         y <- y[yNums]    
     }
 
-    if(!is.null(initial)) {
-        if(!is.list(initial) || names(initial) != c('location', 'scale', 'shape'))
-            stop("fit_gev: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
-        initial <- unlist(initial)
-    }
     
     fit <- fit_model_gev(y, x, locationFun, scaleFun, shapeFun, weights, optimArgs, initial = initial, logScale = logScale)
     
@@ -429,12 +431,13 @@ fit_model_gev <- function(y, x, locationFun, scaleFun, shapeFun, weights, optimA
     } else {
         x$.y <- y
     }
+    if(length(y) < 3)
+        warning("fit_gev: Fewer than three non-missing observations; optimization will fail.")
    
     if(is.null(logScale)) use.phi <- !check.constant(scaleFun) else use.phi <- logScale    
     fit <- try(fevd(.y~1, data = x, location.fun = locationFun, scale.fun = scaleFun, shape.fun = shapeFun, use.phi = use.phi, type = "GEV", method = "MLE", weights = weights, initial = initial, optim.args = optimArgs))
     
     failed <- TRUE
-    fit$info <- list()
                                         # check for various errors in fitting
     if(!methods::is(fit, 'try-error')) {
         fit$info <- fit$results[c('convergence', 'counts', 'message')]
@@ -449,8 +452,12 @@ fit_model_gev <- function(y, x, locationFun, scaleFun, shapeFun, weights, optimA
             } else fit$info$message <- "fitting produced unknown error in fit summary"
         } else fit$info$message <- "optimization did not converge"
     } else { # try-error
+        msg <- fit
+        attributes(msg) <- NULL
+        fit <- list()
+        fit$info <- list()
         fit$info$convergence <- 1
-        fit$info$message <- "optimization call returned error"
+        fit$info$message <- paste("optimization call returned error: ", msg)
     }
     fit$info$failure <- failed
     return(fit)

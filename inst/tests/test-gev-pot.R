@@ -34,7 +34,13 @@ test_that(paste0("test analytic and bootstrap SEs for GEV"), {
     expect_lt(max(abs(fitp$se_mle - fitp$se_mle_boot)), 0.008) 
 })
 
-
+tmp <- FortMax$Prec
+tmp[3:length(tmp)] <- NA
+test_that("test error trapping when fitting with too few observations", {
+    expect_warning(fitg <- fit_gev(tmp, returnPeriod = 20, returnValue = 3.5,
+                    getParams = TRUE, bootSE = TRUE), "Fewer than")
+})
+    
 context("Testing multiple return periods / values.")
 
 fitg2 <- fit_gev(FortMax$Prec, returnPeriod = 50, returnValue = 3,
@@ -879,15 +885,15 @@ blockIndexObs <- blockIndex[wh]
 index <- (1:(nT*nObs))[wh]
 
 cutoff <- -3.25
-p1 = mean(yMax[yrgrps==1] > cutoff)
-p2 = mean(yMax[yrgrps==2] > cutoff)
+p1 = mean(yMin[yrgrps==1] > cutoff)
+p2 = mean(yMin[yrgrps==2] > cutoff)
 rpd = log(p1)-log(p2)
 se1 = sqrt(p1*(1-p1)/(nT/2))
 se2 = sqrt(p2*(1-p2)/(nT/2))
 
 rp = 20
-rv1 = quantile(yMax[yrgrps==1], 1-1/rp)
-rv2 = quantile(yMax[yrgrps==2], 1-1/rp)
+rv1 = quantile(yMin[yrgrps==1], 1/rp)
+rv2 = quantile(yMin[yrgrps==2], 1/rp)
 rvd = rv1 - rv2
 
 x <- rep(c(0,1), each = nT/2)
@@ -897,6 +903,10 @@ xNew = c(0,1)
 wNew = c(0,0)
 xContrast = rev(xNew)
 wContrast = wNew
+
+# need initial values as weights/propMiss not used in initial param estimation in fevd
+inits = list(location = c(-2, 0, 0), scale = c(-1.2, 0, 0), shape = c(.04, 0, 0))
+initsNeg = list(location = c(2, 0, 0), scale = c(-1.2, 0, 0), shape = c(.04, 0, 0))
 
 fitg = fit_gev(yMin, x = data.frame(x=x, w = w), locationFun = ~x + w, scaleFun = ~x+w,
                shapeFun = ~x + w, scaling = 1,
@@ -924,7 +934,7 @@ fitp2 = fit_pot(-yExc, x = data.frame(x=x, w = w), threshold = -thr, locationFun
                returnPeriod = rp, returnValue = -cutoff, getParams = TRUE,
                xNew = data.frame(x=xNew, w = wNew),
                xContrast = data.frame(x=xContrast, w = wContrast),
-               optimArgs = list(method = "BFGS"), .normalizeX = FALSE, initial = inits)
+               optimArgs = list(method = "BFGS"), .normalizeX = FALSE, initial = initsNeg)
 
 fitg2$mle[1:3] <- -fitg2$mle[1:3]
 test_that(paste0("test min/lower for GEV"), {
@@ -932,8 +942,24 @@ test_that(paste0("test min/lower for GEV"), {
 })
 
 fitp2$mle[1:3] <- -fitp2$mle[1:3]
-test_that(paste0("test min/lower for GEV"), {
+test_that(paste0("test min/lower for POT"), {
     expect_identical(fitp, fitp2)
+})
+
+test_that("lower tail results have correct returnValue for GEV", {
+    expect_identical(fitg$returnValue, -fitg2$returnValue)
+})
+
+test_that("lower tail results have correct returnValue for POT", {
+    expect_identical(fitp$returnValue, -fitp2$returnValue)
+})
+
+test_that("lower tail results have correct returnValueDiff for GEV", {
+    expect_identical(fitg$returnValueDiff, -fitg2$returnValueDiff)
+})
+
+test_that("lower tail results have correct returnValueDiff for POT", {
+    expect_identical(fitp$returnValueDiff, -fitp2$returnValueDiff)
 })
 
 # test of proportionMissing

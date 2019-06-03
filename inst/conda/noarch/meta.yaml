@@ -1,25 +1,33 @@
+{% set data = load_setup_py_data() %}
+
 package:
   name: climextremes
-  version: "0.2.0"
+  version: {{ data.get('version') }} 
 
 source:
-  path: ../python_wrapper
+  path: ../../python_wrapper
+
+build:
+  noarch: python
 
 requirements:
   build:
-    - r
+    - r >=3.0.0
     - python
     - setuptools
     - numpy
     - pandas
     - rpy2
+    - tzlocal
   run:
-    - r
+    - r >=3.0.0
     - python
     - setuptools
     - numpy
     - pandas
     - rpy2
+    - r-rcpparmadillo
+    - tzlocal
     - r-devtools
 
 test:
@@ -27,5 +35,5 @@ test:
 
 about:
   home: https://bitbucket.org/lbl-cascade
-  license: BSD
+  license: modified BSD
   license_file: LICENSE.txt

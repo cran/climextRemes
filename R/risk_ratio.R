@@ -23,7 +23,7 @@ bootTypesCols <- list('boot_norm' = 'normal', 'boot_perc' = 'percent', 'boot_bas
 #' 
 #' See \code{\link{fit_pot}} for information on the \code{bootControl} argument.
 #' @references
-#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. arXiv preprint <https://arxiv.org/abs/1706.03388>.
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 #' 
 #' Koopman, P.A.R. 1984. Confidence intervals for the ratio of two binomial proportions. Biometrics 40: 513-517.
 #'
@@ -296,7 +296,7 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' 
 #' See \code{\link{fit_pot}} for information on the \code{bootControl} argument. 
 #' @references
-#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. arXiv preprint <http://arxiv.org/abs/1706.03388>.
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 #'
 #' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. <DOI:10.1016/j.wace.2016.02.001>. arXiv preprint: <http://arxiv.org/abs/1602.04139>.
 #' 
@@ -547,7 +547,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #' 
 #' See \code{\link{fit_pot}} for information on the \code{bootControl} argument. 
 #' @references
-#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. arXiv preprint <http://arxiv.org/abs/1706.03388>.
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 #'
 #' Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. <DOI:10.1016/j.wace.2016.02.001>. arXiv preprint: <http://arxiv.org/abs/1602.04139>.
 #' 

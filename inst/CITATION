@@ -1,7 +1,20 @@
-citHeader("In published work that uses climextRemes, please cite the arXiv preprint below. To cite a specific version of the package, please cite the package itself.")
+citHeader("In published work that uses climextRemes, please cite the Weather and Climate Extremes article. To cite a specific version of the package, please cite the package itself.")
 
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("{R} package version %s", meta$Version)
+
+bibentry(
+    bibtype = "article",
+    title = "Quantifying statistical uncertainty in the attribution of human influence on severe weather.",
+    year = "2018",
+    journal = "Weather and Climate Extremes",
+    volume = "20",
+    pages = "69-80",
+    author = c(person("C.J.", "Paciorek"),
+               person("D.A.", "Stone"),
+               person("M.F.", "Wehner")),
+    doi = "10.1016/j.wace.2018.01.002"
+)
 
 bibentry(
     bibtype = "techreport",

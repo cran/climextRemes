@@ -1,48 +1,27 @@
 #!/bin/bash
 
 SOURCE_DIR=$PWD
-CAM_DIR=$1
 
-if [[ -z "${CAM_DIR// }"  ]]; then
-  CAM_DIR=/tmp
+climextremes="$SOURCE_DIR/noarch"
+
+PKG_DIR=/tmp/cebuild
+
+if [ ! -e "${PKG_DIR}" ]; then
+    mkdir ${PKG_DIR}
 fi
 
-cd $CAM_DIR
+# build in a Conda environment
+conda create --name climextremes_build python=3.7
 
-unamestr=`uname`
-download_prefix='https://repo.continuum.io/miniconda'
-download_file=''
-
-climextremes="$SOURCE_DIR/osx"
-
-if [[ "$unamestr" == 'Linux' ]]; then
-   download_file='Miniconda3-latest-Linux-x86_64.sh'
-   climextremes="$SOURCE_DIR/linux"
-elif [[ "$unamestr" == 'Darwin' ]]; then
-   download_file='Miniconda3-latest-MacOSX-x86_64.sh'
-   climextremes="$SOURCE_DIR/osx"
-else
-   printf "Unsupported format $unamestr. Aborting...\n"
-   exit 0
-fi
-
-
-printf "Setting up environment on $PWD\n"
-curl -s $download_prefix/$download_file > $download_file
-bash $download_file -f -b -p $CAM_DIR/conda
-source $CAM_DIR/conda/bin/activate
-source $CAM_DIR/conda/bin/activate
-
-printf "Finished setting up environment\n"
-# output to do sanity check..
-
-
+source activate climextremes_build
 conda install -y conda-build anaconda-client
 
 conda update -y conda
 conda update -y conda-build
 
 echo conda build $climextremes
-conda build $climextremes
+# `conda` should be the conda in the environment but it may be a function
+${CONDA_PREFIX}/bin/conda build --output-folder=${PKG_DIR} ${climextremes}
 
-
+## test with:
+# conda install /tmp/cebuild/noarch/climextremes-0.2.1rc7-pyr351_0.tar.bz2

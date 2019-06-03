@@ -53,7 +53,7 @@
 #' 
 #' The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 #' \itemize{
-#' \item seed. Value of the random number seed to set before doing resampling. Defaults to \code{1}.
+#' \item seed. Value of the random number seed as a single value, or in the form of \code{.Random.seed}, to set before doing resampling. Defaults to \code{1}.
 #' \item n. Number of bootstrap samples. Defaults to \code{250}.
 #' \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
 #' \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
@@ -79,7 +79,7 @@
 #' @references
 #' Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 #' 
-#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. http://arxiv.org/abs/1706.03388
+#' Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 #'
 #' @examples
 #' # setup Fort precipitation data
@@ -233,6 +233,14 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     
     if(nReplicates == 1) replicateIndex <- rep(1, length(y))
     
+    if(!is.null(initial)) {
+        if(!is.list(initial) || sort(names(initial)) != c('location', 'scale', 'shape'))
+            stop("fit_pot: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
+        if(!upperTail)
+            initial$location <- -initial$location
+        initial <- unlist(initial)
+    }
+
     # lower tail 'exceedances' are handled by using negatives of all values
     if(!upperTail){  
         y <- -y
@@ -261,7 +269,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         m <- mNew <- mContrast <- 0
     }
 
-     # scale data for better numerical performance (provided user chose scaling appropriately)
+    
+    # scale data for better numerical performance (provided user chose scaling appropriately)
     if(scaling != 1) {
         y <- y * scaling
         threshold <- threshold * scaling
@@ -354,11 +363,6 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     if(!is.null(proportionMissing) && length(proportionMissing) == 1) 
         proportionMissing <- rep(proportionMissing, nBlocks)
     
-    if(!is.null(initial)) {
-        if(!is.list(initial) || sort(names(initial)) != c('location', 'scale', 'shape'))
-            stop("fit_pot: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
-        initial <- unlist(initial)
-    }
     
     fit <- fit_model_pot(y, xObs, x, thresholdObs, threshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, weightsObs, weights, proportionMissing, optimArgs, initial = initial, logScale = logScale)
     if(!fit$info$failure) {
@@ -567,6 +571,8 @@ fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scal
     } else {
         xObs$.y <- y
     }
+    if(length(y) < 2)
+        warning("fit_pot: Fewer than two non-missing observations; optimization will fail.")
     
     blocks <- list(nBlocks = nBlocks * nReplicates)
     blocks$threshold <- threshold
@@ -594,7 +600,6 @@ fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scal
     fit <- try(fevd(.y~1, data = xObs, threshold = thresholdObs, location.fun = locationFun, scale.fun = scaleFun, shape.fun = shapeFun, use.phi = use.phi, type = "PP", method = "MLE", weights = weightsObs, initial = initial, blocks = blocks, optim.args = optimArgs))
 
     failed <- TRUE
-    fit$info <- list()
                                         # check for various errors in fitting
     if(!methods::is(fit, 'try-error')) {
         fit$info <- fit$results[c('convergence', 'counts', 'message')]
@@ -609,8 +614,12 @@ fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scal
             } else fit$info$message <- "fitting produced unknown error in fit summary"
         } else fit$info$message <- "optimization did not converge"
     } else { # try-error
+        msg <- fit
+        attributes(msg) <- NULL
+        fit <- list()
+        fit$info <- list()
         fit$info$convergence <- 1
-        fit$info$message <- "optimization call returned error"
+        fit$info$message <- paste("optimization call returned error: ", msg)
     } 
     fit$info$failure <- failed
     return(fit)

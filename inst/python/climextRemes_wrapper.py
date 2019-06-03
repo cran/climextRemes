@@ -10,18 +10,28 @@
 version = ""
 Fort = None
 
+# As of rpy2 >= 3.0.0, use of NULLType rather than RNULLType
+import rpy2.rinterface
+
+if hasattr(rpy2.rinterface, 'NULLType'):
+    NULLType = rpy2.rinterface.NULLType   # rpy2 >= 3.0.0
+else:
+    NULLType = rpy2.rinterface.RNULLType  # rpy2 < 3.0.0
 
 def compute_input_map(input_arg_map):
     import rpy2
     import numpy
     import rpy2.robjects.numpy2ri
 
-    # NULL turns into None
-    if isinstance(input_arg_map, rpy2.rinterface.RNULLType):
+    if isinstance(input_arg_map, NULLType):
         #result = {}
         #result[name] = None
         return None
-   
+
+    # As of rpy2 >= 3.0.0, return elements of list are numpy arrays not R vectors
+    if isinstance(input_arg_map, numpy.ndarray):
+        return input_arg_map
+    
     # don't change RObject 
     if isinstance(input_arg_map, rpy2.robjects.RObject):
         #result = {}
@@ -55,36 +65,36 @@ def compute_input_map(input_arg_map):
                 result[f] = output_values[i]["__vector"]
 
                 name_list = result[f + "_names"].tolist()
-                if isinstance(name_list, rpy2.rinterface.RNULLType):
+                if isinstance(name_list, NULLType):
                    #result[f + "_names"] = None
                    del result[f + "_names"]
                 else:
                    res = result[f + "_names"]
                    for j in range(len(res)):
-                    if isinstance(res[j],rpy2.rinterface.RNULLType):
+                    if isinstance(res[j], NULLType):
                         res[j] = None
 
               elif "__dict" in output_values[i]:
                 result[f + "_row_names"] = output_values[i]["__dict_row_names"]
                 result[f + "_column_names"] = output_values[i]["__dict_column_names"]
                 name_list = result[f + "_row_names"].tolist()
-                if isinstance(name_list, rpy2.rinterface.RNULLType):
+                if isinstance(name_list, NULLType):
                    #result[f + "_row_names"] = None
                    del result[f + "_row_names"]
                 else:
                    res = result[f + "_row_names"]
                    for j in range(len(res)):
-                     if isinstance(res[j],rpy2.rinterface.RNULLType):
+                     if isinstance(res[j], NULLType):
                         res[j] = None
 
                 name_list = result[f + "_column_names"].tolist()
-                if isinstance(name_list, rpy2.rinterface.RNULLType):
+                if isinstance(name_list, NULLType):
                    #result[f + "_column_names"] = None
                    del result[f + "_column_names"]
                 else:
                    res = result[f + "_column_names"]
                    for j in range(len(res)):
-                     if isinstance(res[j],rpy2.rinterface.RNULLType):
+                     if isinstance(res[j], NULLType):
                         res[j] = None
                 result[f] = output_values[i]["__dict"]
               else:
@@ -112,7 +122,7 @@ def compute_input_map(input_arg_map):
               result[name] = numpy.array(input_arg_map, numpy.float)
            else:
               result[name] = numpy.array(input_arg_map)
-           if name+"_names" not in result.keys() or isinstance(input_arg_map_save.names, rpy2.rinterface.RNULLType):
+           if name+"_names" not in result.keys() or isinstance(input_arg_map_save.names, NULLType):
                result = result[name]
            return result
 
@@ -125,7 +135,7 @@ def compute_input_map(input_arg_map):
               pass
            # Float correctly handles numpy.nan conversion
            result[name] = numpy.array(input_arg_map)
-           if name+"_names" not in result.keys() or isinstance(input_arg_map.names, rpy2.rinterface.RNULLType):
+           if name+"_names" not in result.keys() or isinstance(input_arg_map.names, NULLType):
                result = result[name]
            return result
 
@@ -137,7 +147,7 @@ def compute_input_map(input_arg_map):
            except:
               pass
            result[name] = numpy.array(input_arg_map)
-           if name+"_names" not in result.keys() or isinstance(input_arg_map.names, rpy2.rinterface.RNULLType):
+           if name+"_names" not in result.keys() or isinstance(input_arg_map.names, NULLType):
                result = result[name]
            return result
 
@@ -159,7 +169,7 @@ def compute_input_map(input_arg_map):
               result[name] = numpy.array(input_arg_map, numpy.float)
            else:
               result[name] = numpy.array(input_arg_map)
-           if name+"_names" not in result.keys() or isinstance(input_arg_map_save.names, rpy2.rinterface.RNULLType):
+           if name+"_names" not in result.keys() or isinstance(input_arg_map_save.names, NULLType):
                result = result[name]
            return result
     
@@ -229,7 +239,8 @@ def __initialize_wrapper():
   import re
   from rpy2.robjects import pandas2ri
 
-  #rpy2.robjects.activate()
+
+  # rpy2.robjects.activate()
   pandas2ri.activate()
   numpy2ri.activate()
 
@@ -283,12 +294,12 @@ def __initialize_wrapper():
     result = None
 
     if hasattr(obj, 'names') == False:
-      return obj
-
+        return obj
+    
     #print obj.names, rpy2.rinterface.NULL, type(obj), rpy2.rinterface.RNULLType
 
     if obj.names is rpy2.rinterface.NULL or \
-       type(obj.names) is rpy2.rinterface.RNULLType or \
+       type(obj.names) is NULLType or \
        (len(obj.names) == 1 and obj.names[0].replace(".","").isdigit()):
       if isinstance(obj, robjects.Vector) and len(obj) == 1:
         result = obj[0]
@@ -314,9 +325,12 @@ def __initialize_wrapper():
     '''.format(method_name))
 
     def quote_args(text, arg_names):
-        text = re.sub("( " + " | ".join(arg_names) + " )", "‘\\1’", text)
-        text = text.replace("‘ ", "‘")
-        text = text.replace(" ’", "’")
+        text = re.sub("( " + " | ".join(arg_names) + " )", "'\\1'", text)
+        # As of 0.2.1 changed from curly to straight quote to avoid this error in Py 2.7:
+        # SyntaxError: Non-ASCII character '\xe2' in file /accounts/gen/vis/paciorek/R/x86_64-pc-linux-gnu-library/3.5/climextRemes/python/climextRemes_wrapper.py on line 317, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details
+        # This is causing extra spaces because can't tell left vs right single quote, so remove until we go back to curly quotes.
+        # text = text.replace("' ", "'")
+        # text = text.replace(" '", "'")
         return(text)
     
     for (i,name) in  enumerate(signature.names):
@@ -386,8 +400,8 @@ def __initialize_wrapper():
         
     if "value" in help_keys:
         value = gdoc.value()
-        value = value.replace("\code{", "‘")
-        value = value.replace("}", "’")    
+        value = value.replace("\code{", "'")
+        value = value.replace("}", "'")    
         gdoc_help += "value\n-----\n\n" + value + "\n"
         help_keys.remove('value')
         
@@ -452,7 +466,11 @@ def __initialize_wrapper():
               new_kwargs[b] = kwargs[b]
         
       method = getattr(__climextRemes__, method_name)
+
+      #with conversion.localconverter(myconverter):
+      
       retobj = method(*new_args, **new_kwargs)
+
       #return __parseResult(retobj)
       return compute_input_map(retobj)
 
@@ -479,3 +497,17 @@ def __initialize_wrapper():
     globals()[__i__] = result
 
 __initialize_wrapper()
+
+def __set_converter():
+    ## Don't do this within __initialize_wrapper() or get recursion error
+
+    ## From https://stackoverflow.com/questions/54951506/is-there-a-way-to-return-names-from-r-vectors-matrices-etc-in-rpy2-3-0-0/54954583#54954583
+    from rpy2 import robjects
+    myconverter = robjects.conversion.Converter('assym. numpy',
+                                       template=robjects.numpy2ri.converter)
+    myconverter.rpy2py.register(rpy2.rinterface_lib.sexp.Sexp,
+                                robjects.default_converter.rpy2py)
+    robjects.conversion.set_conversion(myconverter)
+
+if int(rpy2.__version__.split('.')[0]) >= 3:
+    __set_converter()

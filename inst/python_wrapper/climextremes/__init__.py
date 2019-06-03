@@ -1,7 +1,7 @@
-import pkg_resources  # part of setuptools
-__current_version__ = pkg_resources.require("climextremes")[0].version
+name = "climextremes"
 
-# __current_version__ = "0.1.3"
+import pkg_resources  # part of setuptools
+__version__ = pkg_resources.require("climextremes")[0].version
 
 def reinstall_climextremes(force, version):
   import os
@@ -11,17 +11,52 @@ def reinstall_climextremes(force, version):
   from rpy2.rinterface import RRuntimeWarning
   warnings.filterwarnings("ignore", category=RRuntimeWarning)
 
+  def install_cran_default(repos = 'https://cran.us.r-project.org'):
+    # sometimes failure occurs with URL issue with cran.r-project.org, so try a mirror
+    try:     # this may fail with error or fail but only issue a warning
+      rpy2.robjects.r("""install.packages('climextRemes',repos='{0}')""".format(repos))
+      rpy2.robjects.r('''library(climextRemes)''')
+    except:  
+      rpy2.robjects.r("""install.packages('climextRemes',repos='https://cran.cnr.berkeley.edu')""")
+      rpy2.robjects.r('''library(climextRemes)''')
+
+  def get_devtools(repos = 'https://cran.us.r-project.org'):
+    try:
+      rpy2.robjects.r('''library(devtools)''')
+      return True
+    except:
+      try:
+        rpy2.robjects.r("""install.packages('devtools',repos='{0}')""".format(repos))
+      except:
+        rpy2.robjects.r("""install.packages('devtools',repos='https://cran.cnr.berkeley.edu')""")
+    try:
+      rpy2.robjects.r('''library(devtools)''')
+    except:
+      print("Unable to install R package devtools; needed for version-specific installation of R climextRemes.")
+      return False
+    return True
+        
+
+  def install_cran_specific(version, repos = 'https://cran.us.r-project.org'):
+    check = get_devtools()
+    if check:
+      try:
+        rpy2.robjects.r("""install_version('climextRemes','{0}',repos='{1}')""".format(version, repos))
+        rpy2.robjects.r('''library(climextRemes)''')
+      except:
+        rpy2.robjects.r("""install_version('climextRemes','{0}',repos='https://cran.cnr.berkeley.edu')""".format(version, repos))
+        rpy2.robjects.r('''library(climextRemes)''')
+  
   if force:
     try:
       if version is None:
-        rpy2.robjects.r("""install.packages('climextRemes',repos='http://cran.us.r-project.org')""")
+        install_cran_default()
       else:
         try:
-          rpy2.robjects.r("""library(devtools);install_version('climextRemes','{0}',repos='http://cran.us.r-project.org')""".format(version))
+          install_cran_specific(version)
         except:
-          print("Installation of version: " + version + " failed, trying default CRAN package")
-          rpy2.robjects.r("""install.packages('climextRemes',repos='http://cran.us.r-project.org')""")
-
+          print("Installation of R climextRemes version: " + version + " failed, likely because the version is not available on the CRAN R package archive.")
+          return False
     except:
       return False
   else:
@@ -31,26 +66,23 @@ def reinstall_climextremes(force, version):
       installed_version = str(iv[0]) + "." + str(iv[1]) + "." + str(iv[2])
 
       if version is not None and version != installed_version:
+        print("Current version: "  + installed_version + " does not match requested version: " + version + ". Attempting installation of R climextRemes package (this may take a few minutes) ...")
         try:
-          rpy2.robjects.r("""library(devtools);install_version('climextRemes', '{0}', repos='http://cran.us.r-project.org', verbose=FALSE)""".format(version))
+          install_cran_specific(version)
         except:
-          print("Installation of version: " + version + " failed, trying default CRAN package")
-          rpy2.robjects.r("""install.packages('climextRemes',repos='http://cran.us.r-project.org')""")
-
+          print("Installation of R climextRemes version: " + version + " failed (likely because the version is not on the CRAN R package archive).\nFalling back to installed version.")
     except:
       # initial import failed
-      print("Attempting installation of R climextRemes (initial time takes longer...)")
-
+      print("Attempting installation of R climextRemes package and its dependencies (this may take a few minutes) ...")
       try:
         if version is None:
-          rpy2.robjects.r("""install.packages('climextRemes',repos='http://cran.us.r-project.org', verbose=FALSE)""")
+          install_cran_default()
         else:
           try:
-            rpy2.robjects.r("""library(devtools);install_version('climextRemes','{0}',repos='http://cran.us.r-project.org')""".format(version))
+            install_cran_specific(version)
           except:
-            print("Installation of version: " + version + " failed, trying default CRAN package")
-            rpy2.robjects.r("""install.packages('climextRemes',repos='http://cran.us.r-project.org')""")
-
+            print("Installation of version: " + version + " failed (likely because the version is not on the CRAN R package archive).\nFalling back to installing default CRAN package.")
+            install_cran_default()
       except:
         return False
   return True
@@ -60,10 +92,10 @@ def __wrap_import():
   import sys
   import rpy2.robjects
 
-  global __current_version__
+  global __version__
 
-  if not reinstall_climextremes(False, __current_version__):
-      print("Installation of climextRemes failed. Please manually install climextRemes using CRAN")
+  if not reinstall_climextremes(False, __version__):
+      print("Installation of climextRemes failed. Please manually install climextRemes using CRAN R package archive.")
       return
 
   # Force R warnings to come through to Python

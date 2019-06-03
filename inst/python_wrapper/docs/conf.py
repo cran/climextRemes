@@ -6,8 +6,8 @@ import os
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary']
 source_suffix = '.rst'
 master_doc = 'index'
-project = u'climextRemes Documentation'
-copyright = u'Chris Paciorek'
+project = u'climextremes Documentation'
+copyright = u'The Regents of the University of California, through Lawrence Berkeley National Laboratory (subject to receipt of any required approvals from the U.S. Dept. of Energy) and the University of California, Berkeley'
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 html_theme = 'default'

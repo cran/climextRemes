@@ -104,8 +104,9 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
     
     if(!is.null(returnPeriod)) {
         tmp <- calc_returnValue_fevd(fit, returnPeriod = returnPeriod, covariates = covariateMatrix)
-        results$returnValue = tmp$returnValue / scaling
-        results$se_returnValue = tmp$se_returnValue/ scaling
+        results$returnValue <- tmp$returnValue / scaling
+        if(!upper) results$returnValue <- -results$returnValue
+        results$se_returnValue <- tmp$se_returnValue/ scaling
     } # end calculation of returnValue
         
 
@@ -123,6 +124,7 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
         if(!is.null(returnPeriod)) {
             tmp <- calc_returnValueDiff_fevd(fit, returnPeriod = returnPeriod, covariates1 = covariateMatrix, covariates2 = covariateMatrix2, getSE = getSE)
             results$returnValueDiff <- tmp$returnValueDiff / scaling
+            if(!upper) results$returnValueDiff <- -results$returnValueDiff 
             results$se_returnValueDiff <- tmp$se_returnValueDiff / scaling
         }
         if(!is.null(returnValue)) {

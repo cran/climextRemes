@@ -54,7 +54,9 @@ calc_returnValue_fevd <- function(fit, returnPeriod, covariates = NULL) {
             }
         } else {
             rv <- se <- rep(NA, nPeriod)
-            if(nPeriod > 1) names(rv) <- names(se) <- returnPeriod
+            if(nPeriod > 1) {
+                names(rv) <- names(se) <- returnPeriod
+            } else names(rv) <- names(se) <- NULL
             results <- list(returnValue = rv, se_returnValue = se)
         }
     }
@@ -91,12 +93,12 @@ calc_returnValueDiff_fevd <- function(fit, returnPeriod, covariates1, covariates
 
     if(nPeriod == 1) {
         tmp <- try(return.level.ns.fevd.mle(fit, return.period = returnPeriod, alpha = .05, qcov = qcov1, qcov.base = qcov2, do.ci = getSE))
-        names(tmp) <- NULL
         if(!methods::is(tmp, 'try-error')) {
             if(getSE) {
                 results <- list(returnValueDiff = tmp[ , 2], se_returnValueDiff = tmp[ , 4])
             } else results <- list(returnValueDiff = tmp, se_returnValueDiff = rep(as.numeric(NA), m))
         } else results <- list(returnValueDiff = rep(as.numeric(NA), m), se_returnValueDiff = rep(as.numeric(NA), m))
+        names(results$returnValueDiff) <- names(results$se_returnValueDiff) <- NULL
     } else {
         rvd <- se <- matrix(as.numeric(NA), m, nPeriod)
         colnames(rvd) <- colnames(se) <- returnPeriod
@@ -130,9 +132,9 @@ calc_logReturnPeriod_fevd <- function(fit, returnValue, covariates = NULL) {
     if(!fit$type %in% c('PP', 'GEV'))
         stop("calc_logReturnPeriod_fevd: can only be used for PP and GEV models.")
     results <- calc_logReturnProb_fevd(fit, returnValue, covariates)
-    results$logPeriod <- -results$logProb
-    results$se_logPeriod <- results$se_logProb
-    results$logProb <- results$se_logProb <- NULL
+    results$logReturnPeriod <- -results$logReturnProb
+    results$se_logReturnPeriod <- results$se_logReturnProb
+    results$logReturnProb <- results$se_logReturnProb <- NULL
     return(results)
 }
 

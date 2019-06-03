@@ -45,7 +45,7 @@ calc_riskRatio_binom(c(4,0), c(100, 100), ciType = c('lrt', 'boot_stud', 'koopma
 Christopher J. Paciorek
 }
 \references{
-Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. arXiv preprint <https://arxiv.org/abs/1706.03388>.
+Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 
 Koopman, P.A.R. 1984. Confidence intervals for the ratio of two binomial proportions. Biometrics 40: 513-517.
 

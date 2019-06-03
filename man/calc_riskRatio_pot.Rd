@@ -147,7 +147,6 @@ earlyPeriod <- which(FortExc$year \%in\% earlyYears)
 latePeriod <- which(FortExc$year \%in\% lateYears)
 # contrast late period with early period, assuming a nonstationary fit
 # within each time period and finding RR based on midpoint of each period
-# lrtCI set to FALSE here to limit time in running examples on CRAN
 \dontrun{
 out <- calc_riskRatio_pot(returnValue = 3,
                    y1 = FortExc$Prec[earlyPeriod], y2 = FortExc$Prec[latePeriod],
@@ -158,15 +157,14 @@ out <- calc_riskRatio_pot(returnValue = 3,
 	      xNew2 = data.frame(years = mean(lateYears)),
                    blockIndex1 = FortExc$year[earlyPeriod], 
                    blockIndex2 = FortExc$year[latePeriod],
-                   firstBlock1 = earlyYears[1], firstBlock2 = lateYears[1],
-                   ciType = c('lrt'))
+                   firstBlock1 = earlyYears[1], firstBlock2 = lateYears[1])
 }
 }
 \author{
 Christopher J. Paciorek
 }
 \references{
-Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. arXiv preprint <http://arxiv.org/abs/1706.03388>.
+Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 
 Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. <DOI:10.1016/j.wace.2016.02.001>. arXiv preprint: <http://arxiv.org/abs/1602.04139>.
 }

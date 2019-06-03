@@ -1,3 +1,23 @@
+0.2.1 (May 2019)
+
+* added ability to install Python version via pip.
+
+* added compatibility for Python interface for rpy2 >= 3.0.0 (moving to NULLType from RNULLType and automatic conversion to numpy.ndarray when objects returned from R.
+
+* fixed bug in return argument names of calc_logReturnPeriod_fevd.
+
+* fixed bug that try-errors in fevd output not being caught properly in fit_gev or fit_pot; particularly affecting model fits with < 3 observations.
+
+* fixed bug that resulted in the negative of the actual return values when using maxes=FALSE in fit_gev and upperTail=FALSE in fit_pot. Similarly fixed bug that initial values were not negated under the same circumstances before doing the fitting.
+
+* cleaned up extraneous names in $returnValue and $returnValueDiff output.
+
+* Python version now passes warnings produced in R back to the user.
+
+* cleaned up Conda build recipe to be architecture- and Python-version independent. Things might not install smoothly under Python 2 however. 
+
+* changed to modified BSD license and updated citation information.
+
 0.2.0:
 
 * added Koopman confidence interval method to 'calc_riskRatio_binom'.

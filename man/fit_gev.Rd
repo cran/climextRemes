@@ -126,6 +126,6 @@ Christopher J. Paciorek
 \references{
 Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 
-Paciorek, C.J., D.A. Stone, and M.F. Wehner. Quantifying uncertainty in the attribution of human influence on severe weather. http://arxiv.org/abs/1706.03388.
+Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 }
 

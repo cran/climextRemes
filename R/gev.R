@@ -35,7 +35,7 @@
 #' 
 #' Replicates are repeated datasets, each with the same structure, including the same number of block maxima/minima. The additional observations in multiple replicates could simply be treated as additional blocks without replication (see next paragraph), but when the covariate values and weights are the same across replicates, it is simpler to make use of \code{nReplicates} and \code{replicateIndex}.
 #' 
-#' When using multiple replicates (e.g., multiple members of a climate model initial condition ensemble), the standard input format is to append observations for additional replicates to the \code{y} argument and indicate the replicate ID for each exceedance in \code{replicateIndex}. The values for each replicate should be grouped together and in the same order within replicate so that \code{x} can be correctly matched to the \code{y} values when \code{x} is only supplied for the first replicate. In other words, \code{y} should first contain all the values for the first replicate, then all the values for the second replicate in the same block order as for the first replicate, and so forth. Note that if \code{y} is provided as a matrix with the number of rows equal to the number of observations in each replicate and the columns corresponding to replicates, this ordering will occur naturally.
+#' When using multiple replicates (e.g., multiple members of a climate model initial condition ensemble), the standard input format is to append observations for additional replicates to the \code{y} argument and indicate the replicate ID for each value via \code{replicateIndex}, which would be of the form 1,1,1,...2,2,2,...3,3,3,... etc. The values for each replicate should be grouped together and in the same order within replicate so that \code{x} can be correctly matched to the \code{y} values when \code{x} is only supplied for the first replicate. In other words, \code{y} should first contain all the values for the first replicate, then all the values for the second replicate in the same block order as for the first replicate, and so forth. Note that if \code{y} is provided as a matrix with the number of rows equal to the number of observations in each replicate and the columns corresponding to replicates, this ordering will occur naturally.
 #' 
 #' However, if one has different covariate values for different replicates, then one needs to treat the additional replicates as providing additional blocks, with only a single replicate (and \code{nReplicates} set to 1). The covariate values can then be included as additional rows in \code{x}. Similarly, if there is a varying number of replicates by block, then all block-replicate pairs should be treated as individual blocks with a corresponding row in \code{x} (and \code{nReplicates} set to 1).
 #' 
@@ -120,6 +120,8 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             stop("fit_gev: 'x' should not contain any NAs.")
     } else m <- 0
     if(!is.null(xNew)) {
+        if(is.null(x))
+            stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xNew <- try(as.data.frame(xNew))
         if(class(xNew) == 'try-error') stop("fit_gev: 'xNew' should be a data frame or be able to be converted to a data frame.")
         mNew <- nrow(xNew)
@@ -127,6 +129,8 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             stop("fit_gev: columns in 'x' and 'xNew' should be the same.")
     } else mNew <- 0
     if(!is.null(xContrast)) {
+        if(is.null(x))
+            stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xContrast <- try(as.data.frame(xContrast))
         if(class(xContrast) == 'try-error') stop("fit_gev: 'xContrast' should be a data frame or be able to be converted to a data frame.")
         mContrast <- nrow(xContrast)
@@ -293,10 +297,11 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
             dimnames(rv_boot) <- list(NULL, NULL, returnPeriod)
         }
         if(!is.null(returnValue)) {
+            nm <- returnValue; if(!maxes) nm <- -nm
             logrp_boot <- array(NA, c(bootControl$n, nres, length(returnValue)))
-            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            dimnames(logrp_boot) <- list(NULL, NULL, nm/scaling)
             logrp_boot_se <- array(NA, c(bootControl$n, nres, length(returnValue)))
-            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            dimnames(logrp_boot) <- list(NULL, NULL, nm/scaling)
             
         }
         if(!is.null(xContrast)) {
@@ -305,8 +310,9 @@ fit_gev <- function(y, x = NULL, locationFun = NULL, scaleFun = NULL,
                 dimnames(rvDiff_boot) <- list(NULL, NULL, returnPeriod)
             }
             if(!is.null(returnValue)) {
+                nm <- returnValue; if(!maxes) nm <- -nm
                 logrpDiff_boot <- array(NA, c(bootControl$n, mContrast, length(returnValue)))
-                dimnames(logrpDiff_boot) <- list(NULL, NULL, returnValue/scaling)
+                dimnames(logrpDiff_boot) <- list(NULL, NULL, nm/scaling)
             }
         }
 

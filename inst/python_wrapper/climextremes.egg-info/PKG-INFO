@@ -1,0 +1,33 @@
+Metadata-Version: 1.1
+Name: climextremes
+Version: 0.2.2rc2
+Summary: climextremes wrapper module
+Home-page: https://bitbucket.org/lbl-cascade
+Author: Christopher Paciorek
+Author-email: paciorek@berkeley.edu
+License: BSD License
+Description: 
+        Functions for fitting GEV and POT (via point process fitting)
+        models for extremes in climate data, providing return values, return
+        probabilities, and return periods for stationary and nonstationary models.
+        Also provides differences in return values and differences in log return
+        probabilities for contrasts of covariate values. Functions for estimating risk
+        ratios for event attribution analyses, including uncertainty. Under the hood,
+        many of the functions use functions from 'extRemes', including for fitting the
+        statistical models.
+        
+Keywords: statistics,GEV,POT,detection and attribution
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8

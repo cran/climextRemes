@@ -5,7 +5,7 @@
 \title{Calculates log return probability and standard error given return value(s) of interest}
 \usage{
 calc_logReturnProb_fevd(fit, returnValue, covariates = NULL, getSE = TRUE,
-  scaling = 1)
+  scaling = 1, upper = FALSE)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -17,6 +17,8 @@ calc_logReturnProb_fevd(fit, returnValue, covariates = NULL, getSE = TRUE,
 \item{getSE}{logical indicating whether standard error is desired, in addition to the point estimate}
 
 \item{scaling}{if \code{returnValue} is scaled for numerics, this allows names of output to be on original scale}
+
+\item{upper}{logical value indicating whether upper tail or lower tail is being considered}
 }
 \description{
 Calculates log return probability given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log probabilities and standard errors are returned for as many sets of covariates as provided.

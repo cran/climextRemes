@@ -20,8 +20,8 @@ calc_returnValue_fevd <- function(fit, returnPeriod, covariates = NULL) {
         if(nPeriod == 1) {
             tmp <- try(return.level.ns.fevd.mle(fit, return.period = returnPeriod, qcov = qcov, do.ci = TRUE))
             if(!methods::is(tmp, 'try-error')) {
-                names(tmp) <- NULL
                 results <- list(returnValue = tmp[ , 2], se_returnValue = tmp[ , 4])
+                names(results$returnValue) <- names(results$se_returnValue) <- NULL
             } else results <- list(returnValue = rep(NA, m), se_returnValue = rep(NA, m))
         } else {
             rv <- se <- matrix(as.numeric(NA), m, nPeriod)
@@ -123,15 +123,16 @@ calc_returnValueDiff_fevd <- function(fit, returnPeriod, covariates1, covariates
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnValue value(s) for which return period is desired
 #' @param covariates matrix of covariate values, each row a set of covariates for which the log return period is desired
+#' @param upper logical value indicating whether upper tail or lower tail is being considered
 #'
 #' @details Results are calculated (and returned) on log scale as delta-method based standard errors are more accurate for the log period. Confidence intervals on the return period scale should be calculated by calculating a confidence interval for the log return period and exponentiating the endpoints of the interval. 
 #' @export
 #'
-calc_logReturnPeriod_fevd <- function(fit, returnValue, covariates = NULL) {
+calc_logReturnPeriod_fevd <- function(fit, returnValue, covariates = NULL, upper = FALSE) {
     # duplicates already-done calculation if returnProb already calculated...
     if(!fit$type %in% c('PP', 'GEV'))
         stop("calc_logReturnPeriod_fevd: can only be used for PP and GEV models.")
-    results <- calc_logReturnProb_fevd(fit, returnValue, covariates)
+    results <- calc_logReturnProb_fevd(fit, returnValue, covariates, upper = upper)
     results$logReturnPeriod <- -results$logReturnProb
     results$se_logReturnPeriod <- results$se_logReturnProb
     results$logReturnProb <- results$se_logReturnProb <- NULL
@@ -147,11 +148,12 @@ calc_logReturnPeriod_fevd <- function(fit, returnValue, covariates = NULL) {
 #' @param covariates matrix of covariate values, each row a set of covariates for which the return probability is desired
 #' @param getSE logical indicating whether standard error is desired, in addition to the point estimate
 #' @param scaling if \code{returnValue} is scaled for numerics, this allows names of output to be on original scale
+#' @param upper logical value indicating whether upper tail or lower tail is being considered
 #'
 #' @details Results are calculated (and returned) on log scale as delta-method based standard errors are more accurate for the log probability. Confidence intervals on the probability scale should be calculated by calculating a confidence interval for the log probability and exponentiating the endpoints of the interval. 
 #' @export
 #'
-calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE = TRUE, scaling = 1){
+calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE = TRUE, scaling = 1, upper = FALSE){
     if(!fit$type %in% c('PP', 'GEV'))
         stop("calc_logReturnProb_fevd: can only be used for PP and GEV models.")
     
@@ -165,6 +167,8 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
     cov_mle <- summ$cov.theta
 
     nValue <- length(returnValue)
+
+    nm <- returnValue; if(!upper) nm <- -nm
     
     if(!is.null(covariates)) {
         qcov <- make.qcov(fit, covariates)
@@ -183,7 +187,7 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
         m <- nrow(qcov)
 
         logprob <- se <- matrix(as.numeric(NA), m, nValue)
-        if(nValue > 1) colnames(logprob) <- colnames(se) <- returnValue/scaling
+        if(nValue > 1) colnames(logprob) <- colnames(se) <- nm/scaling
 
         for(j in seq_len(nValue)) {
             logprob[ , j] <- sapply(seq_along(location), function(i) pevd(returnValue[j], location[i], scale[i], shape[i], lower.tail = FALSE, type = "GEV", log.p = TRUE))
@@ -214,7 +218,7 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
                 se[j] <- sqrt(t(grad) %*% (cov_mle %*% grad))[1,1]
             } else se <- rep(NA, length(logprob))
         }
-        if(nValue > 1) names(logprob) <- names(se) <- returnValue/scaling
+        if(nValue > 1) names(logprob) <- names(se) <- nm/scaling
     }
     
     return(list(logReturnProb = logprob, se_logReturnProb = se))
@@ -229,13 +233,14 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
 #' @param covariates2 matrix of covariate values, each row a set of covariates 
 #' @param getSE logical indicating whether standard error is desired, in addition to the point estimate
 #' @param scaling if \code{returnValue} is scaled for numerics, this allows names of output to be on original scale
+#' @param upper logical value indicating whether upper tail or lower tail is being considered
 #' 
 #' @details Results are calculated (and returned) on log scale as delta-method based standard errors are more accurate for the log probability. Confidence intervals for the ratio of return probabilities should be calculated by calculating a confidence interval for the log probability difference and exponentiating the endpoints of the interval.
 #'
 #' This is designed to calculate differences in log return probabilities and associated standard errors for different covariate values based on the same model fit. It is not designed for differences based on separate model fits, although it may be possible handle this case by fit two models in a single model specification using dummy variables.
 #' @export
 #'
-calc_logReturnProbDiff_fevd <- function(fit, returnValue, covariates1, covariates2, getSE = TRUE, scaling = 1){
+calc_logReturnProbDiff_fevd <- function(fit, returnValue, covariates1, covariates2, getSE = TRUE, scaling = 1, upper = FALSE){
     if(!fit$type %in% c('PP', 'GEV'))
         stop("calc_logReturnProbDiff: can only be used for PP and GEV models.")
     
@@ -265,12 +270,14 @@ calc_logReturnProbDiff_fevd <- function(fit, returnValue, covariates1, covariate
     }
 
     nValue <- length(returnValue)
-    
+
+    nm <- returnValue; if(!upper) nm <- -nm
+
     m <- nrow(qcov1)
     if(nrow(covariates2) != m)
         stop("calc_logReturnProbDiff_fevd: 'covariates1' and 'covariates2' must have same number of rows.")
     logprob1 <- logprob2 <- se <- matrix(as.numeric(NA), m, nValue)
-    if(nValue > 1) colnames(logprob1) <- colnames(logprob2) <- colnames(se) <- returnValue/scaling
+    if(nValue > 1) colnames(logprob1) <- colnames(logprob2) <- colnames(se) <- nm/scaling
 
     for(j in seq_len(nValue)) {
         logprob1[ , j] <- sapply(seq_along(location1), function(i) pevd(returnValue[j], location1[i], scale1[i], shape1[i], lower.tail = FALSE, type = "GEV", log.p = TRUE))

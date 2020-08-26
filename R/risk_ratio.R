@@ -425,7 +425,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
         if(length(bootTypesUse)) {
             bootData <- matrix(drop(fit1$logReturnProb_boot - fit2$logReturnProb_boot), ncol = m)
             if(bootSE)
-                results$se_logRiskRatio_boot <- apply(bootData, 2, sd)
+                results$se_logRiskRatio_boot <- apply(bootData, 2, sd, na.rm = TRUE)
             
             fake_data <- cbind(sample(c(0,1), size = 5, replace = TRUE),
                    sample(c(0,1), size = 5, replace = TRUE))
@@ -465,6 +465,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             lrtControl <- lControl
             oArgs <- list(method = "Nelder-Mead", lower = -Inf, upper = Inf, control = list())
             oArgs[names(optimArgs)] <- optimArgs
+            if(!upperTail) returnValue <- -returnValue
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "PP", optimArgs = oArgs)
             if(is.null(dim(results$ci_riskRatio_lrt))) {
                 names(results$ci_riskRatio_lrt) <- ciLabels
@@ -669,7 +670,7 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
         if(length(bootTypesUse)) {
             bootData <- matrix(drop(fit1$logReturnProb_boot - fit2$logReturnProb_boot), ncol = m)
             if(bootSE)
-                results$se_logRiskRatio_boot <- apply(bootData, 2, sd)
+                results$se_logRiskRatio_boot <- apply(bootData, 2, sd, na.rm = TRUE)
             
             fake_data <- cbind(sample(c(0,1), size = 5, replace = TRUE),
                    sample(c(0,1), size = 5, replace = TRUE))
@@ -708,6 +709,7 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             lrtControl <- lControl
             oArgs <- list(method = "Nelder-Mead", lower = -Inf, upper = Inf, control = list())
             oArgs[names(optimArgs)] <- optimArgs
+            if(!maxes) returnValue <- -returnValue
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue = returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "GEV", optimArgs = oArgs)
             if(is.null(dim(results$ci_riskRatio_lrt))) {
                 names(results$ci_riskRatio_lrt) <- ciLabels

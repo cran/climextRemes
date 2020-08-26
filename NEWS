@@ -1,3 +1,15 @@
+0.2.2 (August 2020)
+
+* fixed bug when using upperTail=FALSE in calc_riskRatio_pot and calc_riskRatio_gev.
+
+* corrected naming of output when using lower tail rather than upper tail in various fitting functions.
+
+* added some error trapping.
+
+* fixed problem with Python interface under rpy2 >= 3.3.0.
+
+* modified Python interface's Conda configuration to require pandas <= 0.25.3, since the rpy2 available for Conda is 2.9.4, which won't work with pandas >= 1.0.0
+
 0.2.1 (May 2019)
 
 * added ability to install Python version via pip.

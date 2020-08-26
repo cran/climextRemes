@@ -75,34 +75,79 @@ def compute_input_map(input_arg_map):
                         res[j] = None
 
               elif "__dict" in output_values[i]:
-                result[f + "_row_names"] = output_values[i]["__dict_row_names"]
-                result[f + "_column_names"] = output_values[i]["__dict_column_names"]
-                name_list = result[f + "_row_names"].tolist()
-                if isinstance(name_list, NULLType):
-                   #result[f + "_row_names"] = None
-                   del result[f + "_row_names"]
-                else:
-                   res = result[f + "_row_names"]
-                   for j in range(len(res)):
-                     if isinstance(res[j], NULLType):
-                        res[j] = None
 
-                name_list = result[f + "_column_names"].tolist()
-                if isinstance(name_list, NULLType):
-                   #result[f + "_column_names"] = None
-                   del result[f + "_column_names"]
-                else:
-                   res = result[f + "_column_names"]
-                   for j in range(len(res)):
-                     if isinstance(res[j], NULLType):
-                        res[j] = None
+                if "__dict_row_names" in output_values[i]:
+                  result[f + "_row_names"] = output_values[i]["__dict_row_names"]
+                  name_list = result[f + "_row_names"].tolist()
+                  if isinstance(name_list, NULLType):
+                     #result[f + "_row_names"] = None
+                     del result[f + "_row_names"]
+                  else:
+                     res = result[f + "_row_names"]
+                     for j in range(len(res)):
+                       if isinstance(res[j], NULLType):
+                          res[j] = None
+                          
+                if "__dict_column_names" in output_values[i]:
+                  result[f + "_column_names"] = output_values[i]["__dict_column_names"]
+                  name_list = result[f + "_column_names"].tolist()
+                  if isinstance(name_list, NULLType):
+                     #result[f + "_column_names"] = None
+                     del result[f + "_column_names"]
+                  else:
+                     res = result[f + "_column_names"]
+                     for j in range(len(res)):
+                       if isinstance(res[j], NULLType):
+                          res[j] = None
+
+                if "__dict_dimnames" in output_values[i]:
+                  for (i2, f2) in enumerate(output_values[i]["__dict_dimnames"]):
+                    result[f + "_dim" + str(i2+1) + "_names"] = f2
+                    try:
+                      name_list = result[f + "_dim" + str(i2+1) + "_names"].tolist()
+                    except:
+                      name_list = None
+                    if name_list is None or isinstance(name_list, NULLType):
+                       #result[f + "_column_names"] = None                                                              
+                       del result[f + "_dim" + str(i2+1) + "_names"]
+                    else:
+                       res = result[f + "_dim" + str(i2+1) + "_names"]
+                       for j in range(len(res)):
+                         if isinstance(res[j], NULLType):
+                            res[j] = None
+                       
                 result[f] = output_values[i]["__dict"]
               else:
                 result[f] = output_values[i]
           else:
               result[f] = output_values[i]
        return result
-    
+
+    # put Array and Matrix before Vectors as they also are Vectors and
+    # want special handling specific to Array and Matrix
+    if isinstance(input_arg_map, rpy2.robjects.vectors.Matrix):
+        result = {}
+        name = "__dict"
+        result[name] = numpy.array(input_arg_map)
+        try:
+          result[name + "_row_names"] = numpy.array(input_arg_map.rownames)
+        except:
+          pass
+        try:
+          result[name + "_column_names"] = numpy.array(input_arg_map.colnames)
+        except:
+          pass
+        return result
+
+    if isinstance(input_arg_map, rpy2.robjects.vectors.Array):
+        result = {}
+        name = "__dict"
+        result[name] = numpy.array(input_arg_map)
+        result[name + "_dimnames"] = []
+        for (i,f) in enumerate(input_arg_map.dimnames):
+          result[name + "_dimnames"].append(compute_input_map(f))
+        return result
+
     #other vectors
     if isinstance(input_arg_map, rpy2.robjects.vectors.IntVector):
            result = {}
@@ -146,7 +191,10 @@ def compute_input_map(input_arg_map):
               result[name+"_names"] = numpy.array(input_arg_map.names)
            except:
               pass
-           result[name] = numpy.array(input_arg_map)
+           try:
+             result[name] = numpy.array(input_arg_map)
+           except:
+             result[name] = input_arg_map
            if name+"_names" not in result.keys() or isinstance(input_arg_map.names, NULLType):
                result = result[name]
            return result
@@ -173,16 +221,6 @@ def compute_input_map(input_arg_map):
                result = result[name]
            return result
     
-    if isinstance(input_arg_map, rpy2.robjects.vectors.Matrix):
-        output_col_names = numpy.array(input_arg_map.colnames)
-        output_row_names = numpy.array(input_arg_map.rownames)
-        result = {}
-        name = "__dict"
-        result[name] = numpy.array(input_arg_map)
-        result[name + "_row_names"] = output_row_names
-        result[name + "_column_names"] = output_col_names
-        return result
-
 
 """
 def compute_input_map(input_arg_map):
@@ -503,11 +541,19 @@ def __set_converter():
 
     ## From https://stackoverflow.com/questions/54951506/is-there-a-way-to-return-names-from-r-vectors-matrices-etc-in-rpy2-3-0-0/54954583#54954583
     from rpy2 import robjects
-    myconverter = robjects.conversion.Converter('assym. numpy',
+    myconverter = robjects.conversion.Converter('asymmetric numpy',
                                        template=robjects.numpy2ri.converter)
     myconverter.rpy2py.register(rpy2.rinterface_lib.sexp.Sexp,
                                 robjects.default_converter.rpy2py)
+    ## As of rpy2 3.3.0, need to have _map element that looks like:
+    ## {<class 'rpy2.rinterface.SexpS4'>: <rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f10>, 
+    ## <class 'rpy2.rinterface.ListSexpVector'>: <rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f50>, 
+    ## <class 'rpy2.rinterface_lib.sexp.SexpEnvironment'>: <rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f90>}
+    if(hasattr(robjects.conversion.converter,'rpy2py_nc_name')):
+        myconverter._rpy2py_nc_map.update(robjects.default_converter._rpy2py_nc_map._map.copy(),
+                                          default=robjects.default_converter._rpy2py_nc_map._default)
     robjects.conversion.set_conversion(myconverter)
+
 
 if int(rpy2.__version__.split('.')[0]) >= 3:
     __set_converter()

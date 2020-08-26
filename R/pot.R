@@ -175,6 +175,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             stop("fit_pot: 'x' should not contain any NAs.")
     } else m <- 0
     if(!is.null(xNew)) {
+        if(is.null(x))
+            stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xNew <- try(as.data.frame(xNew))
         if(class(xNew) == 'try-error') stop("fit_pot: 'xNew' should be a data frame or be able to be converted to a data frame.")
         mNew <- nrow(xNew)
@@ -182,6 +184,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             stop("fit_pot: columns in 'x' and 'xNew' should be the same.")
     } else mNew <- 0
     if(!is.null(xContrast)) {
+        if(is.null(x))
+            stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xContrast <- try(as.data.frame(xContrast))
         if(class(xContrast) == 'try-error') stop("fit_pot: 'xContrast' should be a data frame or be able to be converted to a data frame.")
         mContrast <- nrow(xContrast)
@@ -194,6 +198,9 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     if(m > 0 && is.null(nBlocks))
         nBlocks <- m
 
+    if(is.null(nBlocks))
+        stop("fit_pot: 'nBlocks' must be provided.")
+    
     if(m > 0 && m != nBlocks) {
         stop("fit_pot: number of blocks must equal number of rows of 'x'.")
     }
@@ -408,10 +415,11 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             dimnames(rv_boot) <- list(NULL, NULL, returnPeriod)
         }
         if(!is.null(returnValue)) {
+            nm <- returnValue; if(!upperTail) nm <- -nm
             logrp_boot <- array(NA, c(bootControl$n, nres, length(returnValue)))
-            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            dimnames(logrp_boot) <- list(NULL, NULL, nm/scaling)
             logrp_boot_se <- array(NA, c(bootControl$n, nres, length(returnValue)))
-            dimnames(logrp_boot) <- list(NULL, NULL, returnValue/scaling)
+            dimnames(logrp_boot) <- list(NULL, NULL, nm/scaling)
         }
         if(!is.null(xContrast)) {
             if(!is.null(returnPeriod)) {
@@ -419,8 +427,9 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                 dimnames(rvDiff_boot) <- list(NULL, NULL, returnPeriod)
             }
             if(!is.null(returnValue)) {
+                nm <- returnValue; if(!upperTail) nm <- -nm
                 logrpDiff_boot <- array(NA, c(bootControl$n, mContrast, length(returnValue)))
-                dimnames(logrpDiff_boot) <- list(NULL, NULL, returnValue/scaling)
+                dimnames(logrpDiff_boot) <- list(NULL, NULL, nm/scaling)
             }
         }
 

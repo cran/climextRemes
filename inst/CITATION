@@ -18,7 +18,9 @@ bibentry(
 
 bibentry(
     bibtype = "techreport",
-    author = "Paciorek, C.J., D.A. Stone, and M.F. Wehner",
+    author = c(person("C.J.", "Paciorek"),
+               person("D.A.", "Stone"),
+               person("M.F.", "Wehner")),
     title = "Quantifying uncertainty in the attribution of human influence on severe weather",
     institution = "arXiv preprint",
     year = "2017",

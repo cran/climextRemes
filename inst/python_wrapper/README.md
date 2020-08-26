@@ -86,3 +86,7 @@ Building package uses setup.py, which is the build script for setuptools.
 conda-forge approach should be able to install from pypi tarball via staged recipe.
 conda-forge recipe should be able to avoid usage of build.sh/bld.bat
 
+In some cases if one doesn't force rpy2 >=2.9.4, Conda installation will pull in rpy2=2.8.5, r=3.3.1, and there will be problems. Not clear why. 
+
+As of August 2020, default Conda channel has rpy2 2.9.4 but pulls in pandas >= 1.0.0, which causes a run-time error because of an apparent rpy2-pandas incompatibility. conda-forge has new rpy2 but it doesn't seem possible to force use of a channel in the conda meta.yaml, nor does asking for rpy2 >=3.0.0 work when building the Conda package.
+

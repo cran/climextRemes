@@ -111,7 +111,7 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
         
 
     if(!is.null(returnValue)) {
-        tmp <- calc_logReturnProb_fevd(fit, returnValue, covariates = covariateMatrix, getSE = getSE, scaling = scaling)
+        tmp <- calc_logReturnProb_fevd(fit, returnValue, covariates = covariateMatrix, getSE = getSE, scaling = scaling, upper = upper)
         results$logReturnProb <- tmp$logReturnProb
         results$se_logReturnProb <- tmp$se_logReturnProb
         # return period on log scale is negative of return probability
@@ -128,7 +128,7 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
             results$se_returnValueDiff <- tmp$se_returnValueDiff / scaling
         }
         if(!is.null(returnValue)) {
-            tmp <- calc_logReturnProbDiff_fevd(fit, returnValue = returnValue, covariates1 = covariateMatrix, covariates2 = covariateMatrix2, getSE = getSE, scaling = scaling) 
+            tmp <- calc_logReturnProbDiff_fevd(fit, returnValue = returnValue, covariates1 = covariateMatrix, covariates2 = covariateMatrix2, getSE = getSE, scaling = scaling, upper = upper) 
             results$logReturnProbDiff <- tmp$logReturnProbDiff
             results$se_logReturnProbDiff <- tmp$se_logReturnProbDiff
 

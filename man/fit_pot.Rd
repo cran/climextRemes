@@ -112,7 +112,7 @@ When using multiple replicates (e.g., multiple members of a climate model initia
 
 The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 \itemize{
-\item seed. Value of the random number seed to set before doing resampling. Defaults to \code{1}.
+\item seed. Value of the random number seed as a single value, or in the form of \code{.Random.seed}, to set before doing resampling. Defaults to \code{1}.
 \item n. Number of bootstrap samples. Defaults to \code{250}.
 \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
 \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.

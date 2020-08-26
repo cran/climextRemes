@@ -5,7 +5,7 @@
 \title{Calculates log return probability difference for two sets of covariates and standard error of difference given return value(s) of interest}
 \usage{
 calc_logReturnProbDiff_fevd(fit, returnValue, covariates1, covariates2,
-  getSE = TRUE, scaling = 1)
+  getSE = TRUE, scaling = 1, upper = FALSE)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -19,6 +19,8 @@ calc_logReturnProbDiff_fevd(fit, returnValue, covariates1, covariates2,
 \item{getSE}{logical indicating whether standard error is desired, in addition to the point estimate}
 
 \item{scaling}{if \code{returnValue} is scaled for numerics, this allows names of output to be on original scale}
+
+\item{upper}{logical value indicating whether upper tail or lower tail is being considered}
 }
 \description{
 Calculates difference in log return probabilities for two sets of covariates given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. Differences and standard errors are returned for as many contrasts between covariate sets as provided.

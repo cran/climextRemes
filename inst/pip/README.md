@@ -33,8 +33,6 @@ Note that it can be a hassle to upload new copies of files of the same version i
 
 ## Upload to PyPI
 
-Not sure if include '/legacy' or even if need --repository-url
-
 ```
 python -m twine upload -u paciorek -p PASSWORD  dist/*
 ```

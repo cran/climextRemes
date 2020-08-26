@@ -11,7 +11,7 @@ if [ ! -e "${PKG_DIR}" ]; then
 fi
 
 # build in a Conda environment
-conda create --name climextremes_build python=3.7
+conda create -y --name climextremes_build python=3.7
 
 source activate climextremes_build
 conda install -y conda-build anaconda-client
@@ -24,4 +24,4 @@ echo conda build $climextremes
 ${CONDA_PREFIX}/bin/conda build --output-folder=${PKG_DIR} ${climextremes}
 
 ## test with:
-# conda install /tmp/cebuild/noarch/climextremes-0.2.1rc7-pyr351_0.tar.bz2
+# conda install /tmp/cebuild/noarch/climextremes-0.2.2rc1-pyr36h39e3cac_0.tar.bz2

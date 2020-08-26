@@ -330,10 +330,10 @@ test_that(paste0("POT nonstationary RR methods"), {
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_norm))), (.2))
 })
 test_that(paste0("POT nonstationary RR methods"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.2))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.3))
 })
 test_that(paste0("POT nonstationary RR methods"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.2))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.3))
 })
 test_that(paste0("POT nonstationary RR methods"), {
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_stud))), (.1))
@@ -360,16 +360,16 @@ test_that(paste0("POT nonstationary RR methods, one stationary"), {
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_norm))), (.1))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.1))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.2))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.1))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.2))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_stud))), (.15))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_bca))), (.15))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_bca))), (.3))
 })
 
 
@@ -392,10 +392,10 @@ test_that(paste0("POT nonstationary RR methods, one stationary, proportionMissin
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_norm))), (.15))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary, proportionMissing, weights"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.1))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_perc))), (.25))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary, proportionMissing, weights"), {
-    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.1))
+    expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_basic))), (.25))
 })
 test_that(paste0("POT nonstationary RR methods, one stationary, proportionMissing, weights"), {
     expect_lt(max(abs(log(outp$ci_riskRatio_delta) - log(outp$ci_riskRatio_boot_stud))), (.07))

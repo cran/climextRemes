@@ -4,7 +4,8 @@
 \alias{calc_logReturnPeriod_fevd}
 \title{Calculates log return period and standard error given return value(s) of interest}
 \usage{
-calc_logReturnPeriod_fevd(fit, returnValue, covariates = NULL)
+calc_logReturnPeriod_fevd(fit, returnValue, covariates = NULL,
+  upper = FALSE)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -12,6 +13,8 @@ calc_logReturnPeriod_fevd(fit, returnValue, covariates = NULL)
 \item{returnValue}{value(s) for which return period is desired}
 
 \item{covariates}{matrix of covariate values, each row a set of covariates for which the log return period is desired}
+
+\item{upper}{logical value indicating whether upper tail or lower tail is being considered}
 }
 \description{
 Calculates log return period given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return period is the average number of blocks expected to occur before the return value is exceeded and is equal to the inverse of the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log return periods and standard errors are returned for as many sets of covariates as provided.

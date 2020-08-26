@@ -747,7 +747,7 @@ fitp2 = fit_pot(yExc2, x = data.frame(x=x, w = w), threshold = thr, locationFun 
                xContrast = data.frame(x=xContrast, w = wContrast), optimArgs = list(method = 'BFGS'))
 
 test_that(paste0("test use of 'noruns' for POT"), {
-    expect_identical(fitp1, fitp2)
+    expect_equal(fitp1, fitp2)
 })
 
 
@@ -937,30 +937,21 @@ fitp2 = fit_pot(-yExc, x = data.frame(x=x, w = w), threshold = -thr, locationFun
                optimArgs = list(method = "BFGS"), .normalizeX = FALSE, initial = initsNeg)
 
 fitg2$mle[1:3] <- -fitg2$mle[1:3]
+fitg2$returnValue <- -fitg2$returnValue
+fitg2$returnValueDiff <- -fitg2$returnValueDiff
+
 test_that(paste0("test min/lower for GEV"), {
     expect_identical(fitg, fitg2)
 })
 
 fitp2$mle[1:3] <- -fitp2$mle[1:3]
+fitp2$returnValue <- -fitp2$returnValue
+fitp2$returnValueDiff <- -fitp2$returnValueDiff
+
 test_that(paste0("test min/lower for POT"), {
     expect_identical(fitp, fitp2)
 })
 
-test_that("lower tail results have correct returnValue for GEV", {
-    expect_identical(fitg$returnValue, -fitg2$returnValue)
-})
-
-test_that("lower tail results have correct returnValue for POT", {
-    expect_identical(fitp$returnValue, -fitp2$returnValue)
-})
-
-test_that("lower tail results have correct returnValueDiff for GEV", {
-    expect_identical(fitg$returnValueDiff, -fitg2$returnValueDiff)
-})
-
-test_that("lower tail results have correct returnValueDiff for POT", {
-    expect_identical(fitp$returnValueDiff, -fitp2$returnValueDiff)
-})
 
 # test of proportionMissing
 

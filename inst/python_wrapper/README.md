@@ -16,7 +16,7 @@ See user-facing installation instructions in top-level README file of climextrem
 
 To make documentation:
 
-  1. Make sure climextremes is installed first.
+  1. Make sure climextremes (Python package, presumably using setup.py method) is installed first.
   2. Put new version number into docs/build_sphinx_docs.sh (ideally I'd figure out how to leverage version.py).
   3. One needs the Ubuntu latexmk package which is available for 18.04 but not for 16.04.
   4. If Roxygen documentation in R package has been updated, make sure you've locally installed the up-to-date R package so don't get old help info from CRAN version of R package.
@@ -90,3 +90,4 @@ In some cases if one doesn't force rpy2 >=2.9.4, Conda installation will pull in
 
 As of August 2020, default Conda channel has rpy2 2.9.4 but pulls in pandas >= 1.0.0, which causes a run-time error because of an apparent rpy2-pandas incompatibility. conda-forge has new rpy2 but it doesn't seem possible to force use of a channel in the conda meta.yaml, nor does asking for rpy2 >=3.0.0 work when building the Conda package.
 
+As of July 2022, I've modified the Conda deploy.sh to use `-c conda-forge` which allows me to build based on newer rpy2 and pandas, so removing the version specifications in meta.yaml.

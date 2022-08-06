@@ -59,8 +59,9 @@ result12 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, first
 result13 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = numpy.array([1,2]), getParams = True, returnPeriod = 20, returnValue = 3.5, xNew = numpy.array([[min(Fort.year), 0], [max(Fort.year), 0]]), bootSE = True, bootControl = {'seed':0, 'n':250}) 
 # optimArgs
 result14 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = numpy.array([1,2]), getParams = True, returnPeriod = 20, returnValue = 3.5, xNew = numpy.array([[min(Fort.year), 0], [max(Fort.year), 0]]), bootSE = False, optimArgs = {'method':'BFGS'}) 
+result15 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = numpy.array([1,2]), getParams = True, returnPeriod = 20, returnValue = 3.5, xNew = numpy.array([[min(Fort.year), 0], [max(Fort.year), 0]]), bootSE = False, optimArgs = {'method':'BFGS'}, optimControl = {'maxit': 1000}) 
 # initial
-result15 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = numpy.array([1,2]), getParams = True, returnPeriod = 20, returnValue = 3.5, xNew = numpy.array([[min(Fort.year), 0], [max(Fort.year), 0]]), bootSE = False, initial = {'location': numpy.array([1, 0, 0]), 'scale': 0.5, 'shape': 0.2})
+result16 = climextremes.fit_pot(numpy.array(FortExc.Prec), x = covByBlock, firstBlock = firstYr, nBlocks = nYrs, threshold = threshold, blockIndex = numpy.array(FortExc.year), locationFun = numpy.array([1,2]), getParams = True, returnPeriod = 20, returnValue = 3.5, xNew = numpy.array([[min(Fort.year), 0], [max(Fort.year), 0]]), bootSE = False, initial = {'location': numpy.array([1, 0, 0]), 'scale': 0.5, 'shape': 0.2})
 
 
 Fort = climextremes.Fort

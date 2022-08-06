@@ -1,4 +1,4 @@
-parseParamInput <- function(input, names = NULL) {
+parseParamInput <- function(input, names = NULL, .allowNoInt = TRUE) {
     # converts various formats for covariate specification to formula
     if(is.null(input))
         input <- ~1
@@ -14,8 +14,9 @@ parseParamInput <- function(input, names = NULL) {
                             env = globalenv())
     }
     if(methods::is(input, "formula")) {
-        if(length(grep("\\-\\s{0,1}1",as.character(input))))
-            stop("parseParamInput: no-intercept model specified but fitting only allowed for models with intercepts for location, scale, and shape.")
+        if(!.allowNoInt)
+            if(length(grep("\\-\\s{0,1}1",as.character(input))))
+                stop("parseParamInput: no-intercept model specified but fitting only allowed for models with intercepts for location, scale, and shape.")
         environment(input) <- globalenv()
         return(input)
     } else stop("parseParamInput: expecting 'input' to be a formula, column names, or indices of columns.")
@@ -48,31 +49,46 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
         
         # transform coefficients back to original covariate scale
         if(!is.null(normalizers)) {
-            if(p[['location']] > 1) {
+            if(p[['location']] > 1 || (fit$noInt[1] && p[['location']] > 0)) {
                 normMat <- stats::model.matrix(stats::as.formula(paste0(deparse(locationFun), "-1")), normalizers)
-                tmpInd <- 1:p[['location']]
-                mle[1] <- mle[1] - sum(normMat[1, ] * mle[2:p[['location']]] / (normMat[3, ] - normMat[2, ]))
-                se[1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
-                mle[2:p[['location']]] <- mle[2:p[['location']]] / (normMat[3, ] - normMat[2, ])
-                se[2:p[['location']]] <- se[2:p[['location']]] / (normMat[3, ] - normMat[2, ])
+                if(!fit$noInt[1]) {
+                    tmpInd <- 1:p[['location']]
+                    mle[1] <- mle[1] - sum(normMat[1, ] * mle[2:p[['location']]] / (normMat[3, ] - normMat[2, ]))
+                    se[1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
+                    mle[2:p[['location']]] <- mle[2:p[['location']]] / (normMat[3, ] - normMat[2, ])
+                    se[2:p[['location']]] <- se[2:p[['location']]] / (normMat[3, ] - normMat[2, ])
+                } else {
+                    mle[1:p[['location']]] <- mle[1:p[['location']]] / (normMat[3, ] - normMat[2, ])
+                    se[1:p[['location']]] <- se[1:p[['location']]] / (normMat[3, ] - normMat[2, ])
+                }
             }
-            if(p[['scale']] > 1) {
+            if(p[['scale']] > 1 || (fit$noInt[2] && p[['scale']] > 0)) {
                 normMat <- stats::model.matrix(stats::as.formula(paste0(deparse(scaleFun), "-1")), normalizers)
-                tmpInd <- (1+p[['location']]):(p[['location']]+p[['scale']])
-                mle[p[['location']]+1] <- mle[p[['location']]+1] - sum(normMat[1, ] * mle[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ]))
-                if(!fit$const.scale)
-                    mle[p[['location']]+1] <- mle[p[['location']]+1] - log(scaling)
-                se[p[['location']]+1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
-                mle[(p[['location']]+2):(p[['location']]+p[['scale']])] <- mle[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
-                se[(p[['location']]+2):(p[['location']]+p[['scale']])] <- se[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
+                if(!fit$noInt[2]) {
+                    tmpInd <- (1+p[['location']]):(p[['location']]+p[['scale']])
+                    mle[p[['location']]+1] <- mle[p[['location']]+1] - sum(normMat[1, ] * mle[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ]))
+                    if(!fit$const.scale)
+                        mle[p[['location']]+1] <- mle[p[['location']]+1] - log(scaling)
+                    se[p[['location']]+1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
+                    mle[(p[['location']]+2):(p[['location']]+p[['scale']])] <- mle[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
+                    se[(p[['location']]+2):(p[['location']]+p[['scale']])] <- se[(p[['location']]+2):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
+                } else {
+                    mle[(p[['location']]+1):(p[['location']]+p[['scale']])] <- mle[(p[['location']]+1):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
+                    se[(p[['location']]+1):(p[['location']]+p[['scale']])] <- se[(p[['location']]+1):(p[['location']]+p[['scale']])] / (normMat[3, ] - normMat[2, ])
+                }
             }
-            if(p[['shape']] > 1) {
+            if(p[['shape']] > 1 || (fit$noInt[3] && p[['shape']] > 0)) {
                 normMat <- stats::model.matrix(stats::as.formula(paste0(deparse(shapeFun), "-1")), normalizers)
-                tmpInd <- (1+p[['location']]+p[['scale']]):np
-                mle[p[['location']]+p[['scale']]+1] <- mle[p[['location']]+p[['scale']]+1] - sum(normMat[1, ] * mle[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ]))
-                se[p[['location']]+p[['scale']]+1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
-                mle[(p[['location']]+p[['scale']]+2):np] <- mle[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ])
-                se[(p[['location']]+p[['scale']]+2):np] <- se[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ])
+                if(!fit$noInt[3]) {
+                    tmpInd <- (1+p[['location']]+p[['scale']]):np
+                    mle[p[['location']]+p[['scale']]+1] <- mle[p[['location']]+p[['scale']]+1] - sum(normMat[1, ] * mle[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ]))
+                    se[p[['location']]+p[['scale']]+1] <- sqrt(c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])) %*% covmat[tmpInd, tmpInd] %*% c(1, -normMat[1, ] / (normMat[3, ] - normMat[2, ])))
+                    mle[(p[['location']]+p[['scale']]+2):np] <- mle[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ])
+                    se[(p[['location']]+p[['scale']]+2):np] <- se[(p[['location']]+p[['scale']]+2):np] / (normMat[3, ] - normMat[2, ])
+                } else {
+                    mle[(p[['location']]+p[['scale']]+1):np] <- mle[(p[['location']]+p[['scale']]+1):np] / (normMat[3, ] - normMat[2, ])
+                    se[(p[['location']]+p[['scale']]+1):np] <- se[(p[['location']]+p[['scale']]+1):np] / (normMat[3, ] - normMat[2, ])
+                }
             }
         } # end if(!is.null(normalizers))
         
@@ -136,8 +152,41 @@ compute_return_quantities <- function(fit, returnPeriod = NULL, returnValue = NU
     } # end calculation of diff of returnValue, diff of log return prob
 
     return(results)
-  } # end of compute_return_quantities()
+} # end of compute_return_quantities()
 
+make.qcov_safe <- function(x, vals, nr = 1, ...) {
+    # Wrapper that ensures that extRemes::make.qcov handles no-intercept cases correctly
 
+    increment_numbers <- function(nm, string) {
+        matched <- grep(string, nm)
+        num_matched <- length(matched)
+        # Convert 'mu0,mu1,...' to 'mu1,mu2,...'
+        if(num_matched)
+            nm[matched] <- paste0(string, seq_len(num_matched))
+        return(nm)
+    }
+
+    nm <- names(x$results$par)
+
+    # Convert 'intercept-style' names to 'covariate-style' names
+    if(x$noInt[1]) {
+        nm[nm == 'location'] <- 'mu1'
+        # Convert mu0,mu1,... to mu1,mu2,...
+        nm <- increment_numbers(nm, 'mu')
+    }
+    if(x$noInt[2]) {
+        nm[nm == 'log.scale'] <- 'phi1'
+        nm[nm == 'scale'] <- 'sig1'
+        nm <- increment_numbers(nm, 'phi')
+        nm <- increment_numbers(nm, 'sig')
+    }
+    if(x$noInt[3]) {
+        nm[nm == 'scale'] <- 'xi1'
+        nm <- increment_numbers(nm, 'xi')
+    }
+    
+    names(x$results$par) <- nm
+    make.qcov(x, vals, nr, ...)
+}
 
 

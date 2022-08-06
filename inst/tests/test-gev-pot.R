@@ -40,6 +40,10 @@ test_that("test error trapping when fitting with too few observations", {
     expect_warning(fitg <- fit_gev(tmp, returnPeriod = 20, returnValue = 3.5,
                     getParams = TRUE, bootSE = TRUE), "Fewer than")
 })
+## Note that this test produces the error:
+## Error in if (ipars1["scale"] <= 0) ipars1["scale"] <- 1e-08 : 
+##   missing value where TRUE/FALSE needed
+
     
 context("Testing multiple return periods / values.")
 
@@ -347,6 +351,39 @@ test_that("test that NA blockIndex values trigger error",
               xNew = data.frame(x=xNew, w = wNew, z = zNew),
               xContrast = data.frame(x=xContrast, w = wContrast, z = zContrast),
               optimArgs = list(method = 'BFGS'))))
+
+
+# test no-intercept model
+
+set.seed(1)
+nT <- 500
+nObs <- 100
+y <- matrix(rnorm(nT*nObs),  nrow = nObs)
+yMax <- apply(y, 2, max)
+
+yrs <- seq_len(nT)
+x2 <- rnorm(nT, 0, .1)
+
+yMax <- yMax + 0.001*yrs + .3*x2
+
+fitg <- fit_gev(yMax, x = data.frame(yrs = yrs, x2 = x2), locationFun = ~ yrs+x2, returnPeriod = 20, returnValue = 3.5, xNew = data.frame(yrs = range(yrs), x2 = c(-.1,.1)), getParams = TRUE, getFit = TRUE)
+
+test_that("no intercept estimates are reasonable", {
+    offset <- fitg$fit$results$par['mu0'] # need to use internal estimate used with normalized x
+    yMaxZ <- yMax - offset
+    fitg_noInt <- fit_gev(yMaxZ, x = data.frame(yrs = yrs, x2 = x2), locationFun = ~ yrs+x2 - 1, returnPeriod = 20, returnValue = 3.5-offset, xNew = data.frame(yrs = range(yrs), x2 = c(-.1,.1)), getParams = TRUE)
+
+    mle_noInt <- fitg_noInt$mle
+    names(mle_noInt) <- names(fitg$mle)[2:5]
+    expect_equal(fitg$mle['mu1'], mle_noInt['mu1'], tolerance = 1e-6)
+    expect_equal(fitg$mle['mu2'], mle_noInt['mu2'], tolerance = 1e-3)
+    expect_equal(fitg$mle['scale'], fitg_noInt$mle['scale'], tolerance = 1e-5)
+    expect_equal(fitg$mle['shape'], fitg_noInt$mle['shape'], tolerance = 1e-4)
+    expect_equal(fitg$returnValue, fitg_noInt$returnValue+offset, tolerance = 1e-4)
+    expect_equal(fitg$logReturnPeriod, fitg_noInt$logReturnPeriod, tolerance = 1e-3)
+})
+
+
 
 
 # assess return_calcs values - compare std errors to bootstrap for moderate dataset size

@@ -4,8 +4,7 @@
 \alias{calc_logReturnPeriod_fevd}
 \title{Calculates log return period and standard error given return value(s) of interest}
 \usage{
-calc_logReturnPeriod_fevd(fit, returnValue, covariates = NULL,
-  upper = FALSE)
+calc_logReturnPeriod_fevd(fit, returnValue, covariates = NULL, upper = FALSE)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -22,4 +21,3 @@ Calculates log return period given return value(s) of interest, using model fit 
 \details{
 Results are calculated (and returned) on log scale as delta-method based standard errors are more accurate for the log period. Confidence intervals on the return period scale should be calculated by calculating a confidence interval for the log return period and exponentiating the endpoints of the interval.
 }
-

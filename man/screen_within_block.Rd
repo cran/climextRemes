@@ -16,4 +16,3 @@ screen_within_block(y, index, blockLength = 10)
 \description{
 Remove multiple exceedances within non-overlapping blocks of fixed lengths, for use in declustering
 }
-

@@ -1,6 +1,9 @@
 #' Calculates return value and standard error given return period(s) of interest 
 #'
 #' Calculates return value (also known as the return level) given return period(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return value is the value for which the expected number of blocks until an event that exceeds that value is equal to the return period. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, return values and standard errors are returned for as many sets of covariates as provided. 
+#'
+#' @name calc_returnValue_fevd
+#' 
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnPeriod value(s) for which return value is desired
 #' @param covariates matrix of covariate values, each row a set of covariates for which the return value is desired
@@ -16,7 +19,8 @@ calc_returnValue_fevd <- function(fit, returnPeriod, covariates = NULL) {
     if(!is.null(covariates)) {
         if(!is.matrix(covariates)) stop("calc_returnValue_fevd: 'covariates' should be a matrix.")
         m <- nrow(covariates)
-        qcov <- make.qcov(fit, covariates)
+
+        qcov <- make.qcov_safe(fit, covariates)
         if(nPeriod == 1) {
             tmp <- try(return.level.ns.fevd.mle(fit, return.period = returnPeriod, qcov = qcov, do.ci = TRUE))
             if(!methods::is(tmp, 'try-error')) {
@@ -65,7 +69,10 @@ calc_returnValue_fevd <- function(fit, returnPeriod, covariates = NULL) {
 
 #' Calculates return value difference for two sets of covariates and standard error of difference given return period(s) of interest 
 #'
-#' Calculates difference in return values (also known as return levels) for two sets of covariates given return period(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return value is the value for which the expected number of blocks until an event that exceeds that value is equal to the return period. Differences and standard errors are returned for as many contrasts between covariate sets as provided. 
+#' Calculates difference in return values (also known as return levels) for two sets of covariates given return period(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return value is the value for which the expected number of blocks until an event that exceeds that value is equal to the return period. Differences and standard errors are returned for as many contrasts between covariate sets as provided.
+#'
+#' @name calc_returnValueDiff_fevd
+#' 
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnPeriod value(s) for which return value difference is desired
 #' @param covariates1 matrix of covariate values, each row a set of covariates for which the return value difference relative to the corresponding row of \code{covariates2} is desired
@@ -88,8 +95,8 @@ calc_returnValueDiff_fevd <- function(fit, returnPeriod, covariates1, covariates
 
     nPeriod <- length(returnPeriod)
     
-    qcov1 <- make.qcov(fit, covariates1)
-    qcov2 <- make.qcov(fit, covariates2)
+    qcov1 <- make.qcov_safe(fit, covariates1)
+    qcov2 <- make.qcov_safe(fit, covariates2)
 
     if(nPeriod == 1) {
         tmp <- try(return.level.ns.fevd.mle(fit, return.period = returnPeriod, alpha = .05, qcov = qcov1, qcov.base = qcov2, do.ci = getSE))
@@ -119,7 +126,10 @@ calc_returnValueDiff_fevd <- function(fit, returnPeriod, covariates1, covariates
 
 #' Calculates log return period and standard error given return value(s) of interest 
 #'
-#' Calculates log return period given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return period is the average number of blocks expected to occur before the return value is exceeded and is equal to the inverse of the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log return periods and standard errors are returned for as many sets of covariates as provided. 
+#' Calculates log return period given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return period is the average number of blocks expected to occur before the return value is exceeded and is equal to the inverse of the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log return periods and standard errors are returned for as many sets of covariates as provided.
+#'
+#' @name calc_logReturnPeriod_fevd
+#' 
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnValue value(s) for which return period is desired
 #' @param covariates matrix of covariate values, each row a set of covariates for which the log return period is desired
@@ -142,7 +152,10 @@ calc_logReturnPeriod_fevd <- function(fit, returnValue, covariates = NULL, upper
 
 #' Calculates log return probability and standard error given return value(s) of interest 
 #'
-#' Calculates log return probability given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log probabilities and standard errors are returned for as many sets of covariates as provided. 
+#' Calculates log return probability given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, log probabilities and standard errors are returned for as many sets of covariates as provided.
+#'
+#' @name calc_logReturnProb_fevd
+#' 
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnValue value(s) for which log return probability is desired
 #' @param covariates matrix of covariate values, each row a set of covariates for which the return probability is desired
@@ -171,7 +184,7 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
     nm <- returnValue; if(!upper) nm <- -nm
     
     if(!is.null(covariates)) {
-        qcov <- make.qcov(fit, covariates)
+        qcov <- make.qcov_safe(fit, covariates)
         location <- qcov[, locationIndices, drop = FALSE] %*% mle[locationIndices]
         scale <- qcov[, scaleIndices, drop = FALSE] %*% mle[scaleIndices]
         shape <- qcov[, shapeIndices, drop = FALSE] %*% mle[shapeIndices]
@@ -226,7 +239,10 @@ calc_logReturnProb_fevd <- function(fit, returnValue, covariates = NULL, getSE =
 
 #' Calculates log return probability difference for two sets of covariates and standard error of difference given return value(s) of interest 
 #'
-#' Calculates difference in log return probabilities for two sets of covariates given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. Differences and standard errors are returned for as many contrasts between covariate sets as provided. 
+#' Calculates difference in log return probabilities for two sets of covariates given return value(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return probability is the probability of exceeding the return value in a single block. Differences and standard errors are returned for as many contrasts between covariate sets as provided.
+#'
+#' @name calc_logReturnProbDiff_fevd
+#' 
 #' @param fit fitted object from \pkg{extRemes} \code{fevd}
 #' @param returnValue value(s) for which the log return probability difference is desired
 #' @param covariates1 matrix of covariate values, each row a set of covariates for which the log return probability difference relative to the corresponding row of \code{covariates2} is desired
@@ -255,12 +271,12 @@ calc_logReturnProbDiff_fevd <- function(fit, returnValue, covariates1, covariate
     mle <- summ$par
     cov_mle <- summ$cov.theta
   
-    qcov1 <- make.qcov(fit, covariates1)
+    qcov1 <- make.qcov_safe(fit, covariates1)
     location1 <- qcov1[, locationIndices, drop = FALSE] %*% mle[locationIndices]
     scale1 <- qcov1[, scaleIndices, drop = FALSE] %*% mle[scaleIndices]
     shape1 <- qcov1[, shapeIndices, drop = FALSE] %*% mle[shapeIndices]
 
-    qcov2 <- make.qcov(fit, covariates2)
+    qcov2 <- make.qcov_safe(fit, covariates2)
     location2 <- qcov2[, locationIndices, drop = FALSE] %*% mle[locationIndices]
     scale2 <- qcov2[, scaleIndices, drop = FALSE] %*% mle[scaleIndices]
     shape2 <- qcov2[, shapeIndices, drop = FALSE] %*% mle[shapeIndices]

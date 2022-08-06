@@ -16,16 +16,16 @@ requirements:
     - python
     - setuptools
     - numpy
-    - pandas <=0.25.3
-    - rpy2 >=2.9.4
+    - pandas
+    - rpy2
     - tzlocal
   run:
     - r >=3.0.0
     - python
     - setuptools
     - numpy
-    - pandas <=0.25.3
-    - rpy2 >=2.9.4
+    - pandas 
+    - rpy2 
     - r-rcpparmadillo
     - tzlocal
     - r-devtools

@@ -4,8 +4,14 @@
 \alias{calc_logReturnProb_fevd}
 \title{Calculates log return probability and standard error given return value(s) of interest}
 \usage{
-calc_logReturnProb_fevd(fit, returnValue, covariates = NULL, getSE = TRUE,
-  scaling = 1, upper = FALSE)
+calc_logReturnProb_fevd(
+  fit,
+  returnValue,
+  covariates = NULL,
+  getSE = TRUE,
+  scaling = 1,
+  upper = FALSE
+)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -26,4 +32,3 @@ Calculates log return probability given return value(s) of interest, using model
 \details{
 Results are calculated (and returned) on log scale as delta-method based standard errors are more accurate for the log probability. Confidence intervals on the probability scale should be calculated by calculating a confidence interval for the log probability and exponentiating the endpoints of the interval.
 }
-

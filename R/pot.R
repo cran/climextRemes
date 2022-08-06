@@ -2,7 +2,9 @@
 #'
 #' Fit a peaks-over-threshold model, designed specifically for climate data, to exceedance-only data, using the point process approach. Any covariates/predictors/features assumed to vary only between and not within blocks of observations. It includes options for variable weights (useful for local likelihood) and variable proportions of missing data, as well as for bootstrapping to estimate uncertainties. Results can be returned in terms of parameter values, return values, return periods, return probabilities, and differences in either return values or log return probabilities (i.e., log risk ratios). 
 #'
-#' @param y a numeric vector of exceedance values (values of the outcome variable above the threshold).
+#' @name fit_pot
+#' 
+#' @param y a numeric vector of exceedance values (values of the outcome variable above the threshold). For better optimization performance, it is recommended that the \code{y} have magnitude around one (see \code{Details}), for which one can use \code{scaling}.
 #' @param x a data frame, or object that can be converted to a data frame with columns corresponding to covariate/predictor/feature variables and each row containing the values of the variable for a block (e.g., often a year with climate data). The number of rows must equal the number of blocks.
 #' @param threshold a single numeric value for constant threshold or a numeric vector with length equal to the number of blocks, indicating the threshold for each block.
 #' @param locationFun formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x}.  \code{x} must be supplied if this is anything other than NULL or ~1.
@@ -28,20 +30,22 @@
 #' @param bootSE logical indicating whether to use the bootstrap to estimate standard errors.
 #' @param bootControl a list of control parameters for the bootstrapping. See \sQuote{Details}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to R's \code{optim} function. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{control = list(maxit=VALUE)} for a user-specified VALUE can be used to increase the number of iterations if the optimization is converging slowly.
-#' @param initial a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param optimControl a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.
+#' @param initial a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
 #' @param logScale logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param .normalizeX logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.
 #' @param .getInputs logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only
+#' @param .allowNoInt logical indicating whether no-intercept models are allowed. Defaults to \code{TRUE} and provided primarily to enable backwards compatibility with versions <= 0.2.2.
 #' @author Christopher J. Paciorek
 #' @export
 #' @details
 #' This function allows one to fit stationary or nonstationary peaks-over-threshold models using the point process approach. The function can return parameter estimates (which are asymptotically equivalent to GEV model parameters for block maxima data), return value/level for a given return period (number of blocks),  and return probabilities/periods for a given return value/level. The function provides standard errors based on the usual MLE asymptotics, with delta-method-based standard errors for functionals of the parameters, but also standard errors based on the nonparametric bootstrap, either resampling by block or by replicate or both.
 #'
-#' @section Analyzing aggregated observations, such as yearly averages:
+#' Analyzing aggregated observations, such as yearly averages:
 #' 
 #' Aggregated average or summed data such as yearly or seasonal averages can be fit using this function. The best way to do this is to specify \code{nBlocks} to be the number of observations (i.e., the length of the observation period, not the number of exceedances). Then any return probabilities can be interpreted as the probabilities for a single block (e.g., a year). If instead \code{nBlocks} were one (i.e., a single block) then probabilities would be interpreted as the probability of occurrence in a multi-year block. 
 #'
-#' @section Blocks and replicates:
+#' Blocks and replicates:
 #' 
 #' Note that blocks and replicates are related concepts. Blocks are the grouping of values such that return values and return periods are calculated based on the equivalent block maxima (or minima) generalized extreme value model. For example if a block is a year, the return period is the average number of years before the given value is seen, while the return value when \code{returnPeriod} is, say, 20, is the value exceeded on average once in 20 years. A given dataset will generally have multiple blocks. In some cases a block may contain only a single value, such as when analyzing yearly sums or averages.
 #'
@@ -49,7 +53,7 @@
 #'
 #' When using multiple replicates (e.g., multiple members of a climate model initial condition ensemble), the standard input format is to append outcome values for additional replicates to the \code{y} argument and indicate the replicate ID for each exceedance in \code{replicateIndex}. However, if one has different covariate values or thresholds for different replicates, then one needs to treat the additional replicates as providing additional blocks, with only a single replicate. The covariate values can then be included as additional rows in \code{x}, with \code{nBlocks} reflecting the product of the number of blocks per replicate and the number of replicates and \code{nReplicates} set to 1. In this situation, if \code{declustering} is specified, make sure to set \code{index} such that the values for separate replicates do not overlap with each other, to avoid treating exceedances from different replicates as being sequential or from a contiguous set of values. Similarly, if there is a varying number of replicates by block, then all block-replicate pairs should be treated as individual blocks with a corresponding row in \code{x}.
 #' 
-#' @section \code{bootControl} arguments:
+#' \code{bootControl} arguments:
 #' 
 #' The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 #' \itemize{
@@ -59,9 +63,9 @@
 #' \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
 #' }
 #'
-#' @section Optimization failures:
+#' Optimization failures:
 #'
-#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} if calling from Python).
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. For better optimization performance, it is recommended that the observations be scaled to have magnitude around one (e.g., converting precipitation from mm to cm). When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} if calling from Python).
 #' 
 #' When using the bootstrap, users should check that the number of convergence failures when fitting to the boostrapped datasets is small, as it is not clear how to interpret the bootstrap results when there are convergence failures for some bootstrapped datasets. 
 #'
@@ -144,7 +148,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
                     getParams = FALSE, getFit = FALSE,
                     xNew = NULL, xContrast = NULL, declustering = NULL, upperTail = TRUE, scaling = 1,
                     bootSE = FALSE, bootControl = NULL,
-                    optimArgs = NULL, initial = NULL, logScale = NULL, .normalizeX = TRUE, .getInputs = FALSE) {
+                    optimArgs = NULL, optimControl = NULL, initial = NULL, logScale = NULL, .normalizeX = TRUE, .getInputs = FALSE, .allowNoInt = TRUE) {
 
     ## various input checks
   
@@ -155,6 +159,8 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         optimArgs = list(method = c("Nelder-Mead"))
     if(is.null(optimArgs$method))
         optimArgs$method <- c("Nelder-Mead")
+    if(!is.null(optimControl))
+        optimArgs$control <- optimControl
 
     if(bootSE) {
         bControl <- list(seed = 1, n = 250, by = "block", getSample = FALSE,
@@ -169,7 +175,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     
     if(!is.null(x)) {
         x <- try(as.data.frame(x))
-        if(class(x) == 'try-error') stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
+        if(is(x, 'try-error')) stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
         m <- nrow(x)
         if(any(is.na(x)))
             stop("fit_pot: 'x' should not contain any NAs.")
@@ -178,7 +184,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         if(is.null(x))
             stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xNew <- try(as.data.frame(xNew))
-        if(class(xNew) == 'try-error') stop("fit_pot: 'xNew' should be a data frame or be able to be converted to a data frame.")
+        if(is(xNew, 'try-error')) stop("fit_pot: 'xNew' should be a data frame or be able to be converted to a data frame.")
         mNew <- nrow(xNew)
         if(ncol(x) != ncol(xNew) || (numNumericFun != 3 && !identical(sort(names(x)), sort(names(xNew)))))
             stop("fit_pot: columns in 'x' and 'xNew' should be the same.")
@@ -187,7 +193,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         if(is.null(x))
             stop("fit_pot: 'x' must be provided if 'xNew' is provided.")
         xContrast <- try(as.data.frame(xContrast))
-        if(class(xContrast) == 'try-error') stop("fit_pot: 'xContrast' should be a data frame or be able to be converted to a data frame.")
+        if(is(xContrast, 'try-error')) stop("fit_pot: 'xContrast' should be a data frame or be able to be converted to a data frame.")
         mContrast <- nrow(xContrast)
         if(is.null(xNew) && m != mContrast) stop("fit_pot: number of values in 'x' and 'xContrast' should be the same.")
         if(!is.null(xNew) && mNew != mContrast) stop("fit_pot: number of values in 'xNew' and 'xContrast' should be the same.")
@@ -241,7 +247,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     if(nReplicates == 1) replicateIndex <- rep(1, length(y))
     
     if(!is.null(initial)) {
-        if(!is.list(initial) || sort(names(initial)) != c('location', 'scale', 'shape'))
+        if(!is.list(initial) || !identical(sort(names(initial)), c('location', 'scale', 'shape')))
             stop("fit_pot: 'initial' must be a named list with components 'location', 'scale', 'shape'.")
         if(!upperTail)
             initial$location <- -initial$location
@@ -258,9 +264,9 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
     
 
     # ensure parameter functions are in the form of formulae
-    locationFun <- parseParamInput(locationFun, names(x))
-    scaleFun <- parseParamInput(scaleFun, names(x))
-    shapeFun <- parseParamInput(shapeFun, names(x))
+    locationFun <- parseParamInput(locationFun, names(x), .allowNoInt)
+    scaleFun <- parseParamInput(scaleFun, names(x), .allowNoInt)
+    shapeFun <- parseParamInput(shapeFun, names(x), .allowNoInt)
     
     if(numNumericFun == 3) {
         # if using numeric indices of columns, align the names
@@ -291,8 +297,10 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
 
     # can't do inverse normalization on resulting param estimates easily if have interactions or functions of covariates
     nm <- unique(c(all.names(locationFun), all.names(scaleFun), all.names(shapeFun)))
-    if(any(!nm %in% c(names(x), '~', '+'))) .normalizeX <- FALSE
+    if(any(!nm %in% c(names(x), '~', '+', '-'))) .normalizeX <- FALSE
 
+    noInt <- c('-' %in% all.names(locationFun), '-' %in% all.names(scaleFun), '-' %in% all.names(shapeFun))
+    
     nm <- nm[grep("^[a-zA-Z]", nm)]
     if(!is.null(x) && !all(nm %in% names(x)))
         stop("fit_pot: one or more variables in location, scale, and/or shape formulae are not contained in 'x'.")
@@ -371,7 +379,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
         proportionMissing <- rep(proportionMissing, nBlocks)
     
     
-    fit <- fit_model_pot(y, xObs, x, thresholdObs, threshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, weightsObs, weights, proportionMissing, optimArgs, initial = initial, logScale = logScale)
+    fit <- fit_model_pot(y, xObs, x, thresholdObs, threshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, weightsObs, weights, proportionMissing, optimArgs, initial = initial, logScale = logScale, noInt = noInt)
     if(!fit$info$failure) {
         # calculate various return quantities as specified by user
         if(is.null(xNew)) xUse <- x else xUse <- xNew
@@ -495,7 +503,7 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
             }
          
             # fit model to bootstrapped dataset
-            bFit <- fit_model_pot(bData$y, bxObs, bX, bData$thresholdObs, bThreshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, bData$weightsObs, bWeights, bProportionMissing, optimArgs = optimArgs, initial = results$mle_raw, logScale = logScale)
+            bFit <- fit_model_pot(bData$y, bxObs, bX, bData$thresholdObs, bThreshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, bData$weightsObs, bWeights, bProportionMissing, optimArgs = optimArgs, initial = fit$results$par, logScale = logScale, noInt = noInt)
             if(!bFit$info$failure) {
                 if(is.null(xNew)) xUse <- x else xUse <- xNew
                 bResults <- compute_return_quantities(bFit, returnPeriod = returnPeriod, returnValue = returnValue, x = xUse, x2 = xContrast, locationFun = locationFun, scaleFun = scaleFun, shapeFun = shapeFun, getParams = getParams, upper = upperTail, scaling = scaling, normalizers = normalizers, getSE = bootControl$getSampleSE)
@@ -563,14 +571,14 @@ fit_pot <- function(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
 } # end of fit_pot()
                          
 
-fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, weightsObs, weights, proportionMissing, optimArgs, initial = NULL, logScale = NULL) {
+fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scaleFun, shapeFun, nBlocks, nReplicates, weightsObs, weights, proportionMissing, optimArgs, initial = NULL, logScale = NULL, noInt) {
     # auxiliary function for fitting POT model to individual dataset - used for original dataset and bootstrapped datasets
 
     # set up initial values; used for bootstrapped dataset fitting based on fit to original data
     if(!is.null(initial)) {
         tmp <- list()
         tmp$location <- initial[grep("(location)|(mu)", names(initial))]
-        tmp$scale <- tmp$log.scale <- initial[grep("(scale)|(phi)", names(initial))]
+        tmp$scale <- tmp$log.scale <- initial[grep("(scale)|(phi)|(sigma)", names(initial))]
         tmp$shape <- initial[grep("(shape)|(xi)", names(initial))]
         initial <- tmp
     } 
@@ -631,6 +639,7 @@ fit_model_pot <- function(y, xObs, x, thresholdObs, threshold, locationFun, scal
         fit$info$message <- paste("optimization call returned error: ", msg)
     } 
     fit$info$failure <- failed
+    fit$noInt <- noInt
     return(fit)
 } # end of fit_model_pot()
 

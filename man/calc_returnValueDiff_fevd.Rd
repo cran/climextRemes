@@ -4,8 +4,13 @@
 \alias{calc_returnValueDiff_fevd}
 \title{Calculates return value difference for two sets of covariates and standard error of difference given return period(s) of interest}
 \usage{
-calc_returnValueDiff_fevd(fit, returnPeriod, covariates1, covariates2,
-  getSE = TRUE)
+calc_returnValueDiff_fevd(
+  fit,
+  returnPeriod,
+  covariates1,
+  covariates2,
+  getSE = TRUE
+)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -24,4 +29,3 @@ Calculates difference in return values (also known as return levels) for two set
 \details{
 This is designed to calculate differences in return values and associated standard errors for different covariate values based on the same model fit. It is not designed for differences based on separate model fits, although it may be possible handle this case by fit two models in a single model specification using dummy variables.
 }
-

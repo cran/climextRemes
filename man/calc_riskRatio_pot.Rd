@@ -4,25 +4,62 @@
 \alias{calc_riskRatio_pot}
 \title{Compute risk ratio and uncertainty based on peaks-over-threshold models fit to exceedances over a threshold}
 \usage{
-calc_riskRatio_pot(returnValue, y1, y2, x1 = NULL, x2 = x1, threshold1,
-  threshold2 = threshold1, locationFun1 = NULL,
-  locationFun2 = locationFun1, scaleFun1 = NULL, scaleFun2 = scaleFun1,
-  shapeFun1 = NULL, shapeFun2 = shapeFun1, nBlocks1 = nrow(x1),
-  nBlocks2 = nrow(x2), blockIndex1 = NULL, blockIndex2 = NULL,
-  firstBlock1 = 1, firstBlock2 = 1, index1 = NULL, index2 = NULL,
-  nReplicates1 = 1, nReplicates2 = 1, replicateIndex1 = NULL,
-  replicateIndex2 = NULL, weights1 = NULL, weights2 = NULL,
-  proportionMissing1 = NULL, proportionMissing2 = NULL, xNew1 = NULL,
-  xNew2 = NULL, declustering = NULL, upperTail = TRUE, scaling1 = 1,
-  scaling2 = 1, ciLevel = 0.9, ciType, bootSE, bootControl = NULL,
-  lrtControl = NULL, optimArgs = NULL, initial1 = NULL, initial2 = NULL,
-  logScale1 = NULL, logScale2 = NULL, getReturnCalcs = FALSE,
-  getParams = FALSE, getFit = FALSE)
+calc_riskRatio_pot(
+  returnValue,
+  y1,
+  y2,
+  x1 = NULL,
+  x2 = x1,
+  threshold1,
+  threshold2 = threshold1,
+  locationFun1 = NULL,
+  locationFun2 = locationFun1,
+  scaleFun1 = NULL,
+  scaleFun2 = scaleFun1,
+  shapeFun1 = NULL,
+  shapeFun2 = shapeFun1,
+  nBlocks1 = nrow(x1),
+  nBlocks2 = nrow(x2),
+  blockIndex1 = NULL,
+  blockIndex2 = NULL,
+  firstBlock1 = 1,
+  firstBlock2 = 1,
+  index1 = NULL,
+  index2 = NULL,
+  nReplicates1 = 1,
+  nReplicates2 = 1,
+  replicateIndex1 = NULL,
+  replicateIndex2 = NULL,
+  weights1 = NULL,
+  weights2 = NULL,
+  proportionMissing1 = NULL,
+  proportionMissing2 = NULL,
+  xNew1 = NULL,
+  xNew2 = NULL,
+  declustering = NULL,
+  upperTail = TRUE,
+  scaling1 = 1,
+  scaling2 = 1,
+  ciLevel = 0.9,
+  ciType,
+  bootSE,
+  bootControl = NULL,
+  lrtControl = NULL,
+  optimArgs = NULL,
+  optimControl = NULL,
+  initial1 = NULL,
+  initial2 = NULL,
+  logScale1 = NULL,
+  logScale2 = NULL,
+  getReturnCalcs = FALSE,
+  getParams = FALSE,
+  getFit = FALSE
+)
 }
 \arguments{
 \item{returnValue}{numeric value giving the value for which the risk ratio should be calculated, where the resulting period will be the average number of blocks until the value is exceeded and the probability the probability of exceeding the value in any single block.}
 
-\item{y1}{a numeric vector of exceedance values for the first dataset (values of the outcome variable above the threshold).}
+\item{y1}{a numeric vector of exceedance values for the first dataset (values of the outcome variable above the threshold). For better optimization performance, it is recommended that the \code{y1} have magnitude around one (see \code{Details}), for which one can use \code{scaling1}.}
 
 \item{y2}{a numeric vector of exceedance values for the second dataset (values of the outcome variable above the threshold).}
 
@@ -102,9 +139,11 @@ calc_riskRatio_pot(returnValue, y1, y2, x1 = NULL, x2 = x1, threshold1,
 
 \item{optimArgs}{a list with named components matching exactly any arguments that the user wishes to pass to \code{optim}. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{'control=list(maxit=VALUE)'} for a user-chosen VALUE can be used to increase the number of iterations if the optimization is converging slowly.}
 
-\item{initial1}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.}
+\item{optimControl}{a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.}
 
-\item{initial2}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.}
+\item{initial1}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale1 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.}
+
+\item{initial2}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale2 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.}
 
 \item{logScale1}{logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients).}
 
@@ -123,16 +162,15 @@ The primary outputs of this function are as follows: the log of the risk ratio a
 Compute risk ratio and uncertainty by fitting peaks-over-threshold model, designed specifically for climate data, to exceedance-only data, using the point process approach. The risk ratio is the ratio of the probability of exceedance of a pre-specified value under the model fit to the first dataset to the probability under the model fit to the second dataset. Default standard errors are based on the usual MLE asymptotics using a delta-method-based approximation, but standard errors based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
 }
 \details{
-See \code{\link{fit_pot}} for more details on fitting the peaks-over-threshold model for each dataset, including details on blocking and replication. Also see \code{\link{fit_pot}} for information on the \code{bootControl} argument.
+See \code{\link{fit_pot}} for more details on fitting the peaks-over-threshold model for each dataset, including details on blocking and replication. Also see \code{\link{fit_pot}} for information on the \code{bootControl} argument. 
+
+Optimization failures:
+
+It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_pot}. Also note that if the probability in the denominator of the risk ratio is near one, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
 
 \code{ciType} can include one or more of the following: \code{'delta'}, \code{'lrt'}, \code{'boot_norm'}, \code{'boot_perc'}, \code{'boot_basic'}, \code{'boot_stud'}, \code{'boot_bca'}. \code{'delta'} uses the delta method to compute an asymptotic interval based on the standard error of the log risk ratio. \code{'lrt'} inverts a likelihood-ratio test. Bootstrap-based options are the normal-based interval using the bootstrap standard error (\code{'boot_norm'}), the percentile bootstrap (\code{'boot_perc'}), the basic bootstrap (\code{'boot_basic'}), the bootstrap-t (\code{'boot_stud'}), and the bootstrap BCA method (\code{'boot_bca'}). See Paciorek et al. for more details. 
 
 See \code{\link{fit_pot}} for information on the \code{bootControl} argument.
-}
-\section{Optimization failures}{
-
-
-It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_pot}. Also note that if the probability in the denominator of the risk ratio is near 1, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
 }
 \examples{
 data(Fort, package = 'extRemes')
@@ -160,12 +198,11 @@ out <- calc_riskRatio_pot(returnValue = 3,
                    firstBlock1 = earlyYears[1], firstBlock2 = lateYears[1])
 }
 }
-\author{
-Christopher J. Paciorek
-}
 \references{
 Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 
 Jeon S., C.J. Paciorek, and M.F. Wehner. 2016. Quantile-based bias correction and uncertainty quantification of extreme event attribution statements. Weather and Climate Extremes 12: 24-32. <DOI:10.1016/j.wace.2016.02.001>. arXiv preprint: <http://arxiv.org/abs/1602.04139>.
 }
-
+\author{
+Christopher J. Paciorek
+}

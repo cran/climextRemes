@@ -1,4 +1,36 @@
+0.3.0 (August 2022)
+
+* Allow use of no-intercept models, including normalization of covariates.
+
+* Fix setting of initial values for bootstrap fits when `logScale` is `TRUE` for stationary models and `FALSE` for nonstationary models. Also update help information about setting initial values when `logScale=TRUE`.
+
+* Add suggestion that magnitude of y values be around 1 for better optimization performance to help information.
+
+* Update setup.py to include Python 3.9, 3.10.
+
+* Update Conda build to avoid dependence on old pandas and rpy2 (because Anaconda rpy2 is still 2.9.4) by using conda-forge channel. Update instructions to indicate use of conda-forge channel to avoid new dependency issues that seem to have arisen when trying to install rpy2. Update instructions to suggest use of Mamba to avoid hanging on dependency resolution.
+
+* Update approach to conversion to/from R objects to avoid use of custom converter (which was causing issues in rpy2 >= 3.5.0 and was clunky in terms of working with rpy2 internals in rpy2 >= 3.3.0). Now for rpy2 >= 3.0.0 do manual conversion of numpy arrays and pandas dataframes to R objects.
+
+- Fix error with setup of rpy2 converter preventing Python climextremes import when using rpy2 >= 3.5.0.
+
+* Fix error with the rpy2 parsing of R help that was preventing Python climextremes import when using rpy2 >= 3.4.0.
+
+* Fix error in giving default value for `nBlocks` argument in Python help for `fit_pot` and similarly for `nBlocks1` and `nBlocks2` for `calc_riskRatio_pot`.
+
+* Fix syntax error in check of `initial`.
+
+* Add `optimControl` argument for Python to avoid issues with nested dictionaries.
+
+* Pass `upgrade = 'never'` when installing R packages from Python.
+
+* Fix weird case in Conda installation where Conda's R sets `TAR` environment variable incorrectly to `/bin/gtar`.
+
+* Standardize indentation in Python files to four spaces.
+
 0.2.2 (August 2020)
+
+* fixed Python interface so that matrices and arrays (and their dimension arrays) are handled properly when returned to Python from R.
 
 * fixed bug when using upperTail=FALSE in calc_riskRatio_pot and calc_riskRatio_gev.
 

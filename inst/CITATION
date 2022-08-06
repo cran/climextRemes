@@ -30,7 +30,7 @@ bibentry(
 bibentry(
     bibtype = "misc",
     title = "climextRemes: Tools for Analyzing Climate Extremes",
-    author = person(given = "Christopher", middle = "J.", family = "Paciorek"),
+    author = person(given = "Christopher J.", family = "Paciorek"),
     url = "https://cran.r-project.org/package=climextRemes",
     year = year,
     version = meta$Version,

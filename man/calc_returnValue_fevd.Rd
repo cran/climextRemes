@@ -16,4 +16,3 @@ calc_returnValue_fevd(fit, returnPeriod, covariates = NULL)
 \description{
 Calculates return value (also known as the return level) given return period(s) of interest, using model fit from \code{extRemes::fevd}. Standard error is obtained via the delta method. The return value is the value for which the expected number of blocks until an event that exceeds that value is equal to the return period. For non-stationary models (those that include covariates for the location, scale, and/or shape parameters, return values and standard errors are returned for as many sets of covariates as provided.
 }
-

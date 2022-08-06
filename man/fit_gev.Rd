@@ -4,16 +4,37 @@
 \alias{fit_gev}
 \title{Fit a generalized extreme value model to block maxima or minima}
 \usage{
-fit_gev(y, x = NULL, locationFun = NULL, scaleFun = NULL,
-  shapeFun = NULL, nReplicates = 1, replicateIndex = NULL,
-  weights = NULL, returnPeriod = NULL, returnValue = NULL,
-  getParams = FALSE, getFit = FALSE, xNew = NULL, xContrast = NULL,
-  maxes = TRUE, scaling = 1, bootSE = FALSE, bootControl = NULL,
-  optimArgs = NULL, missingFlag = NULL, initial = NULL, logScale = NULL,
-  .normalizeX = TRUE, .getInputs = FALSE)
+fit_gev(
+  y,
+  x = NULL,
+  locationFun = NULL,
+  scaleFun = NULL,
+  shapeFun = NULL,
+  nReplicates = 1,
+  replicateIndex = NULL,
+  weights = NULL,
+  returnPeriod = NULL,
+  returnValue = NULL,
+  getParams = FALSE,
+  getFit = FALSE,
+  xNew = NULL,
+  xContrast = NULL,
+  maxes = TRUE,
+  scaling = 1,
+  bootSE = FALSE,
+  bootControl = NULL,
+  optimArgs = NULL,
+  optimControl = NULL,
+  missingFlag = NULL,
+  initial = NULL,
+  logScale = NULL,
+  .normalizeX = TRUE,
+  .getInputs = FALSE,
+  .allowNoInt = TRUE
+)
 }
 \arguments{
-\item{y}{a numeric vector of observed maxima or minima values. See \code{Details} for how the values of \code{y} should be ordered if there are multiple replicates and the values of \code{x} are identical for all replicates.}
+\item{y}{a numeric vector of observed maxima or minima values. See \code{Details} for how the values of \code{y} should be ordered if there are multiple replicates and the values of \code{x} are identical for all replicates. For better optimization performance, it is recommended that the \code{y} have magnitude around one (see \code{Details}), for which one can use \code{scaling}.}
 
 \item{x}{a data frame, or object that can be converted to a data frame with columns corresponding to covariate/predictor/feature variables and each row containing the values of the variable for the corresponding observed maximum/minimum. The number of rows should either equal the length of \code{y} or (if there is more than one replicate) it can optionally equal the number of observations in a single replicate, in which case the values will be assumed to be the same for all replicates.}
 
@@ -51,15 +72,19 @@ fit_gev(y, x = NULL, locationFun = NULL, scaleFun = NULL,
 
 \item{optimArgs}{a list with named components matching exactly any arguments that the user wishes to pass to R's \code{optim} function. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{control=list(maxit=VALUE)} for a user-specified VALUE can be used to increase the number of iterations if the optimization is converging slowly.}
 
+\item{optimControl}{a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.}
+
 \item{missingFlag}{value to be interpreted as missing values (instead of \code{NA}), intended for use in other languages (e.g., Python) calling this function}
 
-\item{initial}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale}, and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.}
+\item{initial}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale}, and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.}
 
 \item{logScale}{logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients).}
 
 \item{.normalizeX}{logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.}
 
 \item{.getInputs}{logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only}
+
+\item{.allowNoInt}{logical indicating whether no-intercept models are allowed. Defaults to \code{TRUE} and provided primarily to enable backwards compatibility with versions <= 0.2.2.}
 }
 \value{
 The primary outputs of this function are as follows, depending on what is requested via \code{returnPeriod}, \code{returnValue}, \code{getParams} and \code{xContrast}:
@@ -77,19 +102,16 @@ Fit a generalized extreme value model, designed specifically for climate data. I
 }
 \details{
 This function allows one to fit stationary or nonstationary block maxima/minima models using the generalized extreme value distribution. The function can return parameter estimates, return value/level for a given return period (number of blocks), and return probabilities/periods for a given return value/level. The function provides standard errors based on the usual MLE asymptotics, with delta-method-based standard errors for functionals of the parameters, but also standard errors based on the nonparametric bootstrap, either resampling by block or by replicate or both.
-}
-\section{Replicates}{
 
+Replicates:
 
 Replicates are repeated datasets, each with the same structure, including the same number of block maxima/minima. The additional observations in multiple replicates could simply be treated as additional blocks without replication (see next paragraph), but when the covariate values and weights are the same across replicates, it is simpler to make use of \code{nReplicates} and \code{replicateIndex}.
 
 When using multiple replicates (e.g., multiple members of a climate model initial condition ensemble), the standard input format is to append observations for additional replicates to the \code{y} argument and indicate the replicate ID for each value via \code{replicateIndex}, which would be of the form 1,1,1,...2,2,2,...3,3,3,... etc. The values for each replicate should be grouped together and in the same order within replicate so that \code{x} can be correctly matched to the \code{y} values when \code{x} is only supplied for the first replicate. In other words, \code{y} should first contain all the values for the first replicate, then all the values for the second replicate in the same block order as for the first replicate, and so forth. Note that if \code{y} is provided as a matrix with the number of rows equal to the number of observations in each replicate and the columns corresponding to replicates, this ordering will occur naturally.
 
 However, if one has different covariate values for different replicates, then one needs to treat the additional replicates as providing additional blocks, with only a single replicate (and \code{nReplicates} set to 1). The covariate values can then be included as additional rows in \code{x}. Similarly, if there is a varying number of replicates by block, then all block-replicate pairs should be treated as individual blocks with a corresponding row in \code{x} (and \code{nReplicates} set to 1).
-}
 
-\section{\code{bootControl} arguments}{
-
+\code{bootControl} arguments:
 
 The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 \itemize{
@@ -98,12 +120,10 @@ The \code{bootControl} argument is a list (or dictionary when calling from Pytho
 \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
 \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information returned for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
 }
-}
 
-\section{Optimization failures}{
+Optimization failures:
 
-
-It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} when calling from Python). 
+It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. For better optimization performance, it is recommended that the observations be scaled to have magnitude around one (e.g., converting precipitation from mm to cm). When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} when calling from Python). 
 
 When using the bootstrap, users should check that the number of convergence failures when fitting to the boostrapped datasets is small, as it is not clear how to interpret the bootstrap results when there are convergence failures for some bootstrapped datasets.
 }
@@ -120,12 +140,11 @@ out <- fit_gev(FortMax$Prec, x = data.frame(years = FortMax$year),
         locationFun = ~years, returnPeriod = 20, returnValue = 3.5,
         getParams = TRUE, xNew = data.frame(years = range(FortMax$year)), bootSE = FALSE)
 }
-\author{
-Christopher J. Paciorek
-}
 \references{
 Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 
 Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 }
-
+\author{
+Christopher J. Paciorek
+}

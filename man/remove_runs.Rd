@@ -11,9 +11,8 @@ remove_runs(y, index, upperTail = TRUE)
 
 \item{index}{vector of indices, one per value, that indicate which elements of \code{y} are consecutive}
 
-\item{upperTail}{logical indicating whether values of \code{y} are upper (right) tail values (TRUE) or lower (left) tail values (FALSE)}
+\item{upperTail}{logical indicating whether values of \code{y} are upper (right) tail values (TRUE) or lower (left) tail values. Defaults to \code{FALSE}.}
 }
 \description{
 Remove runs, i.e., consecutive exceedances, from a vector of values and associated indices (days); for use in declustering
 }
-

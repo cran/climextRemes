@@ -4,8 +4,15 @@
 \alias{calc_logReturnProbDiff_fevd}
 \title{Calculates log return probability difference for two sets of covariates and standard error of difference given return value(s) of interest}
 \usage{
-calc_logReturnProbDiff_fevd(fit, returnValue, covariates1, covariates2,
-  getSE = TRUE, scaling = 1, upper = FALSE)
+calc_logReturnProbDiff_fevd(
+  fit,
+  returnValue,
+  covariates1,
+  covariates2,
+  getSE = TRUE,
+  scaling = 1,
+  upper = FALSE
+)
 }
 \arguments{
 \item{fit}{fitted object from \pkg{extRemes} \code{fevd}}
@@ -30,4 +37,3 @@ Results are calculated (and returned) on log scale as delta-method based standar
 
 This is designed to calculate differences in log return probabilities and associated standard errors for different covariate values based on the same model fit. It is not designed for differences based on separate model fits, although it may be possible handle this case by fit two models in a single model specification using dummy variables.
 }
-

@@ -4,17 +4,43 @@
 \alias{fit_pot}
 \title{Fit a peaks-over-threshold model to exceedances over a threshold}
 \usage{
-fit_pot(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
-  shapeFun = NULL, nBlocks = nrow(x), blockIndex = NULL, firstBlock = 1,
-  index = NULL, nReplicates = 1, replicateIndex = NULL, weights = NULL,
-  proportionMissing = NULL, returnPeriod = NULL, returnValue = NULL,
-  getParams = FALSE, getFit = FALSE, xNew = NULL, xContrast = NULL,
-  declustering = NULL, upperTail = TRUE, scaling = 1, bootSE = FALSE,
-  bootControl = NULL, optimArgs = NULL, initial = NULL, logScale = NULL,
-  .normalizeX = TRUE, .getInputs = FALSE)
+fit_pot(
+  y,
+  x = NULL,
+  threshold,
+  locationFun = NULL,
+  scaleFun = NULL,
+  shapeFun = NULL,
+  nBlocks = nrow(x),
+  blockIndex = NULL,
+  firstBlock = 1,
+  index = NULL,
+  nReplicates = 1,
+  replicateIndex = NULL,
+  weights = NULL,
+  proportionMissing = NULL,
+  returnPeriod = NULL,
+  returnValue = NULL,
+  getParams = FALSE,
+  getFit = FALSE,
+  xNew = NULL,
+  xContrast = NULL,
+  declustering = NULL,
+  upperTail = TRUE,
+  scaling = 1,
+  bootSE = FALSE,
+  bootControl = NULL,
+  optimArgs = NULL,
+  optimControl = NULL,
+  initial = NULL,
+  logScale = NULL,
+  .normalizeX = TRUE,
+  .getInputs = FALSE,
+  .allowNoInt = TRUE
+)
 }
 \arguments{
-\item{y}{a numeric vector of exceedance values (values of the outcome variable above the threshold).}
+\item{y}{a numeric vector of exceedance values (values of the outcome variable above the threshold). For better optimization performance, it is recommended that the \code{y} have magnitude around one (see \code{Details}), for which one can use \code{scaling}.}
 
 \item{x}{a data frame, or object that can be converted to a data frame with columns corresponding to covariate/predictor/feature variables and each row containing the values of the variable for a block (e.g., often a year with climate data). The number of rows must equal the number of blocks.}
 
@@ -66,13 +92,17 @@ fit_pot(y, x = NULL, threshold, locationFun = NULL, scaleFun = NULL,
 
 \item{optimArgs}{a list with named components matching exactly any arguments that the user wishes to pass to R's \code{optim} function. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{control = list(maxit=VALUE)} for a user-specified VALUE can be used to increase the number of iterations if the optimization is converging slowly.}
 
-\item{initial}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.}
+\item{optimControl}{a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.}
+
+\item{initial}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.}
 
 \item{logScale}{logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients).}
 
 \item{.normalizeX}{logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.}
 
 \item{.getInputs}{logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only}
+
+\item{.allowNoInt}{logical indicating whether no-intercept models are allowed. Defaults to \code{TRUE} and provided primarily to enable backwards compatibility with versions <= 0.2.2.}
 }
 \value{
 The primary outputs of this function are as follows, depending on what is requested via \code{returnPeriod}, \code{returnValue}, \code{getParams} and \code{xContrast}:
@@ -90,25 +120,20 @@ Fit a peaks-over-threshold model, designed specifically for climate data, to exc
 }
 \details{
 This function allows one to fit stationary or nonstationary peaks-over-threshold models using the point process approach. The function can return parameter estimates (which are asymptotically equivalent to GEV model parameters for block maxima data), return value/level for a given return period (number of blocks),  and return probabilities/periods for a given return value/level. The function provides standard errors based on the usual MLE asymptotics, with delta-method-based standard errors for functionals of the parameters, but also standard errors based on the nonparametric bootstrap, either resampling by block or by replicate or both.
-}
-\section{Analyzing aggregated observations, such as yearly averages}{
 
+Analyzing aggregated observations, such as yearly averages:
 
-Aggregated average or summed data such as yearly or seasonal averages can be fit using this function. The best way to do this is to specify \code{nBlocks} to be the number of observations (i.e., the length of the observation period, not the number of exceedances). Then any return probabilities can be interpreted as the probabilities for a single block (e.g., a year). If instead \code{nBlocks} were one (i.e., a single block) then probabilities would be interpreted as the probability of occurrence in a multi-year block.
-}
+Aggregated average or summed data such as yearly or seasonal averages can be fit using this function. The best way to do this is to specify \code{nBlocks} to be the number of observations (i.e., the length of the observation period, not the number of exceedances). Then any return probabilities can be interpreted as the probabilities for a single block (e.g., a year). If instead \code{nBlocks} were one (i.e., a single block) then probabilities would be interpreted as the probability of occurrence in a multi-year block. 
 
-\section{Blocks and replicates}{
-
+Blocks and replicates:
 
 Note that blocks and replicates are related concepts. Blocks are the grouping of values such that return values and return periods are calculated based on the equivalent block maxima (or minima) generalized extreme value model. For example if a block is a year, the return period is the average number of years before the given value is seen, while the return value when \code{returnPeriod} is, say, 20, is the value exceeded on average once in 20 years. A given dataset will generally have multiple blocks. In some cases a block may contain only a single value, such as when analyzing yearly sums or averages.
 
 Replicates are repeated datasets, each with the same structure, including the same number of blocks. The additional blocks in multiple replicates could simply be treated as additional blocks without replication, but when the predictor variables and weights are the same across replicates, it is simpler to make use of \code{nReplicates} and \code{replicateIndex} (see next paragraph). A given replicate might only contain a single block, such as with an ensemble of short climate model runs that are run only for the length of a single block (e.g., a single year). In this case \code{nBlocks} should be set to one.
 
 When using multiple replicates (e.g., multiple members of a climate model initial condition ensemble), the standard input format is to append outcome values for additional replicates to the \code{y} argument and indicate the replicate ID for each exceedance in \code{replicateIndex}. However, if one has different covariate values or thresholds for different replicates, then one needs to treat the additional replicates as providing additional blocks, with only a single replicate. The covariate values can then be included as additional rows in \code{x}, with \code{nBlocks} reflecting the product of the number of blocks per replicate and the number of replicates and \code{nReplicates} set to 1. In this situation, if \code{declustering} is specified, make sure to set \code{index} such that the values for separate replicates do not overlap with each other, to avoid treating exceedances from different replicates as being sequential or from a contiguous set of values. Similarly, if there is a varying number of replicates by block, then all block-replicate pairs should be treated as individual blocks with a corresponding row in \code{x}.
-}
 
-\section{\code{bootControl} arguments}{
-
+\code{bootControl} arguments:
 
 The \code{bootControl} argument is a list (or dictionary when calling from Python) that can supply any of the following components:
 \itemize{
@@ -117,12 +142,10 @@ The \code{bootControl} argument is a list (or dictionary when calling from Pytho
 \item by. Character string, one of \code{'block'}, \code{'replicate'}, or \code{'joint'}, indicating the basis for the resampling. If \code{'block'}, resampled datasets will consist of blocks drawn at random from the original set of blocks; if there are replicates, each replicate will occur once for every resampled block. If \code{'replicate'}, resampled datasets will consist of replicates drawn at random from the original set of replicates; all blocks from a replicate will occur in each resampled replicate. Note that this preserves any dependence across blocks rather than assuming independence between blocks. If \code{'joint'} resampled datasets will consist of block-replicate pairs drawn at random from the original set of block-replicate pairs. Defaults to \code{'block'}. 
 \item getSample. Logical/boolean indicating whether the user wants the full bootstrap sample of parameter estimates and/or return value/period/probability information provided for use in subsequent calculations; if FALSE (the default), only the bootstrap-based estimated standard errors are returned.
 }
-}
 
-\section{Optimization failures}{
+Optimization failures:
 
-
-It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} if calling from Python).
+It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Users should carefully check the \code{info} element of the return object to ensure that the optimization converged. For better optimization performance, it is recommended that the observations be scaled to have magnitude around one (e.g., converting precipitation from mm to cm). When there is a convergence failure, one can try a different optimization method, more iterations, or different starting values -- see \code{optimArgs} and \code{initial}. In particular, the Nelder-Mead method is used; users may want to try the BFGS method by setting \code{optimArgs = list(method = 'BFGS')} (or \code{optimArgs = {'method': 'BFGS'}} if calling from Python).
 
 When using the bootstrap, users should check that the number of convergence failures when fitting to the boostrapped datasets is small, as it is not clear how to interpret the bootstrap results when there are convergence failures for some bootstrapped datasets.
 }
@@ -183,12 +206,11 @@ out <- fit_pot(FortSummerSumExc$Prec, x = data.frame(years = years), threshold =
         bootSE = FALSE)
 
 }
-\author{
-Christopher J. Paciorek
-}
 \references{
 Coles, S. 2001. An Introduction to Statistical Modeling of Extreme Values. Springer.
 
 Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 }
-
+\author{
+Christopher J. Paciorek
+}

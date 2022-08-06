@@ -18,4 +18,3 @@ normalize(vec, shift = NULL, lower = NULL, upper = NULL)
 \description{
 Normalize a vector by subtracting off central point and dividing by range
 }
-

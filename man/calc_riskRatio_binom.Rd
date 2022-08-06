@@ -4,8 +4,15 @@
 \alias{calc_riskRatio_binom}
 \title{Compute risk ratio and uncertainty based on binomial models for counts of events relative to possible number of events}
 \usage{
-calc_riskRatio_binom(y, n, ciLevel = 0.9, ciType, bootSE,
-  bootControl = NULL, lrtControl = NULL)
+calc_riskRatio_binom(
+  y,
+  n,
+  ciLevel = 0.9,
+  ciType,
+  bootSE,
+  bootControl = NULL,
+  lrtControl = NULL
+)
 }
 \arguments{
 \item{y}{vector of two values, the number of events in the two scenarios}
@@ -41,9 +48,6 @@ calc_riskRatio_binom(c(40, 8), c(400, 400), ciType = c('lrt', 'boot_stud', 'koop
 # even if estimated risk ratio is infinity:
 calc_riskRatio_binom(c(4,0), c(100, 100), ciType = c('lrt', 'boot_stud', 'koopman'))
 }
-\author{
-Christopher J. Paciorek
-}
 \references{
 Paciorek, C.J., D.A. Stone, and M.F. Wehner. 2018. Quantifying uncertainty in the attribution of human influence on severe weather. Weather and Climate Extremes 20:69-80. arXiv preprint <https://arxiv.org/abs/1706.03388>.
 
@@ -51,4 +55,6 @@ Koopman, P.A.R. 1984. Confidence intervals for the ratio of two binomial proport
 
 Fagerland, M.W., S. Lydersen, and P. Laake. 2015. Recommended confidence intervals for two independent binomial proportions. Statistical Methods in Medical Research 24: 224-254.
 }
-
+\author{
+Christopher J. Paciorek
+}

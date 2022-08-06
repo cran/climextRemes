@@ -5,6 +5,8 @@ bootTypesCols <- list('boot_norm' = 'normal', 'boot_perc' = 'percent', 'boot_bas
 #'
 #' Compute risk ratio and uncertainty by fitting binomial models to counts of events relative to possible number of events. The risk ratio is the ratio of the probability of an event under the model fit to the first dataset to the probability under the model fit to the second dataset. Default standard errors are based on the usual MLE asymptotics using a delta-method-based approximation, but standard errors based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
 #'
+#' @name calc_riskRatio_binom
+#' 
 #' @param y vector of two values, the number of events in the two scenarios
 #' @param n vector of two values, the number of samples (possible occurrences of events) in the two scenarios 
 #' @param ciLevel statistical confidence level for confidence intervals; in repeated experimentation, this proportion of confidence intervals should contain the true risk ratio. Note that if only one endpoint of the resulting interval is used, for example the lower bound, then the effective confidence level increases by half of one minus \code{ciLevel}. For example, a two-sided 0.90 confidence interval corresponds to a one-sided 0.95 confidence interval.
@@ -230,8 +232,10 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #'
 #' Compute risk ratio and uncertainty by fitting peaks-over-threshold model, designed specifically for climate data, to exceedance-only data, using the point process approach. The risk ratio is the ratio of the probability of exceedance of a pre-specified value under the model fit to the first dataset to the probability under the model fit to the second dataset. Default standard errors are based on the usual MLE asymptotics using a delta-method-based approximation, but standard errors based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
 #'
+#' @name calc_riskRatio_pot
+#'
 #' @param returnValue numeric value giving the value for which the risk ratio should be calculated, where the resulting period will be the average number of blocks until the value is exceeded and the probability the probability of exceeding the value in any single block.
-#' @param y1 a numeric vector of exceedance values for the first dataset (values of the outcome variable above the threshold).
+#' @param y1 a numeric vector of exceedance values for the first dataset (values of the outcome variable above the threshold). For better optimization performance, it is recommended that the \code{y1} have magnitude around one (see \code{Details}), for which one can use \code{scaling1}.
 #' @param y2 a numeric vector of exceedance values for the second dataset (values of the outcome variable above the threshold).
 #' @param x1 a data frame, or object that can be converted to a data frame with columns corresponding to covariate/predictor/feature variables and each row containing the values of the variable for a block (e.g., often a year with climate data) for the first dataset. The number of rows must equal the number of blocks.
 #' @param x2 analogous to \code{x1} but for the second dataset
@@ -271,8 +275,9 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
 #' @param lrtControl list containing a single component, \code{bounds}, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to \code{NA}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to \code{optim}. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{'control=list(maxit=VALUE)'} for a user-chosen VALUE can be used to increase the number of iterations if the optimization is converging slowly.
-#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
-#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param optimControl a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.
+#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale1 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
+#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale2 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
 #' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param getReturnCalcs logical indicating whether to return the estimated return values/probabilities/periods from the fitted models. 
@@ -283,9 +288,9 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' @details
 #' See \code{\link{fit_pot}} for more details on fitting the peaks-over-threshold model for each dataset, including details on blocking and replication. Also see \code{\link{fit_pot}} for information on the \code{bootControl} argument. 
 #'
-#' @section Optimization failures:
+#' Optimization failures:
 #'
-#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_pot}. Also note that if the probability in the denominator of the risk ratio is near 1, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_pot}. Also note that if the probability in the denominator of the risk ratio is near one, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
 #' 
 #' @return
 #'
@@ -336,7 +341,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                                proportionMissing2 = NULL, xNew1 = NULL, xNew2 = NULL, declustering = NULL,
                                upperTail = TRUE, scaling1 = 1, scaling2 = 1, ciLevel = 0.90, ciType,
                                bootSE, bootControl = NULL, lrtControl = NULL, 
-                               optimArgs = NULL, initial1 = NULL,
+                               optimArgs = NULL, optimControl = NULL, initial1 = NULL,
                                initial2 = NULL, logScale1 = NULL, logScale2 = NULL,
                                getReturnCalcs = FALSE, getParams = FALSE, getFit = FALSE  ) {
 
@@ -353,13 +358,13 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
     ciLabels <- as.character(c(( 1 - ciLevel ) / 2, 1 - ( 1 - ciLevel ) / 2))
     if(!is.null(xNew1)) {
         xNew1tmp <- try(as.data.frame(xNew1))
-        if(class(xNew1tmp) == 'try-error') stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
+        if(is(xNew1tmp, 'try-error')) stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
         m <- nrow(xNew1tmp)
     } else {
         if(is.null(x1))
             m <- 1 else {
                        x1tmp <- try(as.data.frame(x1))
-                       if(class(x1tmp) == 'try-error') stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
+                       if(is(x1tmp, 'try-error')) stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
                        m <- nrow(x1tmp)
                    }
     }
@@ -390,7 +395,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                     weights = weights1, proportionMissing = proportionMissing1, returnValue = returnValue,
                     xNew = xNew1, declustering = declustering, upperTail = upperTail,
                     scaling = scaling1, bootSE = bootSE, bootControl = bootControlTmp,
-                    optimArgs = optimArgs, initial = initial1, logScale = logScale1,
+                    optimArgs = optimArgs, optimControl = optimControl, initial = initial1, logScale = logScale1,
                     getFit = TRUE, getParams = getParams, .getInputs = TRUE) 
     fit2 <- fit_pot(y2, x = x2, threshold = threshold2, locationFun = locationFun2,
                     scaleFun = scaleFun2, shapeFun = shapeFun2, nBlocks = nBlocks2,
@@ -399,7 +404,7 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                     weights = weights2, proportionMissing = proportionMissing2, returnValue = returnValue,
                     xNew = xNew2, declustering = declustering, upperTail = upperTail,
                     scaling = scaling2, bootSE = bootSE, bootControl = bootControlTmp,
-                    optimArgs = optimArgs, initial = initial2, logScale = logScale2,
+                    optimArgs = optimArgs, optimControl = optimControl, initial = initial2, logScale = logScale2,
                     getFit = TRUE, getParams = getParams, .getInputs = TRUE)
     if(fit1$info$failure || fit2$info$failure) {
         warning("calc_riskRatio_pot: fitting failed for one of two datasets.")
@@ -465,6 +470,8 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             lrtControl <- lControl
             oArgs <- list(method = "Nelder-Mead", lower = -Inf, upper = Inf, control = list())
             oArgs[names(optimArgs)] <- optimArgs
+            if(!is.null(optimControl))
+                oArgs[['control']] <- optimControl
             if(!upperTail) returnValue <- -returnValue
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "PP", optimArgs = oArgs)
             if(is.null(dim(results$ci_riskRatio_lrt))) {
@@ -495,8 +502,10 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #'
 #' Compute risk ratio and uncertainty by fitting generalized extreme value model, designed specifically for climate data, to exceedance-only data, using the point process approach. The risk ratio is the ratio of the probability of exceedance of a pre-specified value under the model fit to the first dataset to the probability under the model fit to the second dataset. Default standard errors are based on the usual MLE asymptotics using a delta-method-based approximation, but standard errors based on the nonparametric bootstrap and on a likelihood ratio procedure can also be computed.
 #'
+#' @name calc_riskRatio_gev
+#' 
 #' @param returnValue numeric value giving the value for which the risk ratio should be calculated, where the resulting period will be the average number of blocks until the value is exceeded and the probability the probability of exceeding the value in any single block.
-#' @param y1 a numeric vector of observed maxima or minima values for the first dataset. See \code{Details} for how the values of \code{y1} should be ordered if there are multiple replicates and the values of \code{x1} are identical for all replicates.
+#' @param y1 a numeric vector of observed maxima or minima values for the first dataset. See \code{Details} for how the values of \code{y1} should be ordered if there are multiple replicates and the values of \code{x1} are identical for all replicates. For better optimization performance, it is recommended that \code{y1} have magnitude around one (see \code{Details}), for which one can use \code{scaling1}.
 #' @param y2 a numeric vector of observed maxima or minima values for the second dataset. Analogous to \code{y1}.
 #' @param x1 a data frame, or object that can be converted to a data frame with columns corresponding to covariate/predictor/feature variables and each row containing the values of the variable for the corresponding observed maximum/minimum. The number of rows should either equal the length of \code{y1} or (if there is more than one replicate) it can optionally equal the number of observations in a single replicate, in which case the values will be assumed to be the same for all replicates. 
 #' @param x2 analogous to \code{x1} but for the second dataset
@@ -523,8 +532,9 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #' @param bootControl a list of control parameters for the bootstrapping. See \code{Details}.
 #' @param lrtControl list containing a single component, \code{bounds}, which sets the range inside which the algorithm searches for the endpoints of the likelihood ratio-based confidence interval. This avoids numerical issues with endpoints converging to zero and infinity. If an endpoint is not found within the interval, it is set to \code{NA}.
 #' @param optimArgs a list with named components matching exactly any arguments that the user wishes to pass to \code{optim}. See \code{help(optim)} for details. Of particular note, \code{'method'} can be used to choose the optimization method used for maximizing the log-likelihood to fit the model and \code{'control=list(maxit=VALUE)'} for a user-chosen VALUE can be used to increase the number of iterations if the optimization is converging slowly.
-#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
-#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters.
+#' @param optimControl a list with named components matching exactly any elements that the user wishes to pass as the \code{control} list to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.
+#' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale1 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
+#' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale2 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
 #' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param getReturnCalcs logical indicating whether to return the estimated return values/probabilities/periods from the fitted models. 
@@ -536,9 +546,9 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #' @details
 #' See \code{\link{fit_gev}} for more details on fitting the block maxima model for each dataset, including details on blocking and replication. Also see \code{\link{fit_gev}} for information on the \code{bootControl} argument.
 #' 
-#' @section Optimization failures:
+#' Optimization failures:
 #'
-#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_gev}. Also note that if the probability in the denominator of the risk ratio is near 1, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
+#' It is not uncommon for maximization of the log-likelihood to fail for extreme value models. Please see the help information for \code{fit_gev}. Also note that if the probability in the denominator of the risk ratio is near one, one may achieve better numerical performance by swapping the two datasets and computing the risk ratio for the probability under dataset 2 relative to the probability under dataset 1.
 #' 
 #' @return
 #' The primary outputs of this function are as follows: the log of the risk ratio and standard error of that log risk ratio (\code{logRiskRatio} and \code{se_logRiskRatio}) as well the risk ratio itself (\code{riskRatio}). The standard error is based on the usual MLE asymptotics using a delta-method-based approximation. If requested via \code{ciType}, confidence intervals will be returned, as discussed in \code{Details}.
@@ -579,7 +589,7 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
                                maxes = TRUE, scaling1 = 1, scaling2 = 1,
                                ciLevel = 0.90, ciType, bootSE,
                                bootControl = NULL, lrtControl = NULL,
-                               optimArgs = NULL, initial1 = NULL,
+                               optimArgs = NULL, optimControl = NULL, initial1 = NULL,
                                initial2 = NULL, logScale1 = NULL, logScale2 = NULL,
                                getReturnCalcs = FALSE, getParams = FALSE, getFit = FALSE) {
 
@@ -598,13 +608,13 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 
     if(!is.null(xNew1)) {
         xNew1tmp <- try(as.data.frame(xNew1))
-        if(class(xNew1tmp) == 'try-error') stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
+        if(is(xNew1tmp, 'try-error')) stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
         m <- nrow(xNew1tmp)
     } else {
         if(is.null(x1))
             m <- 1 else {
                        x1tmp <- try(as.data.frame(x1))
-                       if(class(x1tmp) == 'try-error') stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
+                       if(is(x1tmp, 'try-error')) stop("fit_pot: 'x' should be a data frame or be able to be converted to a data frame.")
                        m <- nrow(x1tmp)
                    }
     }
@@ -709,6 +719,8 @@ calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
             lrtControl <- lControl
             oArgs <- list(method = "Nelder-Mead", lower = -Inf, upper = Inf, control = list())
             oArgs[names(optimArgs)] <- optimArgs
+            if(!is.null(optimControl))
+                oArgs[['control']] <- optimControl
             if(!maxes) returnValue <- -returnValue
             results$ci_riskRatio_lrt <- calc_riskRatio_lrt(fit1, fit2, returnValue = returnValue, ciLevel = ciLevel, bounds = lrtControl$bounds, type = "GEV", optimArgs = oArgs)
             if(is.null(dim(results$ci_riskRatio_lrt))) {
@@ -923,13 +935,13 @@ calc_riskRatio_lrt <- function(fit1, fit2, returnValue, ciLevel, bounds, type = 
         covariateMatrix <- stats::model.matrix(inputs1$locationFun, inputs1$xUse)
         covariateMatrix <- cbind(covariateMatrix, stats::model.matrix(inputs1$scaleFun, inputs1$xUse))
         covariateMatrix <- cbind(covariateMatrix, stats::model.matrix(inputs1$shapeFun, inputs1$xUse))
-        qcov1 <- make.qcov(fit1$fit, covariateMatrix)
+        qcov1 <- make.qcov_safe(fit1$fit, covariateMatrix)
     } else qcov1 <- NULL
     if(sum(unlist(p2)) > 3) {
         covariateMatrix <- stats::model.matrix(inputs2$locationFun, inputs2$xUse)
         covariateMatrix <- cbind(covariateMatrix, stats::model.matrix(inputs2$scaleFun, inputs2$xUse))
         covariateMatrix <- cbind(covariateMatrix, stats::model.matrix(inputs2$shapeFun, inputs2$xUse))
-        qcov2 <- make.qcov(fit2$fit, covariateMatrix)
+        qcov2 <- make.qcov_safe(fit2$fit, covariateMatrix)
     } else qcov2 <- NULL
 
     objfun <- function(logrr0, logLikHat, cutoff, initial, y1, y2, x1, x2, threshold1, threshold2, weights1, weights2, p1, p2, designs1, designs2, blocks1, blocks2, usePhi1, usePhi2, returnValue, qcov1, qcov2, type, optimArgs) {

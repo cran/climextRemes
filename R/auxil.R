@@ -1,6 +1,9 @@
 #' Normalize a vector
 #'
 #' Normalize a vector by subtracting off central point and dividing by range
+#'
+#' @name normalize
+#' 
 #' @param vec vector of values
 #' @param shift optional central point (if not provided, uses the mean of \code{vec})
 #' @param lower optional lower end point of range (if not provided uses min of \code{vec})
@@ -25,9 +28,11 @@ normalize <- function(vec, shift = NULL, lower = NULL, upper = NULL){
 #' Remove consecutive exceedances from a vector
 #'
 #' Remove runs, i.e., consecutive exceedances, from a vector of values and associated indices (days); for use in declustering 
+#'
+#' @name remove_runs
 #' @param y vector of values
 #' @param index vector of indices, one per value, that indicate which elements of \code{y} are consecutive
-#' @param upperTail logical indicating whether values of \code{y} are upper (right) tail values (TRUE) or lower (left) tail values (FALSE)
+#' @param upperTail logical indicating whether values of \code{y} are upper (right) tail values (TRUE) or lower (left) tail values. Defaults to \code{FALSE}.
 #'
 #' @export
 #'
@@ -71,10 +76,13 @@ remove_runs <- function(y, index, upperTail = TRUE){
 #' Remove multiple exceedances within non-overlapping blocks of fixed length
 #'
 #' Remove multiple exceedances within non-overlapping blocks of fixed lengths, for use in declustering
+#'
+#' @name screen_within_block
+#'
 #' @param y vector of values
 #' @param index vector of indices, one per value, that indicate which elements of \code{y} are consecutive
 #' @param blockLength length of block within which to remove all but the most extreme value
-#'
+#' 
 #' @export
 #'
 screen_within_block <-  function(y, index, blockLength = 10){

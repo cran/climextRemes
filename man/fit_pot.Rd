@@ -48,7 +48,7 @@ fit_pot(
 
 \item{locationFun}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x}.  \code{x} must be supplied if this is anything other than NULL or ~1.}
 
-\item{scaleFun}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x}.  \code{x} must be supplied if this is anything other than NULL or ~1.}
+\item{scaleFun}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the (potentially transformed) scale parameter using columns from \code{x}.  \code{x} must be supplied if this is anything other than NULL or ~1. \code{logScale} controls whether this determines the log of the scale or the scale directly.}
 
 \item{shapeFun}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x}.  \code{x} must be supplied if this is anything other than NULL or ~1.}
 
@@ -96,9 +96,9 @@ fit_pot(
 
 \item{initial}{a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling}, \code{logScale} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.}
 
-\item{logScale}{logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients).}
+\item{logScale}{logical indicating whether optimization for the scale parameter should be done on the log scale. By default this is \code{FALSE} when the scale is not a function of covariates and \code{TRUE} when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients).}
 
-\item{.normalizeX}{logical indicating whether to normalize \code{x} values for better numerical performance; default is TRUE.}
+\item{.normalizeX}{logical indicating whether to normalize \code{x} values for better numerical performance; default is \code{TRUE}.}
 
 \item{.getInputs}{logical indicating whether to return intermediate objects used in fitting. Defaults to \code{FALSE} and intended for internal use only}
 

@@ -1,3 +1,21 @@
+0.3.1 (December 2023)
+
+* Update setup.py to include Python 3.11, 3.12.
+
+* Per CRAN request, update handling of `climextRemes-package.R`.
+
+* Change defaults for 2nd dataset in `calc_riskRatio_gev` and `calc_riskRatio_pot` to be `NULL` (or `None` in Python) for clarity and so that R and Python behave the same. Users should explicitly provide arguments for the 2nd dataset.
+
+* Allow use of scalar numpy floats or ints as input arguments.
+
+* Fix setting of `__climextRemes_home__` under recent versions of `rpy2` (somewhere between 3.5.1 and 3.5.14) in `__wrap_import()` in `__init__.py` and similar issue with `Fort`, requiring that last line of `robjects.r` be the explicit object/value.
+
+* Change to use of `importlib.metadata` from deprecated `pkg_resources.require`.
+
+* Change default CRAN URL to `https://cran.r-project.org`.
+
+* Modify help information for `scaleFun` to indicate that `logScale` argument controls whether optimization done on log scale.
+
 0.3.0 (August 2022)
 
 * Allow use of no-intercept models, including normalization of covariates.

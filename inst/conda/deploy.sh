@@ -11,13 +11,14 @@ if [ ! -e "${PKG_DIR}" ]; then
 fi
 
 # build in a Conda environment
-conda create -y --name climextremes_build python=3.8
+# with 3.11 got issues with numpy/python/pandas versions
+mamba create -y --name climextremes_build python=3.10
 
 source activate climextremes_build
-conda install -y conda-build anaconda-client conda-verify
+mamba install -y conda-build anaconda-client conda-verify
 
-conda update -y conda
-conda update -y conda-build
+mamba update -y conda
+mamba update -y conda-build
 
 echo conda build $climextremes
 # `conda` should be the conda in the environment but it may be a function
@@ -27,4 +28,4 @@ echo conda build $climextremes
 ${CONDA_PREFIX}/bin/conda build -c conda-forge --output-folder=${PKG_DIR} ${climextremes}
 
 ## test with:
-# conda install /tmp/cebuild/noarch/climextremes-0.2.3rc2-pyr41h7b7c402_0.tar.bz2
+# mamba install /tmp/cebuild/noarch/climextremes-0.3.1rc2-pyr43h4f56d60_0.tar.bz2

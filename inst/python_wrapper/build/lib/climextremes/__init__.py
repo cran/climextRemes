@@ -11,7 +11,7 @@ def reinstall_climextremes(force, version):
     from rpy2.rinterface import RRuntimeWarning
     warnings.filterwarnings("ignore", category=RRuntimeWarning)
 
-    def install_cran_default(repos = 'https://cran.us.r-project.org'):
+    def install_cran_default(repos = 'https://cran.r-project.org'):
         # sometimes failure occurs with URL issue with cran.r-project.org, so try a mirror
         try:     # this may fail with error or fail but only issue a warning
             rpy2.robjects.r("""install.packages('climextRemes',repos='{0}')""".format(repos))
@@ -20,7 +20,7 @@ def reinstall_climextremes(force, version):
             rpy2.robjects.r("""install.packages('climextRemes',repos='https://cran.cnr.berkeley.edu')""")
             rpy2.robjects.r('''library(climextRemes)''')
 
-    def get_devtools(repos = 'https://cran.us.r-project.org'):
+    def get_devtools(repos = 'https://cran.r-project.org'):
         try:
             rpy2.robjects.r('''library(devtools)''')
             return True
@@ -37,7 +37,7 @@ def reinstall_climextremes(force, version):
         return True
                 
 
-    def install_cran_specific(version, repos = 'https://cran.us.r-project.org'):
+    def install_cran_specific(version, repos = 'https://cran.r-project.org'):
         check = get_devtools()
         # When using Conda with R provided by Conda, TAR is incorrectly set to /bin/gtar, which causes errors.
         # Simply unsetting seems to avoid the problem and not prevent installation of R packages.
@@ -107,10 +107,13 @@ def __wrap_import():
     from rpy2.rinterface import RRuntimeWarning
     warnings.filterwarnings("always", category=RRuntimeWarning)
 
+    # As of recent rpy2 (e.g., 3.5.14), need to give `climextremes_path` as
+    # last line here. Probably would be fine to never define `climextremes_path`.
     __climextRemes_home__ = rpy2.robjects.r('''
     library(climextRemes)
     sp <- searchpaths()
     climextremes_path <- sp[grep("climextRemes", sp)]
+    climextremes_path
     ''')[0]
     __climextRemes_python_path__ = __climextRemes_home__ + "/python"
     sys.path.append(__climextRemes_python_path__)

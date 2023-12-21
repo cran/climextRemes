@@ -39,7 +39,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/lbl-cascade',
+    url='https://bitbucket.org/lbl-cascade/climextremes-dev',
 
     # Author details
     author='Christopher Paciorek',
@@ -79,6 +79,8 @@ setup(
 	'Programming Language :: Python :: 3.8',
 	'Programming Language :: Python :: 3.9',
 	'Programming Language :: Python :: 3.10',
+	'Programming Language :: Python :: 3.11',
+	'Programming Language :: Python :: 3.12',
     ],
 
     # What does your project relate to?

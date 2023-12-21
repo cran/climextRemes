@@ -1,17 +1,15 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>climextRemes_wrapper &#8212; climextremes Documentation 0.2.3 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>climextRemes_wrapper &#8212; climextremes Documentation 0.3.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=039e1c02" />
+    <script src="../_static/documentation_options.js?v=4621528c"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
    
@@ -51,7 +49,9 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="n">NULLType</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">RNULLType</span>  <span class="c1"># rpy2 &lt; 3.0.0</span>
 
-<div class="viewcode-block" id="compute_input_map"><a class="viewcode-back" href="../index.html#climextremes.compute_input_map">[docs]</a><span class="k">def</span> <span class="nf">compute_input_map</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_input_map">
+<a class="viewcode-back" href="../index.html#climextremes.compute_input_map">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_input_map</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">rpy2</span>
     <span class="kn">import</span> <span class="nn">numpy</span>
     <span class="kn">import</span> <span class="nn">rpy2.robjects.numpy2ri</span>
@@ -73,88 +73,88 @@
 
     <span class="c1"># named array</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">ListVector</span><span class="p">):</span>
-       <span class="n">output_names</span> <span class="o">=</span> <span class="p">[]</span>
-       <span class="n">output_values</span> <span class="o">=</span> <span class="p">[]</span>
-       <span class="k">try</span><span class="p">:</span>
-         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">xname</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">compute_input_map</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xname</span><span class="p">)</span>
-                <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="c1">#print xname, type(input_arg_map[i]), value</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xname</span><span class="p">)</span>
-                <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Compute Error&quot;</span><span class="p">)</span>
-       <span class="k">except</span><span class="p">:</span>
-         <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
-         <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+        <span class="n">output_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">output_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">xname</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">compute_input_map</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xname</span><span class="p">)</span>
+                    <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="c1">#print xname, type(input_arg_map[i]), value</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xname</span><span class="p">)</span>
+                    <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Compute Error&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+            <span class="n">output_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
 
-       <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-       <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_names</span><span class="p">):</span>
-          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
 
-              <span class="k">if</span> <span class="s2">&quot;__vector&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__vector_names&quot;</span><span class="p">]</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__vector&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;__vector&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__vector_names&quot;</span><span class="p">]</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__vector&quot;</span><span class="p">]</span>
 
-                <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-                   <span class="c1">#result[f + &quot;_names&quot;] = None</span>
-                   <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                   <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
-                   <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
-                        <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-              <span class="k">elif</span> <span class="s2">&quot;__dict&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-
-                <span class="k">if</span> <span class="s2">&quot;__dict_row_names&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                  <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_row_names&quot;</span><span class="p">]</span>
-                  <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-                     <span class="c1">#result[f + &quot;_row_names&quot;] = None</span>
-                     <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span>
-                  <span class="k">else</span><span class="p">:</span>
-                     <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span>
-                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-                       <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
-                          <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-                          
-                <span class="k">if</span> <span class="s2">&quot;__dict_column_names&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                  <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_column_names&quot;</span><span class="p">]</span>
-                  <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-                     <span class="c1">#result[f + &quot;_column_names&quot;] = None</span>
-                     <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span>
-                  <span class="k">else</span><span class="p">:</span>
-                     <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span>
-                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-                       <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
-                          <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-                <span class="k">if</span> <span class="s2">&quot;__dict_dimnames&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                  <span class="k">for</span> <span class="p">(</span><span class="n">i2</span><span class="p">,</span> <span class="n">f2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_dimnames&quot;</span><span class="p">]):</span>
-                    <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f2</span>
-                    <span class="k">try</span><span class="p">:</span>
-                      <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                    <span class="k">except</span><span class="p">:</span>
-                      <span class="n">name_list</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="k">if</span> <span class="n">name_list</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-                       <span class="c1">#result[f + &quot;_column_names&quot;] = None                                                              </span>
-                       <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
+                    <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+                        <span class="c1">#result[f + &quot;_names&quot;] = None</span>
+                        <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
-                       <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
-                       <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
-                            <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
+                                <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">elif</span> <span class="s2">&quot;__dict&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+
+                    <span class="k">if</span> <span class="s2">&quot;__dict_row_names&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_row_names&quot;</span><span class="p">]</span>
+                        <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+                            <span class="c1">#result[f + &quot;_row_names&quot;] = None</span>
+                            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
+                                    <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                          
+                    <span class="k">if</span> <span class="s2">&quot;__dict_column_names&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_column_names&quot;</span><span class="p">]</span>
+                        <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+                            <span class="c1">#result[f + &quot;_column_names&quot;] = None</span>
+                            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
+                                    <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="k">if</span> <span class="s2">&quot;__dict_dimnames&quot;</span> <span class="ow">in</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="n">i2</span><span class="p">,</span> <span class="n">f2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict_dimnames&quot;</span><span class="p">]):</span>
+                            <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f2</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">name_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="n">name_list</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">if</span> <span class="n">name_list</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+                                <span class="c1">#result[f + &quot;_column_names&quot;] = None                                                              </span>
+                                <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;_dim&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_names&quot;</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+                                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">NULLType</span><span class="p">):</span>
+                                        <span class="n">res</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                        
-                <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict&quot;</span><span class="p">]</span>
-              <span class="k">else</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-          <span class="k">else</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-       <span class="k">return</span> <span class="n">result</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;__dict&quot;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                 <span class="n">result</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="c1"># put Array and Matrix before Vectors as they also are Vectors and</span>
     <span class="c1"># want special handling specific to Array and Matrix</span>
@@ -163,13 +163,13 @@
         <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__dict&quot;</span>
         <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-          <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">rownames</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_row_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">rownames</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-          <span class="k">pass</span>
+            <span class="k">pass</span>
         <span class="k">try</span><span class="p">:</span>
-          <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">colnames</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_column_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">colnames</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-          <span class="k">pass</span>
+            <span class="k">pass</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
@@ -178,82 +178,83 @@
         <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_dimnames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">dimnames</span><span class="p">):</span>
-          <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_dimnames&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_input_map</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_dimnames&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_input_map</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="c1">#other vectors</span>
+    <span class="c1"># other vectors</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">IntVector</span><span class="p">):</span>
-           <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-           <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
-           <span class="n">input_arg_map_save</span> <span class="o">=</span> <span class="n">input_arg_map</span>
-           <span class="k">try</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-           <span class="k">except</span><span class="p">:</span>
-              <span class="k">pass</span>
-           <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">False</span>
-           <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">:</span>
-             <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NA_Integer</span><span class="p">:</span>
-               <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">True</span>
-               <span class="k">break</span>
-           <span class="k">if</span> <span class="n">has_nan</span><span class="p">:</span> 
-              <span class="n">input_arg_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">NA_Integer</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">]</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-           <span class="k">else</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
-           <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map_save</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-               <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-           <span class="k">return</span> <span class="n">result</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
+        <span class="n">input_arg_map_save</span> <span class="o">=</span> <span class="n">input_arg_map</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NA_Integer</span><span class="p">:</span>
+                <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">has_nan</span><span class="p">:</span> 
+            <span class="n">input_arg_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">NA_Integer</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map_save</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">FloatVector</span><span class="p">):</span>
-           <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-           <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
-           <span class="k">try</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-           <span class="k">except</span><span class="p">:</span>
-              <span class="k">pass</span>
-           <span class="c1"># Float correctly handles numpy.nan conversion</span>
-           <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
-           <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-               <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-           <span class="k">return</span> <span class="n">result</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="c1"># Float correctly handles numpy.nan conversion</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">StrVector</span><span class="p">):</span>
-           <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-           <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
-           <span class="k">try</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-           <span class="k">except</span><span class="p">:</span>
-              <span class="k">pass</span>
-           <span class="k">try</span><span class="p">:</span>
-             <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
-           <span class="k">except</span><span class="p">:</span>
-             <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_arg_map</span>
-           <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-               <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-           <span class="k">return</span> <span class="n">result</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_arg_map</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">BoolVector</span><span class="p">):</span>
-           <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-           <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
-           <span class="n">input_arg_map_save</span> <span class="o">=</span> <span class="n">input_arg_map</span>
-           <span class="k">try</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-           <span class="k">except</span><span class="p">:</span>
-              <span class="k">pass</span>
-           <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">False</span>
-           <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">:</span>
-             <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NA_Logical</span><span class="p">:</span>
-               <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">True</span>
-               <span class="k">break</span>
-           <span class="k">if</span> <span class="n">has_nan</span><span class="p">:</span>
-              <span class="n">input_arg_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">NA_Logical</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">]</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-           <span class="k">else</span><span class="p">:</span>
-              <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
-           <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map_save</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
-               <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-           <span class="k">return</span> <span class="n">result</span></div>
-    
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;__vector&quot;</span>
+        <span class="n">input_arg_map_save</span> <span class="o">=</span> <span class="n">input_arg_map</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NA_Logical</span><span class="p">:</span>
+                <span class="n">has_nan</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">has_nan</span><span class="p">:</span>
+                <span class="n">input_arg_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">NA_Logical</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_arg_map</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_arg_map</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot;_names&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_arg_map_save</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">NULLType</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result</span></div>
+
+<span class="w">    </span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">def compute_input_map(input_arg_map):</span>
@@ -296,332 +297,333 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="k">def</span> <span class="nf">__initialize_wrapper</span><span class="p">():</span>
-  <span class="k">global</span> <span class="n">version</span><span class="p">,</span> <span class="n">Fort</span>
+    <span class="k">global</span> <span class="n">version</span><span class="p">,</span> <span class="n">Fort</span>
 
-  <span class="kn">import</span> <span class="nn">numpy</span>
-  <span class="kn">import</span> <span class="nn">pandas</span>
-  <span class="kn">import</span> <span class="nn">rpy2</span>
-  <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
-  <span class="kn">import</span> <span class="nn">rpy2.robjects.help</span> <span class="k">as</span> <span class="nn">rh</span>
-  <span class="kn">import</span> <span class="nn">rpy2.robjects.numpy2ri</span> <span class="k">as</span> <span class="nn">numpy2ri</span>
-  <span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
-  <span class="kn">import</span> <span class="nn">fnmatch</span>
-  <span class="kn">import</span> <span class="nn">os</span>
-  <span class="kn">import</span> <span class="nn">re</span>
-  <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">pandas2ri</span>
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="kn">import</span> <span class="nn">pandas</span>
+    <span class="kn">import</span> <span class="nn">rpy2</span>
+    <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
+    <span class="kn">import</span> <span class="nn">rpy2.robjects.help</span> <span class="k">as</span> <span class="nn">rh</span>
+    <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">numpy2ri</span> 
+    <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">pandas2ri</span>
+    <span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
+    <span class="kn">import</span> <span class="nn">fnmatch</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">re</span>
 
 
-  <span class="c1"># rpy2.robjects.activate()</span>
-  <span class="n">pandas2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
-  <span class="n">numpy2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+    <span class="c1"># rpy2.robjects.activate()</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">pandas2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+        <span class="n">numpy2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+        
 
-  <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 
-  <span class="n">__extRemes__</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;extRemes&quot;</span><span class="p">)</span>
-  <span class="n">__climextRemes__</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;climextRemes&quot;</span><span class="p">)</span>
-  <span class="n">__climextRemesHelp__</span> <span class="o">=</span> <span class="n">rh</span><span class="o">.</span><span class="n">Package</span><span class="p">(</span><span class="s2">&quot;climextRemes&quot;</span><span class="p">)</span>
+    <span class="n">__extRemes__</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;extRemes&quot;</span><span class="p">)</span>
+    <span class="n">__climextRemes__</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;climextRemes&quot;</span><span class="p">)</span>
+    <span class="n">__climextRemesHelp__</span> <span class="o">=</span> <span class="n">rh</span><span class="o">.</span><span class="n">Package</span><span class="p">(</span><span class="s2">&quot;climextRemes&quot;</span><span class="p">)</span>
 
-  <span class="n">__version__</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">  packageVersion(&quot;climextRemes&quot;)</span>
-<span class="s1">  &#39;&#39;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    packageVersion(&quot;climextRemes&quot;)</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-  <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__version__</span><span class="p">])</span>
-  <span class="n">version</span> <span class="o">=</span> <span class="n">__version__</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__version__</span><span class="p">])</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">__version__</span>
 
-  <span class="n">Fort</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">  data(Fort)</span>
-<span class="s1">  ord &lt;- order(Fort$year, Fort$month, Fort$day) </span>
-<span class="s1">  Fort &lt;- Fort[ord, ]</span>
-<span class="s1">  &#39;&#39;&#39;</span><span class="p">))</span>
-  
-  <span class="n">examples</span> <span class="o">=</span> <span class="p">{}</span>
-  <span class="n">examples_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/../examples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
-  <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">examples_dir</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;*_examples.py&#39;</span><span class="p">):</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">examples_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-          <span class="n">key</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_examples.py&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-          <span class="n">value</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-          <span class="n">examples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">Fort</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    data(Fort)</span>
+<span class="s1">    ord &lt;- order(Fort$year, Fort$month, Fort$day) </span>
+<span class="s1">    Fort &lt;- Fort[ord, ]</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
 
-  <span class="n">arguments_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/../python_help&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
-  <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">arguments_dir</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;*_args.txt&#39;</span><span class="p">):</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">arguments_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-          <span class="n">key</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_args.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-          <span class="n">value</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-          <span class="n">examples</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-  <span class="c1">#print(&quot;examples&quot;, examples.keys())</span>
-
-  <span class="k">class</span> <span class="nc">climextRemesReturnObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-       <span class="k">pass</span>
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-      <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-  <span class="k">def</span> <span class="nf">__parseResult</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">obj</span>
-    
-    <span class="c1">#print obj.names, rpy2.rinterface.NULL, type(obj), rpy2.rinterface.RNULLType</span>
-
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span> <span class="ow">or</span> \
-       <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NULLType</span> <span class="ow">or</span> \
-       <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()):</span>
-      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robjects</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robjects</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
-      <span class="n">result</span> <span class="o">=</span> <span class="n">climextRemesReturnObject</span><span class="p">()</span>
-      <span class="n">result</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)):</span>
-        <span class="c1">#print obj.names[i]</span>
-        <span class="n">result</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">result</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">__parseResult</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-  
-    <span class="k">return</span> <span class="n">result</span>
- 
-  <span class="k">def</span> <span class="nf">__climextRemesWrapFunction</span><span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="n">override_examples</span><span class="p">):</span>
-
-    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">defaults</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">signature</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">    library(climextRemes)</span>
-<span class="s1">    as.list(args(</span><span class="si">{0}</span><span class="s1">))</span>
-<span class="s1">    &#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method_name</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">quote_args</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">arg_names</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;( &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; )&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;</span><span class="se">\\</span><span class="s2">1&#39;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-        <span class="c1"># As of 0.2.1 changed from curly to straight quote to avoid this error in Py 2.7:</span>
-        <span class="c1"># SyntaxError: Non-ASCII character &#39;\xe2&#39; in file /accounts/gen/vis/paciorek/R/x86_64-pc-linux-gnu-library/3.5/climextRemes/python/climextRemes_wrapper.py on line 317, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details</span>
-        <span class="c1"># This is causing extra spaces because can&#39;t tell left vs right single quote, so remove until we go back to curly quotes.</span>
-        <span class="c1"># text = text.replace(&quot;&#39; &quot;, &quot;&#39;&quot;)</span>
-        <span class="c1"># text = text.replace(&quot; &#39;&quot;, &quot;&#39;&quot;)</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    
-    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span>  <span class="nb">enumerate</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
-       <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-         <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-         <span class="k">try</span><span class="p">:</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">signature</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">robject</span><span class="o">.</span><span class="n">RObject</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">SexpSymbol</span><span class="p">):</span>
-               <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-               <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-         <span class="k">except</span><span class="p">:</span>
-            <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="n">gdoc</span> <span class="o">=</span> <span class="n">__climextRemesHelp__</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">method_name</span><span class="p">)</span>
-    <span class="c1">## As of rpy2 &gt;= 3.4.0 need \\ in key names</span>
-    <span class="n">use_backslash</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">title&#39;</span> <span class="ow">in</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="kc">False</span>
-    
-    <span class="n">key_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">use_backslash</span><span class="p">:</span>
-        <span class="n">key_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">nm</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="n">key_names</span><span class="p">]</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">(</span><span class="n">key_names</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span> <span class="ow">in</span> <span class="n">override_examples</span><span class="p">:</span>
-      <span class="n">new_arguments</span> <span class="o">=</span> <span class="n">override_examples</span><span class="p">[</span><span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span><span class="p">]</span>
-      <span class="n">arguments</span> <span class="o">=</span> <span class="n">new_arguments</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@param &quot;</span><span class="p">)</span>
-      <span class="n">new_arguments</span> <span class="o">=</span> <span class="s2">&quot;arguments</span><span class="se">\n</span><span class="s2">&quot;</span>
-      <span class="n">new_arguments</span> <span class="o">+=</span> <span class="s2">&quot;---------</span><span class="se">\n</span><span class="s2">&quot;</span>
-      <span class="n">argument_names</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="n">n_arg</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-        <span class="n">argument_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-        <span class="n">arg</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">n_arg</span><span class="p">)</span>
-        <span class="n">new_arguments</span> <span class="o">+=</span> <span class="n">arg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-      <span class="c1">#new_arguments = new_arguments.replace(&quot;@param &quot;, &quot;&quot;)</span>
-      <span class="c1">#gdoc_help += &quot;arguments\n&quot;</span>
-      <span class="c1">#gdoc_help += &quot;----------\n&quot;</span>
-      <span class="c1">#gdoc_help += new_arguments #.replace(&quot;\n&quot;, &quot;\n\n&quot;)</span>
-
-      <span class="c1">#gdoc_help.replace(&quot;\n\ndetails\n&quot;, &quot;\n&quot; + new_arguments + &quot;\n\ndetails\n&quot;)</span>
-      <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">new_arguments</span>
-       
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">localconverter</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span> <span class="o">+</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">pandas2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">):</span>
+            <span class="n">Fort</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">rpy2py</span><span class="p">(</span><span class="n">Fort</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">arguments&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;arguments&#39;</span>
-      <span class="n">gdoc_arguments</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">([</span><span class="n">key_name</span><span class="p">])</span>
-      <span class="n">res</span> <span class="o">=</span> <span class="n">gdoc_arguments</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-      <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-      <span class="n">argument_names</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
-        <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-          <span class="n">argument_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-          <span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-          <span class="n">r2</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
-          <span class="n">output</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">r2</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-          <span class="n">output</span> <span class="o">+=</span> <span class="n">r</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-      <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-
-    <span class="c1">#method = getattr(__climextRemes__, method_name)</span>
-    <span class="c1">#arglist = method.formals().names</span>
-
-    <span class="n">help_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gdoc</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-    <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">details&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;details&#39;</span>    
-    <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">([</span><span class="n">key_name</span><span class="p">])</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="n">quote_args</span><span class="p">(</span><span class="n">details</span><span class="p">,</span> <span class="n">argument_names</span><span class="p">)</span>
-        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">details</span>
-        <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key_name</span><span class="p">)</span>
-        
-    <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">value&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;value&#39;</span>    
-    <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">use_backslash</span><span class="p">:</span>  <span class="c1"># value needs to be handled differently as of rpy2 &gt;= 3.4.0</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">else</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;\code{&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>    
-
-        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;value</span><span class="se">\n</span><span class="s2">-----</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>    
-        <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key_name</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="s2">&quot;usage&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;usage&#39;</span><span class="p">)</span>  <span class="c1"># this is the R usage so exclude</span>
-    <span class="k">if</span> <span class="s2">&quot;alias&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;alias&#39;</span><span class="p">)</span>  <span class="c1"># this is the R alias so exclude</span>
-    <span class="k">if</span> <span class="s2">&quot;arguments&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;arguments&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;examples&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;examples&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>  <span class="c1"># this is redundant so exclude</span>
-
-    <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;description&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">usage&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">usage&#39;</span><span class="p">)</span>  <span class="c1"># this is the R usage so exclude</span>
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">alias&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">alias&#39;</span><span class="p">)</span>  <span class="c1"># this is the R alias so exclude</span>
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">arguments&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">arguments&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">examples&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">examples&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">name&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">name&#39;</span><span class="p">)</span>  <span class="c1"># this is redundant so exclude</span>
-
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">title&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">title&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-    <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">description&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">description&#39;</span><span class="p">)</span>  <span class="c1"># handled separately</span>
-
-    <span class="n">others</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">(</span><span class="n">help_keys</span><span class="p">)</span>
-    <span class="n">others</span> <span class="o">=</span> <span class="n">quote_args</span><span class="p">(</span><span class="n">others</span><span class="p">,</span> <span class="n">argument_names</span><span class="p">)</span>
-    <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">others</span>
+        <span class="n">Fort</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Fort</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">override_examples</span><span class="p">:</span>
-        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;examples</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;--------</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;&gt;&gt;&gt; &quot;</span> <span class="o">+</span> <span class="n">override_examples</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">... &quot;</span><span class="p">)</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">examples_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/../examples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">examples_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;*_examples.py&#39;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">examples_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_examples.py&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">examples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-        <span class="c1">#index = gdoc_help.find(&quot;examples&quot;)</span>
-        <span class="c1">#if index &gt;= 0:</span>
-        <span class="c1">#    gdoc_help = gdoc_help[0:index]</span>
-        <span class="c1">#    if method_name in override_examples:</span>
-        <span class="c1">#        gdoc_help += &quot;examples\n&quot;</span>
-        <span class="c1">#        gdoc_help += &quot;---------\n&quot;</span>
-        <span class="c1">#        gdoc_help += override_examples[method_name].replace(&quot;\n&quot;, &quot;\n\n&quot;)</span>
+    <span class="n">arguments_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/../python_help&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">arguments_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;*_args.txt&#39;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">arguments_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_args.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">examples</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c1">#print(&quot;examples&quot;, examples.keys())</span>
+
+    <span class="k">class</span> <span class="nc">climextRemesReturnObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__parseResult</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
         
-    <span class="c1"># some cleanup</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;title</span><span class="se">\n</span><span class="s2">-----&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># &#39;title&#39; is extraneous</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;---</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;---</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1">#print obj.names, rpy2.rinterface.NULL, type(obj), rpy2.rinterface.RNULLType</span>
 
-    <span class="n">help_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">hk</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">hk</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">]</span>
-    <span class="n">help_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;arguments&quot;</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">help</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>  <span class="c1"># Sphinx thinks repeated characters are section titles</span>
-       <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">help</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">help</span><span class="p">),</span> <span class="s2">&quot;**&quot;</span> <span class="o">+</span> <span class="n">help</span>  <span class="o">+</span> <span class="s2">&quot;**</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;TRUE&#39;</span><span class="p">,</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span>
-    <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span> <span class="ow">or</span> \
+            <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NULLType</span> <span class="ow">or</span> \
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robjects</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robjects</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">climextRemesReturnObject</span><span class="p">()</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">)):</span>
+                <span class="c1">#print obj.names[i]</span>
+                <span class="n">result</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">result</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">__parseResult</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-      <span class="c1">#print kwargs, args</span>
-      <span class="n">new_args</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="n">new_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-      <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-          <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">ListVector</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-          <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-              <span class="n">a</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span>
-          <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-      
-      <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-              <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">ListVector</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
-          <span class="k">else</span><span class="p">:</span>
-              <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                 <span class="n">b</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span>
-              <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+ 
+    <span class="k">def</span> <span class="nf">__climextRemesWrapFunction</span><span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="n">override_examples</span><span class="p">):</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        library(climextRemes)</span>
+<span class="s1">        as.list(args(</span><span class="si">{0}</span><span class="s1">))</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method_name</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">quote_args</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">arg_names</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;( &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; )&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;</span><span class="se">\\</span><span class="s2">1&#39;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="c1"># As of 0.2.1 changed from curly to straight quote to avoid this error in Py 2.7:</span>
+            <span class="c1"># SyntaxError: Non-ASCII character &#39;\xe2&#39; in file /accounts/gen/vis/paciorek/R/x86_64-pc-linux-gnu-library/3.5/climextRemes/python/climextRemes_wrapper.py on line 317, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details</span>
+            <span class="c1"># This is causing extra spaces because can&#39;t tell left vs right single quote, so remove until we go back to curly quotes.</span>
+            <span class="c1"># text = text.replace(&quot;&#39; &quot;, &quot;&#39;&quot;)</span>
+            <span class="c1"># text = text.replace(&quot; &#39;&quot;, &quot;&#39;&quot;)</span>
+            <span class="k">return</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         
-      <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">__climextRemes__</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">signature</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">robject</span><span class="o">.</span><span class="n">RObject</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">SexpSymbol</span><span class="p">):</span>
+                        <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
-      <span class="c1">#with conversion.localconverter(myconverter):</span>
-      
-      <span class="n">retobj</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">)</span>
+        <span class="n">gdoc</span> <span class="o">=</span> <span class="n">__climextRemesHelp__</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">method_name</span><span class="p">)</span>
+        <span class="c1">## As of rpy2 &gt;= 3.4.0 need \\ in key names</span>
+        <span class="n">use_backslash</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">title&#39;</span> <span class="ow">in</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="kc">False</span>
+        
+        <span class="n">key_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">use_backslash</span><span class="p">:</span>
+                <span class="n">key_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">nm</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="n">key_names</span><span class="p">]</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">(</span><span class="n">key_names</span><span class="p">)</span>
 
-      <span class="c1">#return __parseResult(retobj)</span>
-      <span class="k">return</span> <span class="n">compute_input_map</span><span class="p">(</span><span class="n">retobj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span> <span class="ow">in</span> <span class="n">override_examples</span><span class="p">:</span>
+            <span class="n">new_arguments</span> <span class="o">=</span> <span class="n">override_examples</span><span class="p">[</span><span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_arguments&quot;</span><span class="p">]</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">new_arguments</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@param &quot;</span><span class="p">)</span>
+            <span class="n">new_arguments</span> <span class="o">=</span> <span class="s2">&quot;arguments</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">new_arguments</span> <span class="o">+=</span> <span class="s2">&quot;---------</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">argument_names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">n_arg</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="n">argument_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                <span class="n">arg</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">n_arg</span><span class="p">)</span>
+                <span class="n">new_arguments</span> <span class="o">+=</span> <span class="n">arg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-    <span class="n">decorator</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">gdoc_help</span>
-    <span class="n">decorator</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
-    <span class="n">decorator</span><span class="o">.</span><span class="n">__names__</span> <span class="o">=</span> <span class="n">names</span>
-    <span class="n">decorator</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+            <span class="c1">#new_arguments = new_arguments.replace(&quot;@param &quot;, &quot;&quot;)</span>
+            <span class="c1">#gdoc_help += &quot;arguments\n&quot;</span>
+            <span class="c1">#gdoc_help += &quot;----------\n&quot;</span>
+            <span class="c1">#gdoc_help += new_arguments #.replace(&quot;\n&quot;, &quot;\n\n&quot;)</span>
 
-    <span class="n">argstr</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
-    <span class="n">fakefunc</span> <span class="o">=</span> <span class="s2">&quot;def </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">):</span><span class="se">\n</span><span class="s2">    return </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="n">argstr</span><span class="p">,</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">argstr</span><span class="p">)</span>
-    <span class="n">fakefunc_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">fakefunc</span><span class="p">,</span> <span class="s2">&quot;fakesource&quot;</span><span class="p">,</span> <span class="s2">&quot;exec&quot;</span><span class="p">)</span>
-    <span class="n">fakeglobals</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="nb">eval</span><span class="p">(</span><span class="n">fakefunc_code</span><span class="p">,</span> <span class="p">{</span><span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="n">decorator</span><span class="p">},</span> <span class="n">fakeglobals</span><span class="p">)</span>
+            <span class="c1">#gdoc_help.replace(&quot;\n\ndetails\n&quot;, &quot;\n&quot; + new_arguments + &quot;\n\ndetails\n&quot;)</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">new_arguments</span>
+             
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">arguments&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;arguments&#39;</span>
+            <span class="n">gdoc_arguments</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">([</span><span class="n">key_name</span><span class="p">])</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">gdoc_arguments</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">argument_names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">argument_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                    <span class="n">r2</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+                    <span class="n">output</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">r2</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">output</span> <span class="o">+=</span> <span class="n">r</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-    <span class="n">f_with_good_sig</span> <span class="o">=</span> <span class="n">fakeglobals</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span>
-    <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">gdoc_help</span>
-    <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method_name</span>
-    <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="c1">#method = getattr(__climextRemes__, method_name)</span>
+        <span class="c1">#arglist = method.formals().names</span>
 
-    <span class="k">return</span> <span class="n">f_with_good_sig</span>
+        <span class="n">help_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gdoc</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-  <span class="k">for</span> <span class="n">__i__</span> <span class="ow">in</span> <span class="n">__climextRemes__</span><span class="o">.</span><span class="n">_exported_names</span><span class="p">:</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">__climextRemesWrapFunction</span><span class="p">(</span><span class="n">__i__</span><span class="p">,</span> <span class="n">examples</span><span class="p">)</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="n">__i__</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">details&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;details&#39;</span>
+        <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">([</span><span class="n">key_name</span><span class="p">])</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="n">quote_args</span><span class="p">(</span><span class="n">details</span><span class="p">,</span> <span class="n">argument_names</span><span class="p">)</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">details</span>
+            <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key_name</span><span class="p">)</span>
+                
+        <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">value&#39;</span> <span class="k">if</span> <span class="n">use_backslash</span> <span class="k">else</span> <span class="s1">&#39;value&#39;</span>
+        <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">use_backslash</span><span class="p">:</span>    <span class="c1"># value needs to be handled differently as of rpy2 &gt;= 3.4.0</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">else</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;\code{&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>        
+
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;value</span><span class="se">\n</span><span class="s2">-----</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>    
+            <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;usage&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;usage&#39;</span><span class="p">)</span>    <span class="c1"># this is the R usage so exclude</span>
+        <span class="k">if</span> <span class="s2">&quot;alias&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;alias&#39;</span><span class="p">)</span>    <span class="c1"># this is the R alias so exclude</span>
+        <span class="k">if</span> <span class="s2">&quot;arguments&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;arguments&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;examples&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;examples&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>    <span class="c1"># this is redundant so exclude</span>
+
+        <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;description&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">usage&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">usage&#39;</span><span class="p">)</span>    <span class="c1"># this is the R usage so exclude</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">alias&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">alias&#39;</span><span class="p">)</span>    <span class="c1"># this is the R alias so exclude</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">arguments&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">arguments&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">examples&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">examples&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">name&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">name&#39;</span><span class="p">)</span>    <span class="c1"># this is redundant so exclude</span>
+
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">title&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">title&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">description&quot;</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span> <span class="n">help_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">description&#39;</span><span class="p">)</span>    <span class="c1"># handled separately</span>
+
+        <span class="n">others</span> <span class="o">=</span> <span class="n">gdoc</span><span class="o">.</span><span class="n">to_docstring</span><span class="p">(</span><span class="n">help_keys</span><span class="p">)</span>
+        <span class="n">others</span> <span class="o">=</span> <span class="n">quote_args</span><span class="p">(</span><span class="n">others</span><span class="p">,</span> <span class="n">argument_names</span><span class="p">)</span>
+        <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="n">others</span>
+        
+        <span class="k">if</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">override_examples</span><span class="p">:</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;examples</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;--------</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">gdoc_help</span> <span class="o">+=</span> <span class="s2">&quot;&gt;&gt;&gt; &quot;</span> <span class="o">+</span> <span class="n">override_examples</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">... &quot;</span><span class="p">)</span>
+
+            <span class="c1">#index = gdoc_help.find(&quot;examples&quot;)</span>
+            <span class="c1">#if index &gt;= 0:</span>
+            <span class="c1">#        gdoc_help = gdoc_help[0:index]</span>
+            <span class="c1">#        if method_name in override_examples:</span>
+            <span class="c1">#                gdoc_help += &quot;examples\n&quot;</span>
+            <span class="c1">#                gdoc_help += &quot;---------\n&quot;</span>
+            <span class="c1">#                gdoc_help += override_examples[method_name].replace(&quot;\n&quot;, &quot;\n\n&quot;)</span>
+                
+        <span class="c1"># some cleanup</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;title</span><span class="se">\n</span><span class="s2">-----&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>    <span class="c1"># &#39;title&#39; is extraneous</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;---</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;---</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">help_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">hk</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">hk</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">]</span>
+        <span class="n">help_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;arguments&quot;</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">help</span> <span class="ow">in</span> <span class="n">help_keys</span><span class="p">:</span>    <span class="c1"># Sphinx thinks repeated characters are section titles</span>
+            <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">help</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">help</span><span class="p">),</span> <span class="s2">&quot;**&quot;</span> <span class="o">+</span> <span class="n">help</span>    <span class="o">+</span> <span class="s2">&quot;**</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;TRUE&#39;</span><span class="p">,</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span>
+        <span class="n">gdoc_help</span> <span class="o">=</span> <span class="n">gdoc_help</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">)</span>
+
+        
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="kn">import</span> <span class="nn">numpy</span>
+            <span class="n">new_args</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">new_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">ListVector</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="c1"># new_args.append(rpy2.robjects.vectors.FloatVector(a)</span>
+                        <span class="k">with</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">localconverter</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span> <span class="o">+</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">numpy2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">):</span>
+                            <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">py2rpy</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">localconverter</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span> <span class="o">+</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">pandas2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">):</span>
+                            <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">py2rpy</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span>
+                        <span class="c1"># rpy2 doesn&#39;t convert scalar numpy ints or floats.</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">floating</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                            
+                        <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">ListVector</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">localconverter</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span> <span class="o">+</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">numpy2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">):</span>
+                            <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">py2rpy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">localconverter</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span> <span class="o">+</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">pandas2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">):</span>
+                            <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">py2rpy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface</span><span class="o">.</span><span class="n">NULL</span>
+                        <span class="c1"># rpy2 doesn&#39;t convert scalar numpy ints or floats.</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">floating</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                        <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            
+                        <span class="n">new_kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">__climextRemes__</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+
+            <span class="n">retobj</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">)</span>
+        
+            <span class="c1">#return __parseResult(retobj)</span>
+            <span class="k">return</span> <span class="n">compute_input_map</span><span class="p">(</span><span class="n">retobj</span><span class="p">)</span>
+
+        <span class="n">decorator</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">gdoc_help</span>
+        <span class="n">decorator</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
+        <span class="n">decorator</span><span class="o">.</span><span class="n">__names__</span> <span class="o">=</span> <span class="n">names</span>
+        <span class="n">decorator</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+
+        <span class="n">argstr</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">fakefunc</span> <span class="o">=</span> <span class="s2">&quot;def </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">):</span><span class="se">\n</span><span class="s2">        return </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="n">argstr</span><span class="p">,</span> <span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">argstr</span><span class="p">)</span>
+        <span class="n">fakefunc_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">fakefunc</span><span class="p">,</span> <span class="s2">&quot;fakesource&quot;</span><span class="p">,</span> <span class="s2">&quot;exec&quot;</span><span class="p">)</span>
+        <span class="n">fakeglobals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="nb">eval</span><span class="p">(</span><span class="n">fakefunc_code</span><span class="p">,</span> <span class="p">{</span><span class="n">method_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="n">decorator</span><span class="p">},</span> <span class="n">fakeglobals</span><span class="p">)</span>
+
+        <span class="n">f_with_good_sig</span> <span class="o">=</span> <span class="n">fakeglobals</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span>
+        <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">gdoc_help</span>
+        <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method_name</span>
+        <span class="n">f_with_good_sig</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f_with_good_sig</span>
+
+    <span class="k">for</span> <span class="n">__i__</span> <span class="ow">in</span> <span class="n">__climextRemes__</span><span class="o">.</span><span class="n">_exported_names</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">__climextRemesWrapFunction</span><span class="p">(</span><span class="n">__i__</span><span class="p">,</span> <span class="n">examples</span><span class="p">)</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="n">__i__</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 
 <span class="n">__initialize_wrapper</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">__set_converter</span><span class="p">():</span>
-    <span class="c1">## Don&#39;t do this within __initialize_wrapper() or get recursion error</span>
-
-    <span class="c1">## From https://stackoverflow.com/questions/54951506/is-there-a-way-to-return-names-from-r-vectors-matrices-etc-in-rpy2-3-0-0/54954583#54954583</span>
-    <span class="kn">from</span> <span class="nn">rpy2</span> <span class="kn">import</span> <span class="n">robjects</span>
-    <span class="n">myconverter</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">Converter</span><span class="p">(</span><span class="s1">&#39;asymmetric numpy&#39;</span><span class="p">,</span>
-                                       <span class="n">template</span><span class="o">=</span><span class="n">robjects</span><span class="o">.</span><span class="n">numpy2ri</span><span class="o">.</span><span class="n">converter</span><span class="p">)</span>
-    <span class="n">myconverter</span><span class="o">.</span><span class="n">rpy2py</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">rinterface_lib</span><span class="o">.</span><span class="n">sexp</span><span class="o">.</span><span class="n">Sexp</span><span class="p">,</span>
-                                <span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span><span class="o">.</span><span class="n">rpy2py</span><span class="p">)</span>
-    <span class="c1">## As of rpy2 3.3.0, need to have _map element that looks like:</span>
-    <span class="c1">## {&lt;class &#39;rpy2.rinterface.SexpS4&#39;&gt;: &lt;rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f10&gt;, </span>
-    <span class="c1">## &lt;class &#39;rpy2.rinterface.ListSexpVector&#39;&gt;: &lt;rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f50&gt;, </span>
-    <span class="c1">## &lt;class &#39;rpy2.rinterface_lib.sexp.SexpEnvironment&#39;&gt;: &lt;rpy2.robjects.conversion.NameClassMap object at 0x7efbfc6e5f90&gt;}</span>
-
-    <span class="c1">## As of rpy2 3.5.0, robjects.default_converter._rpy2py_nc_map is a dict with the converters</span>
-    <span class="c1">## whereas formerly robjects.default_converter._rpy2py_nc_map._map was the dict with the converters,</span>
-    <span class="c1">## so now need that myconverter._rpy2py_nc_map has the full set of elements in</span>
-    <span class="c1">## robjects.default_converter._rpy2py_nc_map.</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">converter</span><span class="p">,</span><span class="s1">&#39;rpy2py_nc_name&#39;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># &gt;= 3.5.0</span>
-            <span class="n">myconverter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">myconverter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="o">.</span><span class="n">_map</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                                              <span class="n">default</span><span class="o">=</span><span class="n">robjects</span><span class="o">.</span><span class="n">default_converter</span><span class="o">.</span><span class="n">_rpy2py_nc_map</span><span class="o">.</span><span class="n">_default</span><span class="p">)</span>
-    <span class="n">robjects</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">set_conversion</span><span class="p">(</span><span class="n">myconverter</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">rpy2</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-    <span class="n">__set_converter</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -659,7 +661,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -673,11 +675,11 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, Christopher Paciorek.
+      &copy;2023, Christopher Paciorek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

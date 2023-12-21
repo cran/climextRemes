@@ -23,10 +23,11 @@ Note that this creates an egg file but not sure why. The upload to PyPI does not
 
 ```
 # python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-python -m twine upload -u paciorek -p PASSWORD --repository-url https://test.pypi.org/legacy/ dist/*
+python -m twine upload -u __token__ -p <TOKEN> --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
-If don't provide password on command line, you get "RuntimeError: No recommended backend was available. Install the keyrings.alt package if you want to use the non-recommended backends. See README.rst for details."
+
+If don't provide password/token on command line, you get "RuntimeError: No recommended backend was available. Install the keyrings.alt package if you want to use the non-recommended backends. See README.rst for details."
 
 Note that it can be a hassle to upload new copies of files of the same version if want to test out changes. Try renaming the version number and make sure you do dist/filename rather than dist/*
 
@@ -34,7 +35,7 @@ Note that it can be a hassle to upload new copies of files of the same version i
 ## Upload to PyPI
 
 ```
-python -m twine upload -u paciorek -p PASSWORD  dist/*
+python -m twine upload -u __token__ -p <TOKEN>  dist/*
 ```
 
 ## Testing installation

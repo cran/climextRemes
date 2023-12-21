@@ -9,13 +9,13 @@ calc_riskRatio_gev(
   y1,
   y2,
   x1 = NULL,
-  x2 = x1,
+  x2 = NULL,
   locationFun1 = NULL,
-  locationFun2 = locationFun1,
+  locationFun2 = NULL,
   scaleFun1 = NULL,
-  scaleFun2 = scaleFun1,
+  scaleFun2 = NULL,
   shapeFun1 = NULL,
-  shapeFun2 = shapeFun1,
+  shapeFun2 = NULL,
   nReplicates1 = 1,
   nReplicates2 = 1,
   replicateIndex1 = NULL,
@@ -58,9 +58,9 @@ calc_riskRatio_gev(
 
 \item{locationFun2}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x2} for the second dataset. \code{x2} must be supplied if this is anything other than NULL or ~1.}
 
-\item{scaleFun1}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.}
+\item{scaleFun1}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the (potentially transformed) scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1. \code{logScale1} controls whether this determines the log of the scale or the scale directly.}
 
-\item{scaleFun2}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1.}
+\item{scaleFun2}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the  (potentially transformed) scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1. \code{logScale2} controls whether this determines the log of the scale or the scale directly.}
 
 \item{shapeFun1}{formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.}
 

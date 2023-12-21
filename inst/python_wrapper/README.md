@@ -14,17 +14,19 @@ See user-facing installation instructions in top-level README file of climextrem
 
 ## Documentation
 
+Probably best to do this in a Conda environment.
+
 To make documentation:
 
   1. Make sure climextremes (Python package, presumably using setup.py method) is installed first.
-  2. Put new version number into docs/build_sphinx_docs.sh (ideally I'd figure out how to leverage version.py).
-  3. One needs the Ubuntu latexmk package which is available for 18.04 but not for 16.04.
+  2. Put new version number into `python_wrapper/docs/build_sphinx_docs.sh` (ideally I'd figure out how to leverage `version.py`).
+  3. One needs the Ubuntu `latexmk` package which is available for 18.04 but not for 16.04.
   4. If Roxygen documentation in R package has been updated, make sure you've locally installed the up-to-date R package so don't get old help info from CRAN version of R package.
 
 ```
 pip install sphinx
 pip install sphinx-autodoc-annotation
-cd docs
+cd python_wrapper/docs
 python make_docs.py
 ```
 

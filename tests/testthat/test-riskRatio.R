@@ -26,7 +26,7 @@ index1 <- index1[wh1]
 index0 <- index0[wh0]
 
 outb <- calc_riskRatio_binom(yC, rep(n, 2), ciType = c('koopman', allNonKoopmanTypes))
-outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, nBlocks1 = n,
+outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, threshold2 = thr, nBlocks1 = n,
                            nBlocks2 = n, blockIndex1 = index1, blockIndex2 = index0,
                            ciType = allNonKoopmanTypes)
 
@@ -113,7 +113,7 @@ for( i in 1:m ) {
     index0 <- index0[wh0]
 
     outb <- calc_riskRatio_binom(yC, rep(n, 2), ciType = c('koopman', allNonKoopmanTypes))
-    outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, nBlocks1 = n,
+    outp <- calc_riskRatio_pot(cutoff, y1e, y0e, threshold1 = thr, threshold2 = thr, nBlocks1 = n,
                                nBlocks2 = n, blockIndex1 = index1, blockIndex2 = index0,
                                ciType = allNonKoopmanTypes, bootControl = list(n = 100))
     rrb[i] <- outb$logRiskRatio
@@ -315,7 +315,7 @@ test_that(paste0("GEV nonstationary RR methods, one stationary"), {
 outp <- calc_riskRatio_pot(returnValue = cutoff, yExc[grps == 1], yExc[grps == 2],
                    x1 = data.frame(w = w), x2 = data.frame(w= w, z = z), nBlocks1 = nT/2, nBlocks2 = nT/2,
                    blockIndex1 = blockIndexObs[grps == 1], blockIndex2 = blockIndexObs[grps==2]-(nT/2),
-                   threshold1 = thr, 
+                   threshold1 = thr, threshold2 = thr, 
                    locationFun1 = ~ w, scaleFun1 = ~w, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = data.frame(w = wNew), xNew2 = data.frame(w = wNew, z = zNew),
@@ -346,7 +346,7 @@ test_that(paste0("POT nonstationary RR methods"), {
 outp <- calc_riskRatio_pot(returnValue = cutoff, yExc[grps == 1], yExc[grps == 2],
                    x1 = NULL, x2 = data.frame(w= w, z = z), nBlocks1 = nT/2, nBlocks2 = nT/2,
                    blockIndex1 = blockIndexObs[grps == 1], blockIndex2 = blockIndexObs[grps==2]-(nT/2),
-                   threshold1 = thr, 
+                   threshold1 = thr, threshold2 = thr,
                    locationFun1 = ~ 1, scaleFun1 = ~1, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,
                    xNew1 = NULL, xNew2 = data.frame(w = wNew[1], z = zNew[1]),
@@ -377,7 +377,7 @@ test_that(paste0("POT nonstationary RR methods, one stationary"), {
 outp <- calc_riskRatio_pot(yExc[grps == 1], yExc[grps == 2],
                    x1 = NULL, x2 = data.frame(w= w, z = z), nBlocks1 = nT/2, nBlocks2 = nT/2,
                    blockIndex1 = blockIndexObs[grps == 1], blockIndex2 = blockIndexObs[grps==2]-(nT/2),
-                   threshold1 = thr, weights1 = weights1, weights2 = weights2,
+                   threshold1 = thr, threshold2 = thr, weights1 = weights1, weights2 = weights2,
                    proportionMissing1 = pm1, proportionMissing2 = pm2,
                    locationFun1 = ~ 1, scaleFun1 = ~1, shapeFun1 = ~1,
                    locationFun2 = ~ w+z, scaleFun2 = ~w+z, shapeFun2 = ~w+z,

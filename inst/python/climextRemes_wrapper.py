@@ -301,6 +301,7 @@ def __initialize_wrapper():
     data(Fort)
     ord <- order(Fort$year, Fort$month, Fort$day) 
     Fort <- Fort[ord, ]
+    Fort
     ''')
 
     if int(rpy2.__version__.split('.')[0]) >= 3:
@@ -458,7 +459,11 @@ def __initialize_wrapper():
                 value = ' '.join(["\n\n" if v == "\n" else v.strip() for v in value[1:]])
                 value = "\n" + value.strip() + "\n"
             else:
-                value = value.replace("\code{", "'")
+                # As of Python 3.12, `\c` not allowed.
+                # In any event, it looks like `\code` is already stripped
+                # out before we grab it here. For safety,
+                # just use `\\code` but I don't think this will be invoked.
+                value = value.replace("\\code{", "'")
                 value = value.replace("}", "'")        
 
             gdoc_help += "value\n-----\n\n" + value + "\n"    
@@ -516,7 +521,7 @@ def __initialize_wrapper():
 
         
         def decorator(*args, **kwargs):
-            #print kwargs, args
+            import numpy
             new_args = []
             new_kwargs = {}
             for a in args:
@@ -533,6 +538,10 @@ def __initialize_wrapper():
                     else:
                         if a is None:
                             a = rpy2.rinterface.NULL
+                        # rpy2 doesn't convert scalar numpy ints or floats.
+                        if isinstance(a, (numpy.floating, numpy.integer)):
+                            a = float(a)
+                            
                         new_args.append(a)
             
             for b in kwargs.keys():
@@ -548,6 +557,11 @@ def __initialize_wrapper():
                     else:
                         if b is None:
                             b = rpy2.rinterface.NULL
+                        # rpy2 doesn't convert scalar numpy ints or floats.
+                        if isinstance(b, (numpy.floating, numpy.integer)):
+                            b = float(b)
+                        new_kwargs[b] = kwargs[b]
+                            
                         new_kwargs[b] = kwargs[b]
                 
             method = getattr(__climextRemes__, method_name)

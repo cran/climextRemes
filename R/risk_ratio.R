@@ -243,8 +243,8 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' @param threshold2 analogous to \code{threshold1} but for the second dataset
 #' @param locationFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x1} for the first dataset. \code{x1} must be supplied if this is anything other than NULL or ~1.
 #' @param locationFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x2} for the second dataset. \code{x2} must be supplied if this is anything other than NULL or ~1.
-#' @param scaleFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.
-#' @param scaleFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1.
+#' @param scaleFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the (potentially transformed) scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1. \code{logScale1} controls whether this determines the log of the scale or the scale directly.
+#' @param scaleFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the (potentially transformed) scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1. \code{logScale2} controls whether this determines the log of the scale or the scale directly.
 #' @param shapeFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.
 #' @param shapeFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x2} for the first dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1.
 #' @param nBlocks1 number of blocks (e.g., a block will often be a year with climate data) in first dataset; note this value determines the interpretation of return values/periods/probabilities; see \code{returnPeriod} and \code{returnValue}.
@@ -278,8 +278,8 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #' @param optimControl a list with named components matching exactly any elements that the user wishes to pass as the \code{control} argument to R's \code{optim} function. See \code{help(optim)} for details. Primarily provided for the Python interface because \code{control} can also be passed as part of \code{optimArgs}.
 #' @param initial1 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the first dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling1}, \code{logScale1} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale1 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
 #' @param initial2 a list with components named \code{'location'}, \code{'scale'}, and \code{'shape'} providing initial parameter values for the second dataset, intended for use in speeding up or enabling optimization when the default initial values are resulting in failure of the optimization; note that use of \code{scaling2}, \code{logScale2} and \code{.normalizeX = TRUE} cause numerical changes in some of the parameters. For example with \code{logScale2 = TRUE}, initial value(s) for \code{'scale'} should be specified on the log scale.
-#' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
-#' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is FALSE when the scale is not a function of covariates and TRUE when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param logScale1 logical indicating whether optimization for the scale parameter should be done on the log scale for the first dataset. By default this is \code{FALSE} when the scale is not a function of covariates and \code{TRUE} when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
+#' @param logScale2 logical indicating whether optimization for the scale parameter should be done on the log scale for the second dataset. By default this is \code{FALSE} when the scale is not a function of covariates and \code{TRUE} when the scale is a function of covariates (to ensure the scale is positive regardless of the regression coefficients). 
 #' @param getReturnCalcs logical indicating whether to return the estimated return values/probabilities/periods from the fitted models. 
 #' @param getParams logical indicating whether to return the fitted parameter values and their standard errors for the fitted models; WARNING: parameter values for models with covariates for the scale parameter must interpreted based on the value of \code{logScale}.
 #' @param getFit logical indicating whether to return the full fitted models (potentially useful for model evaluation and for understanding optimization problems); note that estimated parameters in the fit object for nonstationary models will not generally match the MLE provided when \code{getParams} is \code{TRUE} because covariates are normalized before fitting and the fit object is based on the normalized covariates. Similarly, parameters will not match if \code{scaling} is not 1.
@@ -330,10 +330,10 @@ calc_riskRatio_lrt_binom <- function(y, n, ciLevel = 0.90, bounds) {
 #'                    blockIndex2 = FortExc$year[latePeriod],
 #'                    firstBlock1 = earlyYears[1], firstBlock2 = lateYears[1])
 #' }
-calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
-                               threshold1, threshold2 = threshold1, locationFun1 = NULL,
-                               locationFun2 = locationFun1, scaleFun1 = NULL, scaleFun2 = scaleFun1,
-                               shapeFun1 = NULL, shapeFun2 = shapeFun1, nBlocks1 = nrow(x1),
+calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = NULL,
+                               threshold1, threshold2, locationFun1 = NULL,
+                               locationFun2 = NULL, scaleFun1 = NULL, scaleFun2 = NULL,
+                               shapeFun1 = NULL, shapeFun2 = NULL, nBlocks1 = nrow(x1),
                                nBlocks2 = nrow(x2), blockIndex1 = NULL, blockIndex2 = NULL, firstBlock1 = 1,
                                firstBlock2 = 1, index1 = NULL, index2 = NULL, nReplicates1 = 1,
                                nReplicates2 = 1, replicateIndex1 = NULL, replicateIndex2 = NULL,
@@ -511,8 +511,8 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #' @param x2 analogous to \code{x1} but for the second dataset
 #' @param locationFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x1} for the first dataset. \code{x1} must be supplied if this is anything other than NULL or ~1.
 #' @param locationFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the location parameter using columns from \code{x2} for the second dataset. \code{x2} must be supplied if this is anything other than NULL or ~1.
-#' @param scaleFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.
-#' @param scaleFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the log of the scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1.
+#' @param scaleFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the (potentially transformed) scale parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1. \code{logScale1} controls whether this determines the log of the scale or the scale directly.
+#' @param scaleFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the  (potentially transformed) scale parameter using columns from \code{x2} for the second dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1. \code{logScale2} controls whether this determines the log of the scale or the scale directly.
 #' @param shapeFun1 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x1} for the first dataset.  \code{x1} must be supplied if this is anything other than NULL or ~1.
 #' @param shapeFun2 formula, vector of character strings, or indices describing a linear model (i.e., regression function) for the shape parameter using columns from \code{x2} for the first dataset.  \code{x2} must be supplied if this is anything other than NULL or ~1.
 #' @param nReplicates1 numeric value indicating the number of replicates for the first dataset.
@@ -579,10 +579,10 @@ calc_riskRatio_pot <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
 #'                    xNew1 = data.frame(years = mean(earlyYears)),
 #'                    xNew2 = data.frame(years = mean(lateYears)))
 #' }
-calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = x1,
-                               locationFun1 = NULL, locationFun2 = locationFun1,
-                               scaleFun1 = NULL, scaleFun2 = scaleFun1,
-                               shapeFun1 = NULL, shapeFun2 = shapeFun1,
+calc_riskRatio_gev <- function(returnValue, y1, y2, x1 = NULL, x2 = NULL,
+                               locationFun1 = NULL, locationFun2 = NULL,
+                               scaleFun1 = NULL, scaleFun2 = NULL,
+                               shapeFun1 = NULL, shapeFun2 = NULL,
                                nReplicates1 = 1, nReplicates2 = 1,
                                replicateIndex1 = NULL, replicateIndex2 = NULL,
                                weights1 = NULL, weights2 = NULL, xNew1 = NULL, xNew2 = NULL, 

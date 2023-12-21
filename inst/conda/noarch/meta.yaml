@@ -34,6 +34,6 @@ test:
   imports:
 
 about:
-  home: https://bitbucket.org/lbl-cascade
+  home: https://bitbucket.org/lbl-cascade/climextremes-dev
   license: modified BSD
   license_file: LICENSE.txt
